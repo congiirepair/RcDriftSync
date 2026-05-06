@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595 842" role="img" aria-label="RC Drift Sync Universal Setup Sheet">
+  <rect width="595" height="842" fill="#f8faf8"/>
+  <rect x="24" y="24" width="547" height="794" rx="10" fill="#fff" stroke="#17242b" stroke-width="2"/>
+  <text x="42" y="58" font-family="Arial, sans-serif" font-size="24" font-weight="800" fill="#17242b">RC Drift Sync Universal Setup Sheet</text>
+  <text x="42" y="84" font-family="Arial, sans-serif" font-size="10" fill="#60726f">For any RC drift chassis when an official setup sheet is not available.</text>
+  <g font-family="Arial, sans-serif" fill="#17242b">
+    <g transform="translate(42 118)">
+      <text font-size="14" font-weight="700">General</text>
+      <line x1="0" y1="12" x2="511" y2="12" stroke="#17242b" stroke-width="1.5"/>
+      <text y="40" font-size="10">Date</text><line x1="80" y1="36" x2="230" y2="36" stroke="#17242b"/>
+      <text x="270" y="40" font-size="10">Driver</text><line x1="340" y1="36" x2="511" y2="36" stroke="#17242b"/>
+      <text y="70" font-size="10">Track</text><line x1="80" y1="66" x2="230" y2="66" stroke="#17242b"/>
+      <text x="270" y="70" font-size="10">Surface</text><line x1="340" y1="66" x2="511" y2="66" stroke="#17242b"/>
+    </g>
+    <g transform="translate(42 232)">
+      <text font-size="14" font-weight="700">Front Suspension</text>
+      <line x1="0" y1="12" x2="240" y2="12" stroke="#17242b" stroke-width="1.5"/>
+      <text y="42" font-size="10">Ride Height</text><line x1="95" y1="38" x2="240" y2="38" stroke="#17242b"/>
+      <text y="72" font-size="10">Camber</text><line x1="95" y1="68" x2="240" y2="68" stroke="#17242b"/>
+      <text y="102" font-size="10">Toe</text><line x1="95" y1="98" x2="240" y2="98" stroke="#17242b"/>
+      <text y="132" font-size="10">Shock / Spring</text><line x1="95" y1="128" x2="240" y2="128" stroke="#17242b"/>
+    </g>
+    <g transform="translate(313 232)">
+      <text font-size="14" font-weight="700">Rear Suspension</text>
+      <line x1="0" y1="12" x2="240" y2="12" stroke="#17242b" stroke-width="1.5"/>
+      <text y="42" font-size="10">Ride Height</text><line x1="95" y1="38" x2="240" y2="38" stroke="#17242b"/>
+      <text y="72" font-size="10">Camber</text><line x1="95" y1="68" x2="240" y2="68" stroke="#17242b"/>
+      <text y="102" font-size="10">Toe</text><line x1="95" y1="98" x2="240" y2="98" stroke="#17242b"/>
+      <text y="132" font-size="10">Diff</text><line x1="95" y1="128" x2="240" y2="128" stroke="#17242b"/>
+    </g>
+    <g transform="translate(42 430)">
+      <text font-size="14" font-weight="700">Electronics</text>
+      <line x1="0" y1="12" x2="511" y2="12" stroke="#17242b" stroke-width="1.5"/>
+      <text y="42" font-size="10">Motor</text><line x1="80" y1="38" x2="230" y2="38" stroke="#17242b"/>
+      <text x="270" y="42" font-size="10">ESC</text><line x1="340" y1="38" x2="511" y2="38" stroke="#17242b"/>
+      <text y="72" font-size="10">Servo</text><line x1="80" y1="68" x2="230" y2="68" stroke="#17242b"/>
+      <text x="270" y="72" font-size="10">Gyro</text><line x1="340" y1="68" x2="511" y2="68" stroke="#17242b"/>
+      <text y="102" font-size="10">Radio</text><line x1="80" y1="98" x2="230" y2="98" stroke="#17242b"/>
+      <text x="270" y="102" font-size="10">Battery</text><line x1="340" y1="98" x2="511" y2="98" stroke="#17242b"/>
+    </g>
+    <g transform="translate(42 590)">
+      <text font-size="14" font-weight="700">Notes</text>
+      <line x1="0" y1="12" x2="511" y2="12" stroke="#17242b" stroke-width="1.5"/>
+      <line x1="0" y1="48" x2="511" y2="48" stroke="#94a7a8"/>
+      <line x1="0" y1="84" x2="511" y2="84" stroke="#94a7a8"/>
+      <line x1="0" y1="120" x2="511" y2="120" stroke="#94a7a8"/>
+      <line x1="0" y1="156" x2="511" y2="156" stroke="#94a7a8"/>
+    </g>
+  </g>
+</svg>

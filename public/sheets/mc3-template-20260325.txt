@@ -1,0 +1,222 @@
+メカ類/ Electrical
+シャーシ/ Chassis
+SETTING SHEET
+mm
+mm
+mm
+mm
+mm
+mm
+【Spacer】
+【Spacer】
+【Spacer】
+【Spacer】
+【Spacer】
+mm
+【Wheel Hubs】
+【Spacer under Sus-mount】
+【Lower Sus-Mount】
+正側/Positive side
+逆側/Negative side
+ノーマル/Normal
+アルミ製/Aluminum
+mm
+【Spacer】
+【Ball Caps】
+S
+M
+L
+【Spacer】
+【Spacer】
+【Spacer】
+【Diﬀ】
+スプール/Spool
+ギヤデフ/Gear Diﬀ
+ボールデフ/Ball Diﬀ
+オイル/Oil　＃
+【モーターポジション/Motor Position】
+ハイマウント/High Mount
+ローマウント/Low Mount
+mm
+【Spacer】
+車高/Ride Height
+オイル/Oil
+スプリング/Spring
+O リング/O-ring
+ピストン/Piston
+ショックシャフト/Shock Shaft
+穴/Holes
+【ナックルストッパー/
+         Knuckle Stopper】
+【ボールエンド/Ball Stud】
+【ボールエンド/Ball Stud】
+【ボールエンド/Ball Stud】
+タイヤ/Tires
+フロント/ Front
+リア/ Rear
+オフセット/Oﬀset
+オフセット/Oﬀset
+ボディー/Body
+ウイング/Wing
+サーボ/Servo
+モーター/Motor
+バッテリー/Battery
+サーボホーン/Servo Horn
+ジャイロ/Gyro
+ゲイン/Gain
+進角/Timing
+カーブ/Carve
+走行場所/Driving Place
+日時/Date
+ドライバー/Driver
+路面/Surface
+P タイル/Plastic Tile
+カーペット/Carpet
+アスファルト/Asphalt
+カラコン/Colored Concrete
+mm
+mm
+ピニオンギヤ/Pinion Gear
+スパーギヤ/Spur Gear
+アンプ/ESC
+mm
+mm
+リテーナー/Retainer
+車高/Ride Height
+オイル/Oil
+スプリング/Spring
+O リング/O-ring
+ピストン/Piston
+ショックシャフト/Shock Shaft
+キャンバー/Camber Angle
+穴/Holes
+mm
+【ボールエンド/Ball Stud】
+【ボールエンド/Ball Stud】
+サーボ位置/Servo Position
+【Sus Mount RR】
+ノーマル/Normall
+アルミ製/Aluminum #
+【Sus Mount RF】
+ノーマル/Normall
+アルミ製/Aluminum #
+mm
+【Spacer】
+mm
+【Wheel Hubs】
+ノーマル/ Normal
+アルミ製/Aluminum
+【ベルクランク/Bell Crank】
+【ボールエンド/Ball Stud】
+mm
+mm
+RF
+RR
+横置/Horizontal Installation
+縦置/Installed Vertically
+ノーマル/Normal
+アルミ製/Aluminum
+【フロントショック/Front Shock】
+【リアショック/Rear Shock】
+ブースト/Boost
+ターボ/Turbo
+リテーナー/Retainer
+mm
+ノーマル/Normal
+アルミ製/Aluminum
+フロント/ Front
+リア/ Rear
+ホイール/ Wheel
+【RD-012S】
+ノーマル/Normal
+グラファイト製/Graphite
+ノーマル/Normal
+グラファイト製/Graphite
+【ナックル/Knuckle】
+アルミ製/Aluminum
+アルミ製/Aluminum
+20260318
+ブッシュ/Bushing ＃　　 In/Out
+ブッシュ/Bushing ＃　　 In/Out
+【Lower Sus Hole Position】
+上穴/Upper Hole
+下穴/Lower Hole
+#
+°
+#
+mm
+mm
+mm
+mm
+T
+T
+【スタビライザーバー
+               /Sway bar】
+【Sus Arm】
+42mm
+42mm 2.6°
+45mm
+その他/Others
+ノーマル/Normal
+A アーム /A-Arm 
+mm
+【Rear Hub Carrier】
+ノーマル/Normal
+アルミ製/Aluminum
+A アーム /A-Arm 
+【Sus Arm】
+ストレート/Straight
+ガルアーム /Gull Arm 
+A アーム /A-Arm 
+mm
+mm
+°
+中/M
+前/F
+後/R
+トー角/Toe Angle
+°
+キャンバー/Camber Angle
+°
+トー角/Toe Angle
+°
+Memo
+Memo
+スキッド角/Skid Angle
+°
+マルチナックル/Multi knuckle
+Plate：
+Φ
+【ショックタワー/Shock Tower】
+ノーマル/Normal
+グラファイト製/Graphite
+【Ball Caps】
+S
+M
+L
+mm
+【Spacer】
+mm
+【Spacer】
+mm
+【Spacer】
+mm
+【Spacer】
+mm
+【Spacer】
+【ボールエンド/Ball Stud】
+樹脂/ Molded
+アルミ/Aluminum 
+シャーシブレース
+    /Chassis Braces
+Front
+LSD
+オモリ/ Weight
+アルミ製ポスト/Alu. Post
+g
+装着位置に〇をつける
+Mark the installation
+location with a circle. 
+装着位置に〇をつける
+Mark the installation
+location with a circle. 

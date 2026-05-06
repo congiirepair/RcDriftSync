@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200">
+  <rect width="900" height="1200" fill="#f8faf8"/>
+  <rect x="40" y="38" width="820" height="1124" rx="18" fill="#fff" stroke="#151719" stroke-width="4"/>
+  <text x="72" y="105" font-family="Arial, sans-serif" font-size="52" font-weight="800" fill="#151719">MC-3</text>
+  <text x="72" y="144" font-family="Arial, sans-serif" font-size="24" fill="#5a6664">Interactive setting sheet placeholder</text>
+  <g stroke="#1d2929" stroke-width="3" fill="none">
+    <rect x="72" y="184" width="756" height="88"/>
+    <line x1="324" y1="184" x2="324" y2="272"/>
+    <line x1="576" y1="184" x2="576" y2="272"/>
+    <rect x="72" y="296" width="250" height="108"/>
+    <rect x="325" y="296" width="250" height="108"/>
+    <rect x="578" y="296" width="250" height="108"/>
+    <rect x="72" y="468" width="250" height="116"/>
+    <rect x="578" y="468" width="250" height="116"/>
+    <rect x="72" y="608" width="756" height="88"/>
+    <line x1="261" y1="608" x2="261" y2="696"/>
+    <line x1="450" y1="608" x2="450" y2="696"/>
+    <line x1="639" y1="608" x2="639" y2="696"/>
+    <rect x="72" y="788" width="756" height="104"/>
+    <line x1="252" y1="788" x2="252" y2="892"/>
+    <line x1="432" y1="788" x2="432" y2="892"/>
+    <line x1="612" y1="788" x2="612" y2="892"/>
+    <rect x="72" y="946" width="756" height="166"/>
+  </g>
+  <g font-family="Arial, sans-serif" fill="#151719">
+    <text x="90" y="218" font-size="22" font-weight="700">Tune</text>
+    <text x="342" y="218" font-size="22" font-weight="700">Track</text>
+    <text x="594" y="218" font-size="22" font-weight="700">Surface</text>
+    <text x="96" y="324" font-size="23" font-weight="700">Front shock</text>
+    <text x="350" y="324" font-size="23" font-weight="700">Servo / steering</text>
+    <text x="604" y="324" font-size="23" font-weight="700">Rear shock</text>
+    <text x="96" y="494" font-size="23" font-weight="700">Front link</text>
+    <text x="604" y="494" font-size="23" font-weight="700">Rear link</text>
+    <text x="92" y="638" font-size="22" font-weight="700">Caster</text>
+    <text x="282" y="638" font-size="22" font-weight="700">Front toe</text>
+    <text x="472" y="638" font-size="22" font-weight="700">Rear toe</text>
+    <text x="660" y="638" font-size="22" font-weight="700">Diff</text>
+    <text x="92" y="818" font-size="22" font-weight="700">F tires</text>
+    <text x="272" y="818" font-size="22" font-weight="700">R tires</text>
+    <text x="452" y="818" font-size="22" font-weight="700">Oil</text>
+    <text x="632" y="818" font-size="22" font-weight="700">Weight</text>
+    <text x="90" y="980" font-size="23" font-weight="700">Notes</text>
+  </g>
+  <g fill="#e3e8e5" stroke="#151719" stroke-width="3">
+    <circle cx="142" cy="352" r="11"/><circle cx="178" cy="352" r="11"/><circle cx="214" cy="352" r="11"/><circle cx="250" cy="352" r="11"/>
+    <circle cx="676" cy="352" r="11"/><circle cx="712" cy="352" r="11"/><circle cx="748" cy="352" r="11"/><circle cx="784" cy="352" r="11"/>
+    <circle cx="391" cy="344" r="11"/><circle cx="438" cy="344" r="11"/><circle cx="485" cy="344" r="11"/>
+    <circle cx="162" cy="526" r="11"/><circle cx="202" cy="526" r="11"/><circle cx="242" cy="526" r="11"/>
+    <circle cx="698" cy="526" r="11"/><circle cx="738" cy="526" r="11"/><circle cx="778" cy="526" r="11"/>
+  </g>
+  <path d="M124 1046h652" stroke="#d5ded9" stroke-width="6" stroke-dasharray="18 16"/>
+</svg>

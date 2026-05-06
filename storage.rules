@@ -1,0 +1,54 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function owner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function imageUnder(maxMb) {
+      return request.resource.size < maxMb * 1024 * 1024
+        && request.resource.contentType.matches("image/.*");
+    }
+
+    function pdfUnder(maxMb) {
+      return request.resource.size < maxMb * 1024 * 1024
+        && request.resource.contentType == "application/pdf";
+    }
+
+    match /carPhotos/{ownerId}/{carId}/{fileName} {
+      allow read, write: if owner(ownerId) && imageUnder(10);
+    }
+
+    match /tunePhotos/{ownerId}/{tuneId}/{fileName} {
+      allow read, write: if owner(ownerId) && imageUnder(10);
+    }
+
+    match /electronicsPhotos/{ownerId}/{tuneId}/{fileName} {
+      allow read, write: if owner(ownerId) && imageUnder(10);
+    }
+
+    match /profilePhotos/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if owner(userId) && imageUnder(5);
+    }
+
+    match /generatedPdfs/{ownerId}/{tuneId}/{fileName} {
+      allow read, write: if owner(ownerId) && pdfUnder(15);
+    }
+
+    match /publicTunePhotos/{ownerId}/{tuneId}/{fileName} {
+      allow read: if true;
+      allow write: if owner(ownerId) && imageUnder(10);
+    }
+
+    match /publicPdfs/{ownerId}/{tuneId}/{fileName} {
+      allow read: if true;
+      allow write: if owner(ownerId) && pdfUnder(15);
+    }
+  }
+}

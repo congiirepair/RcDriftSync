@@ -1,0 +1,169 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(ownerId) {
+      return signedIn() && request.auth.uid == ownerId;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && (
+          request.auth.token.admin == true
+          || exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        );
+    }
+
+    function validVisibility(value) {
+      return value in ["private", "unlisted", "public"];
+    }
+
+    function ownerCreate() {
+      return signedIn() && request.resource.data.ownerId == request.auth.uid;
+    }
+
+    function ownerUpdate() {
+      return isAdmin()
+        || (
+          signedIn()
+          && resource.data.ownerId == request.auth.uid
+          && request.resource.data.ownerId == resource.data.ownerId
+        );
+    }
+
+    function publicTune() {
+      return resource.data.visibility == "public";
+    }
+
+    match /admins/{adminId} {
+      allow read: if isOwner(adminId) || isAdmin();
+      allow create, update: if request.auth.token.admin == true;
+      allow delete: if request.auth.token.admin == true;
+    }
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin() || resource.data.publicProfile.isPublic == true;
+      allow create, update, delete: if isOwner(userId) || isAdmin();
+
+      match /cars/{carId} {
+        allow read, delete: if isOwner(userId) || isAdmin();
+        allow create, update: if (isOwner(userId) && request.resource.data.ownerId == userId) || isAdmin();
+      }
+
+      match /tunes/{tuneId} {
+        allow read, delete: if isOwner(userId) || isAdmin();
+        allow create: if (
+          isOwner(userId)
+          && request.resource.data.userId == userId
+          && request.resource.data.ownerId == userId
+          && validVisibility(request.resource.data.visibility)
+          && request.resource.data.keys().hasAll(["tuneId", "userId", "ownerId", "tuneName", "name", "visibility", "createdAt", "updatedAt"])
+        ) || isAdmin();
+        allow update: if (
+          isOwner(userId)
+          && resource.data.ownerId == userId
+          && request.resource.data.ownerId == userId
+          && request.resource.data.userId == userId
+          && validVisibility(request.resource.data.visibility)
+        ) || isAdmin();
+      }
+
+      match /electronicsProfiles/{profileId} {
+        allow read, delete: if isOwner(userId) || isAdmin();
+        allow create, update: if (isOwner(userId) && request.resource.data.ownerId == userId) || isAdmin();
+      }
+
+      match /trackSessions/{sessionId} {
+        allow read, delete: if isOwner(userId) || isAdmin();
+        allow create, update: if (isOwner(userId) && request.resource.data.ownerId == userId) || isAdmin();
+      }
+    }
+
+    match /profiles/{username} {
+      allow read: if resource.data.isPublic != false || isAdmin();
+      allow create, update: if (signedIn() && request.resource.data.uid == request.auth.uid) || isAdmin();
+      allow delete: if (signedIn() && resource.data.uid == request.auth.uid) || isAdmin();
+    }
+
+    match /cars/{carId} {
+      allow read: if isOwner(resource.data.ownerId) || isAdmin();
+      allow create: if ownerCreate() || isAdmin();
+      allow update, delete: if ownerUpdate();
+    }
+
+    match /tunes/{tuneId} {
+      allow read: if isOwner(resource.data.ownerId) || publicTune() || isAdmin();
+      allow create: if (
+        ownerCreate()
+        && validVisibility(request.resource.data.visibility)
+        && request.resource.data.keys().hasAll(["ownerId", "carId", "sheetId", "name", "visibility", "createdAt", "updatedAt"])
+      ) || isAdmin();
+      allow update, delete: if ownerUpdate();
+    }
+
+    match /electronicsProfiles/{profileId} {
+      allow read: if isOwner(resource.data.ownerId) || isAdmin();
+      allow create: if ownerCreate() || isAdmin();
+      allow update, delete: if ownerUpdate();
+    }
+
+    match /setupTemplates/{templateId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /sharedTunes/{shareId} {
+      allow read: if resource.data.visibility in ["public", "unlisted"] || isAdmin();
+      allow create, update: if (
+        signedIn()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.visibility in ["public", "unlisted"]
+      ) || isAdmin();
+      allow delete: if (signedIn() && resource.data.ownerId == request.auth.uid) || isAdmin();
+    }
+
+    match /comments/{commentId} {
+      allow read: if resource.data.visibility == "public" || isAdmin();
+      allow create: if signedIn()
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.tuneVisibility == "public";
+      allow update, delete: if (signedIn() && resource.data.authorId == request.auth.uid) || isAdmin();
+    }
+
+    match /likes/{likeId} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.userId == request.auth.uid;
+      allow delete: if (signedIn() && resource.data.userId == request.auth.uid) || isAdmin();
+      allow update: if false;
+    }
+
+    match /follows/{followId} {
+      allow read: if true;
+      allow create: if signedIn() && request.resource.data.followerId == request.auth.uid;
+      allow delete: if (signedIn() && resource.data.followerId == request.auth.uid) || isAdmin();
+      allow update: if false;
+    }
+
+    match /trackSessions/{sessionId} {
+      allow read: if isOwner(resource.data.ownerId) || isAdmin();
+      allow create: if ownerCreate() || isAdmin();
+      allow update, delete: if ownerUpdate();
+    }
+
+    match /publicTuneStats/{tuneId} {
+      allow read: if true;
+      allow create: if signedIn();
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(["viewCount", "likeCount", "cloneCount", "shareCount", "commentCount", "updatedAt"]);
+      allow delete: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

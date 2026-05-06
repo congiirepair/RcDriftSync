@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "rcdriftsync",
+    "beta": "rcdriftsync-beta"
+  },
+  "targets": {}
+}

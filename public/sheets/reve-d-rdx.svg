@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1200">
+  <rect width="900" height="1200" fill="#fafbf6"/>
+  <rect x="40" y="38" width="820" height="1124" rx="18" fill="#fff" stroke="#161b1c" stroke-width="4"/>
+  <text x="72" y="105" font-family="Arial, sans-serif" font-size="48" font-weight="800" fill="#101819">Reve D RDX</text>
+  <text x="72" y="144" font-family="Arial, sans-serif" font-size="24" fill="#5a6664">Interactive setup sheet placeholder</text>
+  <g stroke="#1d2929" stroke-width="3" fill="none">
+    <rect x="72" y="184" width="756" height="102"/>
+    <line x1="324" y1="184" x2="324" y2="286"/>
+    <line x1="576" y1="184" x2="576" y2="286"/>
+    <line x1="72" y1="235" x2="828" y2="235"/>
+    <rect x="72" y="318" width="250" height="122"/>
+    <rect x="578" y="318" width="250" height="122"/>
+    <rect x="72" y="468" width="250" height="122"/>
+    <rect x="325" y="468" width="250" height="122"/>
+    <rect x="578" y="468" width="250" height="122"/>
+    <rect x="72" y="620" width="250" height="90"/>
+    <rect x="578" y="620" width="250" height="90"/>
+    <rect x="250" y="682" width="400" height="78"/>
+    <rect x="72" y="804" width="756" height="110"/>
+    <rect x="72" y="952" width="756" height="160"/>
+  </g>
+  <g font-family="Arial, sans-serif" fill="#101819">
+    <text x="90" y="217" font-size="22" font-weight="700">Tune</text>
+    <text x="342" y="217" font-size="22" font-weight="700">Track</text>
+    <text x="594" y="217" font-size="22" font-weight="700">Date</text>
+    <text x="95" y="342" font-size="23" font-weight="700">Front shock</text>
+    <text x="603" y="342" font-size="23" font-weight="700">Rear shock</text>
+    <text x="95" y="492" font-size="23" font-weight="700">Front upper link</text>
+    <text x="350" y="492" font-size="23" font-weight="700">Arm mount</text>
+    <text x="603" y="492" font-size="23" font-weight="700">Rear upper link</text>
+    <text x="95" y="646" font-size="22" font-weight="700">Front camber</text>
+    <text x="604" y="646" font-size="22" font-weight="700">Rear camber</text>
+    <text x="282" y="722" font-size="22" font-weight="700">Ride height</text>
+    <text x="90" y="835" font-size="23" font-weight="700">Electronics / body</text>
+    <text x="90" y="982" font-size="23" font-weight="700">Notes</text>
+  </g>
+  <g fill="#dfe7e2" stroke="#101819" stroke-width="3">
+    <circle cx="146" cy="356" r="11"/><circle cx="190" cy="356" r="11"/><circle cx="235" cy="356" r="11"/>
+    <circle cx="146" cy="382" r="11"/><circle cx="190" cy="382" r="11"/><circle cx="235" cy="382" r="11"/>
+    <circle cx="682" cy="356" r="11"/><circle cx="726" cy="356" r="11"/><circle cx="770" cy="356" r="11"/>
+    <circle cx="682" cy="382" r="11"/><circle cx="726" cy="382" r="11"/><circle cx="770" cy="382" r="11"/>
+    <circle cx="166" cy="526" r="11"/><circle cx="203" cy="526" r="11"/><circle cx="241" cy="526" r="11"/>
+    <circle cx="700" cy="526" r="11"/><circle cx="738" cy="526" r="11"/><circle cx="776" cy="526" r="11"/>
+    <circle cx="423" cy="526" r="11"/><circle cx="466" cy="526" r="11"/><circle cx="423" cy="562" r="11"/><circle cx="466" cy="562" r="11"/>
+  </g>
+  <path d="M130 1040c80-62 146-62 226 0s146 62 226 0 146-62 226 0" fill="none" stroke="#d5ded9" stroke-width="6"/>
+</svg>
