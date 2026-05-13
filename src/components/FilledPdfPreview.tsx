@@ -1,37 +1,71 @@
 import { Download, Share2 } from "lucide-react";
-import { useMemo, useState } from "react";
-import type { PdfTemplate } from "../data/pdfTemplates";
-import type { Tune } from "../types";
-import { downloadPdf, generateFilledPdf, pdfPreviewPosition } from "../utils/pdfExport";
+import { useEffect, useMemo, useState } from "react";
+import type { Car, Tune } from "../types";
+import { downloadPdf } from "../utils/pdfExport";
+import { generateUniversalTunePdf } from "../utils/universalPdfExport";
 
 interface FilledPdfPreviewProps {
   tune: Tune;
-  template: PdfTemplate;
+  car?: Car;
   onSave: () => void;
   allowDownload?: boolean;
   shareUrl?: string;
 }
 
-export function FilledPdfPreview({ tune, template, onSave, allowDownload = true, shareUrl }: FilledPdfPreviewProps) {
+function fallbackCar(tune: Tune): Car {
+  return {
+    id: tune.carId || "shared-car",
+    name: "Shared car",
+    chassis: [tune.chassisBrand, tune.chassisModel].filter(Boolean).join(" ") || String(tune.values.chassis ?? "RC drift chassis"),
+    chassisBrand: tune.chassisBrand,
+    chassisBrandSlug: tune.chassisBrandSlug,
+    chassisModel: tune.chassisModel,
+    chassisModelSlug: tune.chassisModelSlug,
+    chassisVariant: tune.chassisVariant,
+    customChassisBrand: tune.customChassisBrand,
+    customChassisModel: tune.customChassisModel,
+    sheetId: "universal-template",
+    templateMode: "universal",
+    officialTemplateEligible: false,
+    createdAt: tune.createdAt,
+    updatedAt: tune.updatedAt
+  };
+}
+
+export function FilledPdfPreview({ tune, car, onSave, allowDownload = true, shareUrl }: FilledPdfPreviewProps) {
   const [busy, setBusy] = useState(false);
-  const textMarkers = useMemo(
-    () =>
-      template.text
-        .map((item) => {
-          const value = item.fieldId === "date" ? tune.date : item.fieldId === "drivingPlace" ? tune.track : tune.values[item.fieldId] ?? tune.selections[item.fieldId] ?? "";
-          if (!value) return null;
-          return { ...item, value: `${String(value)}${item.suffix ? ` ${item.suffix}` : ""}` };
-        })
-        .filter(Boolean),
-    [template, tune]
-  );
+  const [previewUrl, setPreviewUrl] = useState("");
+  const pdfCar = useMemo(() => car ?? fallbackCar(tune), [car, tune]);
+
+  useEffect(() => {
+    let cancelled = false;
+    generateUniversalTunePdf(tune, pdfCar, { shareUrl })
+      .then((bytes) => {
+        if (cancelled) return;
+        const blob = new Blob([bytes.slice().buffer], { type: "application/pdf" });
+        const url = URL.createObjectURL(blob);
+        setPreviewUrl((current) => {
+          if (current) URL.revokeObjectURL(current);
+          return url;
+        });
+      })
+      .catch(() => undefined);
+
+    return () => {
+      cancelled = true;
+      setPreviewUrl((current) => {
+        if (current) URL.revokeObjectURL(current);
+        return "";
+      });
+    };
+  }, [pdfCar, shareUrl, tune]);
 
   async function exportPdf() {
     setBusy(true);
     try {
       await onSave();
-      const bytes = await generateFilledPdf(template, tune);
-      downloadPdf(bytes, `${tune.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-setup-sheet.pdf`);
+      const bytes = await generateUniversalTunePdf(tune, pdfCar, { shareUrl });
+      downloadPdf(bytes, `${tune.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-rc-drift-sync-setup.pdf`);
     } finally {
       setBusy(false);
     }
@@ -43,7 +77,7 @@ export function FilledPdfPreview({ tune, template, onSave, allowDownload = true,
         {allowDownload ? (
           <button className="primaryAction" type="button" onClick={exportPdf} disabled={busy}>
             <Download size={19} />
-            {busy ? "Generating..." : "Export filled PDF"}
+            {busy ? "Generating..." : "Export PDF"}
           </button>
         ) : null}
         <button type="button" onClick={() => navigator.clipboard?.writeText(shareUrl ?? `${location.origin}/t/${tune.shareId ?? tune.id}`)}>
@@ -51,32 +85,8 @@ export function FilledPdfPreview({ tune, template, onSave, allowDownload = true,
           Share link
         </button>
       </div>
-      <div className="pdfPreviewCanvas">
-        <img src={template.previewImageAsset} alt={`${template.name} filled PDF preview`} />
-        <div className="pdfPreviewOverlay">
-          {textMarkers.map((item) =>
-            item ? (
-              <span key={item.fieldId} style={pdfPreviewPosition(template, item.pdfX, item.pdfY)}>
-                {item.value}
-              </span>
-            ) : null
-          )}
-          {template.checkboxes.map((box) => {
-            const value = tune.values[box.fieldId];
-            const checked = value === box.value || value === true;
-            return checked ? (
-              <b key={box.id} className="pdfCheck" style={pdfPreviewPosition(template, box.pdfX, box.pdfY)}>
-                ✓
-              </b>
-            ) : null;
-          })}
-          {template.holeGroups.flatMap((group) => {
-            const selected = String(tune.values[group.fieldId] ?? tune.selections[group.fieldId] ?? "");
-            return group.holes
-              .filter((hole) => hole.id === selected)
-              .map((hole) => <i key={`${group.id}-${hole.id}`} style={pdfPreviewPosition(template, hole.pdfX, hole.pdfY)} />);
-          })}
-        </div>
+      <div className="pdfPreviewCanvas readablePdfPreview">
+        {previewUrl ? <iframe title="RC Drift Sync setup PDF preview" src={previewUrl} /> : <p className="mutedText">Building readable setup PDF preview...</p>}
       </div>
     </div>
   );

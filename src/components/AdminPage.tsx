@@ -133,7 +133,7 @@ export function AdminPage({ account, data, onDeleteCar, onDeleteTune, onResetHom
                 <strong>{tune.name}</strong>
                 <span>{tune.visibility || "private"} · {tune.ownerUsername || tune.ownerId || "local"}</span>
               </div>
-              <button className="dangerAction" type="button" onClick={() => onDeleteTune(tune.id)}>
+              <button className="dangerAction" type="button" onClick={() => onDeleteTune(tune.shareId || tune.id)}>
                 <Trash2 size={16} />
                 Delete
               </button>

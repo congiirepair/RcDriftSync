@@ -37,7 +37,20 @@ export function snapshotTune(tune: Tune): TuneSnapshot {
     changeReason: tune.changeReason,
     testResult: tune.testResult,
     confidenceRating: tune.confidenceRating,
-    summaryChips: [...(tune.summaryChips ?? [])]
+    summaryChips: [...(tune.summaryChips ?? [])],
+    electronics: tune.electronics ? { ...tune.electronics } : undefined,
+    chassisSetup: tune.chassisSetup ? { ...tune.chassisSetup } : undefined,
+    advancedSetup: tune.advancedSetup ? { ...tune.advancedSetup } : undefined,
+    cloneInfo: tune.cloneInfo ? { ...tune.cloneInfo } : undefined,
+    shareSettings: tune.shareSettings ? { ...tune.shareSettings } : undefined,
+    tuneName: tune.tuneName ?? tune.name,
+    chassisBrand: tune.chassisBrand,
+    chassisBrandSlug: tune.chassisBrandSlug,
+    chassisModel: tune.chassisModel,
+    chassisModelSlug: tune.chassisModelSlug,
+    chassisVariant: tune.chassisVariant,
+    customChassisBrand: tune.customChassisBrand,
+    customChassisModel: tune.customChassisModel
   };
 }
 
@@ -82,9 +95,15 @@ export function withRevision(before: Tune, after: Tune): Tune {
       {
         id: `rev-${Date.now()}`,
         date: new Date().toISOString(),
-        summary: changes.slice(0, 2).join(", "),
+        summary: String(after.values.changeSummary || after.values.whatChanged || changes.slice(0, 2).join(", ")),
         changes,
-        snapshot: snapshotTune(before)
+        snapshot: snapshotTune(before),
+        whatChanged: String(after.values.whatChanged ?? after.values.changeSummary ?? ""),
+        reason: after.changeReason || String(after.values.changeReason ?? ""),
+        result: after.testResult,
+        trackCondition: String(after.values.trackConditionDuringTest ?? after.trackConditionPreset ?? ""),
+        dateTested: String(after.values.dateTested ?? ""),
+        notes: String(after.values.sessionNotes ?? after.values.howItFelt ?? "")
       },
       ...after.history
     ]

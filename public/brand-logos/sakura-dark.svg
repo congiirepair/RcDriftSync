@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="110" viewBox="0 0 360 110" role="img" aria-label="SAKURA placeholder logo">
+  <rect width="360" height="110" rx="18" fill="#050607"/>
+  <rect x="1" y="1" width="358" height="108" rx="17" fill="none" stroke="#2A2F35"/>
+  <path d="M28 73 C54 30, 92 30, 118 72" fill="none" stroke="#59D6FF" stroke-width="8" stroke-linecap="round"/>
+  <text x="145" y="66" fill="#F5F7FA" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800" letter-spacing="2">SAKURA</text>
+  <text x="146" y="86" fill="#9BA3AD" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" letter-spacing="3">RC DRIFT SYNC PLACEHOLDER</text>
+</svg>

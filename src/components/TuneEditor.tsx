@@ -1,8 +1,8 @@
-import { Check, Clock, FileText, Images, ListChecks, SlidersHorizontal } from "lucide-react";
+import { Clock, FileText, Images, ListChecks, Save, SlidersHorizontal } from "lucide-react";
 import { useMemo, useState } from "react";
 import { getPdfTemplate } from "../data/pdfTemplates";
 import { getSheet } from "../data/sheets";
-import type { EditorTab, Tune } from "../types";
+import type { Car, EditorTab, Tune } from "../types";
 import { FilledPdfPreview } from "./FilledPdfPreview";
 import { HistoryTab } from "./HistoryTab";
 import { MobileSetupForm } from "./MobileSetupForm";
@@ -11,6 +11,7 @@ import { PhotosTab } from "./PhotosTab";
 
 interface TuneEditorProps {
   tune: Tune;
+  car?: Car;
   onDraft: (tune: Tune) => void;
   onSave: () => void;
   onDuplicate: (source?: Tune) => void;
@@ -25,7 +26,7 @@ const tabs: Array<{ id: EditorTab; label: string; icon: typeof SlidersHorizontal
   { id: "history", label: "History", icon: Clock }
 ];
 
-export function TuneEditor({ tune, onDraft, onSave, onDuplicate, dirty }: TuneEditorProps) {
+export function TuneEditor({ tune, car, onDraft, onSave, onDuplicate }: TuneEditorProps) {
   const [activeTab, setActiveTab] = useState<EditorTab>("details");
   const sheet = useMemo(() => getSheet(tune.sheetId), [tune.sheetId]);
   const pdfTemplate = useMemo(() => getPdfTemplate(tune.sheetId), [tune.sheetId]);
@@ -68,7 +69,7 @@ export function TuneEditor({ tune, onDraft, onSave, onDuplicate, dirty }: TuneEd
 
       {activeTab === "sheet" ? (
         <div className="tabPanel sheetPanel">
-          <FilledPdfPreview tune={tune} template={pdfTemplate} onSave={onSave} />
+          <FilledPdfPreview tune={tune} car={car} onSave={onSave} />
         </div>
       ) : null}
       {activeTab === "details" ? <MobileSetupForm tune={tune} template={pdfTemplate} onMeta={updateMeta} onValue={updateValue} /> : null}
@@ -77,9 +78,9 @@ export function TuneEditor({ tune, onDraft, onSave, onDuplicate, dirty }: TuneEd
       {activeTab === "history" ? <HistoryTab history={tune.history} onDuplicate={() => onDuplicate(tune)} /> : null}
 
       <div className="stickySave">
-        <button className="primaryAction" type="button" onClick={onSave} disabled={!dirty}>
-          <Check size={21} />
-          {dirty ? "Save tune" : "Saved"}
+        <button className="primaryAction" type="button" onClick={onSave}>
+          <Save size={21} />
+          Save
         </button>
       </div>
     </main>

@@ -1,47 +1,36 @@
-import { Camera, CarFront, CopyPlus, ImagePlus, Pencil, Plus, Trash2, Wrench } from "lucide-react";
+import { ChevronDown, CopyPlus, Download, Pencil, Plus, Trash2, Wrench } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import type { Car, Tune, TunePhoto } from "../types";
+import { chassisBrands, chassisInfoFromCar, findChassisBrand, modelsForBrand, slugifyChassis } from "../data/chassisBrands";
+import type { Car, Tune } from "../types";
+import { BrandLogo } from "./BrandIdentity";
 import { BottomSheet } from "./BottomSheet";
-import { TuneCard } from "./TuneVisuals";
-import { AppCard, EmptyState, SelectField, TextAreaField, TextField } from "./UiPrimitives";
+import { EmptyState, SelectField, TextField } from "./UiPrimitives";
 
 interface GarageManagerProps {
   cars: Car[];
   tunes: Tune[];
   activeTuneId?: string;
   startAdding?: number;
-  onSaveCar: (car: Car) => void;
+  onSaveCar: (car: Car) => void | Promise<boolean | void>;
   onDeleteCar: (carId: string) => void;
   onCreateTune: (carId: string) => void;
   onDuplicateTune: (tune: Tune) => void;
+  onExportTunePdf: (tune: Tune) => void | Promise<void>;
   onSelectTune: (tuneId: string) => void;
 }
-
-const chassisSuggestions = [
-  "Reve D RDX",
-  "Reve D MC-3",
-  "Yokomo",
-  "MST",
-  "Usukani",
-  "Rhino Racing",
-  "Team AD",
-  "Overdose",
-  "Wrap-Up Next",
-  "Sakura",
-  "Redcat",
-  "Custom / Other"
-];
-
-const brands = ["Reve D", "Yokomo", "MST", "Usukani", "Rhino Racing", "Team AD", "Overdose", "Wrap-Up Next", "Sakura", "Redcat", "Custom / Other"];
-const drivetrainTypes = ["RWD", "AWD", "CS", "Other"];
-const motorLayouts = ["Rear motor", "Mid motor", "Front motor", "High mount", "Low mount", "Other"];
 
 const emptyCar = (): Car => ({
   id: `car-${Date.now()}`,
   name: "",
   brand: "",
+  chassisBrand: "",
+  chassisBrandSlug: "",
   chassis: "",
   chassisModel: "",
+  chassisModelSlug: "",
+  chassisVariant: "",
+  customChassisBrand: "",
+  customChassisModel: "",
   chassisType: "RWD drift",
   drivetrainType: "RWD",
   motorLayout: "",
@@ -55,7 +44,7 @@ const emptyCar = (): Car => ({
 });
 
 function classifyTemplate(car: Car): Car {
-  const text = `${car.brand ?? ""} ${car.chassis ?? ""} ${car.chassisModel ?? ""}`.toLowerCase();
+  const text = `${car.brand ?? ""} ${car.chassisBrand ?? ""} ${car.chassis ?? ""} ${car.chassisModel ?? ""} ${car.customChassisBrand ?? ""} ${car.customChassisModel ?? ""}`.toLowerCase();
   if (text.includes("rdx")) {
     return { ...car, chassis: car.chassis || "Reve D RDX", sheetId: "rdx-template", templateMode: "official", officialTemplateEligible: true };
   }
@@ -65,33 +54,20 @@ function classifyTemplate(car: Car): Car {
   return { ...car, sheetId: "universal-template", templateMode: "universal", officialTemplateEligible: false };
 }
 
-function templateModeLabel(car: Car) {
-  return car.templateMode === "official" || car.sheetId === "rdx-template" || car.sheetId === "mc3-template" ? "Official PDF" : "Universal sheet";
-}
-
-function isOfficialTemplate(car: Car) {
-  return car.templateMode === "official" || car.sheetId === "rdx-template" || car.sheetId === "mc3-template";
-}
-
-async function photosFromFiles(files: FileList | null, existing: TunePhoto[] = []) {
-  if (!files?.length) return [];
-  return Promise.all(
-    Array.from(files).map(
-      (file, index) =>
-        new Promise<TunePhoto>((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () =>
-            resolve({
-              id: `car-photo-${Date.now()}-${index}`,
-              label: index === 0 && existing.length === 0 ? "Full car" : file.name.replace(/\.[^.]+$/, ""),
-              dataUrl: String(reader.result),
-              provider: "local",
-              createdAt: new Date().toISOString()
-            });
-          reader.readAsDataURL(file);
-        })
-    )
-  );
+function normalizeCarChassis(car: Car): Car {
+  const brand = findChassisBrand(car.chassisBrandSlug || car.chassisBrand || car.brand) ?? chassisInfoFromCar(car);
+  const brandName = "name" in brand ? brand.name : brand.brand;
+  const brandSlug = "slug" in brand ? brand.slug : brand.brandSlug;
+  const model = car.chassisModel || car.customChassisModel || "";
+  return {
+    ...car,
+    brand: brandSlug === "other" ? car.customChassisBrand || "Other / Custom" : brandName,
+    chassisBrand: brandSlug === "other" ? car.customChassisBrand || "Other / Custom" : brandName,
+    chassisBrandSlug: brandSlug,
+    chassisModel: model,
+    chassisModelSlug: slugifyChassis(model),
+    chassis: brandSlug === "other" ? [car.customChassisBrand, car.customChassisModel].filter(Boolean).join(" ") || "Custom / Other" : [brandName, model].filter(Boolean).join(" ")
+  };
 }
 
 export function GarageManager({
@@ -102,13 +78,27 @@ export function GarageManager({
   onDeleteCar,
   onCreateTune,
   onDuplicateTune,
+  onExportTunePdf,
   onSelectTune
 }: GarageManagerProps) {
   const [editing, setEditing] = useState<Car | null>(startAdding ? emptyCar() : null);
-  const [detailCarId, setDetailCarId] = useState<string>(cars[0]?.id ?? "");
+  const [selectedBrandSlug, setSelectedBrandSlug] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<Car | null>(null);
-  const detailCar = cars.find((car) => car.id === detailCarId) ?? cars[0];
+  const [openCarId, setOpenCarId] = useState("");
   const tunesByCar = useMemo(() => new Map(cars.map((car) => [car.id, tunes.filter((tune) => tune.carId === car.id)])), [cars, tunes]);
+  const brandGroups = useMemo(() => {
+    const groups = new Map<string, { brandSlug: string; brandName: string; cars: Car[]; tunes: Tune[] }>();
+    cars.forEach((car) => {
+      const info = chassisInfoFromCar(car);
+      const brandSlug = info.brandSlug || "other";
+      const group = groups.get(brandSlug) ?? { brandSlug, brandName: info.brand, cars: [], tunes: [] };
+      group.cars.push(car);
+      group.tunes.push(...(tunesByCar.get(car.id) ?? []));
+      groups.set(brandSlug, group);
+    });
+    return Array.from(groups.values()).sort((a, b) => a.brandName.localeCompare(b.brandName));
+  }, [cars, tunesByCar]);
+  const selectedBrand = brandGroups.find((group) => group.brandSlug === selectedBrandSlug) ?? brandGroups[0];
 
   useEffect(() => {
     if (!startAdding) return;
@@ -116,22 +106,24 @@ export function GarageManager({
     return () => window.clearTimeout(handle);
   }, [startAdding]);
 
-  function saveEditing() {
+  async function saveEditing() {
     if (!editing) return;
-    const next = classifyTemplate({
+    const normalized = normalizeCarChassis(editing);
+    const generatedName = [normalized.chassisBrand, normalized.chassisModel].filter(Boolean).join(" ") || "RC drift car";
+    const next = classifyTemplate(normalizeCarChassis({
       ...editing,
-      name: editing.name.trim() || `${editing.chassis || editing.chassisModel || "RC drift"} car`,
-      chassis: editing.chassis.trim() || editing.chassisModel?.trim() || "Custom / Other",
+      name: editing.name.trim() || generatedName,
+      chassis: editing.chassis.trim() || generatedName || "Custom / Other",
       updatedAt: new Date().toISOString()
-    });
-    onSaveCar(next);
-    setDetailCarId(next.id);
+    }));
+    const saved = await onSaveCar(next);
+    if (saved === false) return;
+    setSelectedBrandSlug(chassisInfoFromCar(next).brandSlug);
     setEditing(null);
   }
 
   function deleteCar(car: Car) {
     onDeleteCar(car.id);
-    setDetailCarId(cars.find((item) => item.id !== car.id)?.id ?? "");
     setDeleteTarget(null);
   }
 
@@ -156,178 +148,146 @@ export function GarageManager({
       ) : null}
 
       {cars.length ? (
-        <div className="garageCarList">
-          {cars.map((car) => {
-            const carTunes = tunesByCar.get(car.id) ?? [];
-            return (
-              <AppCard key={car.id} className={detailCar?.id === car.id ? "activeCard" : ""}>
-                <button className="carDetailButton" type="button" onClick={() => setDetailCarId(car.id)}>
-                  {car.photos?.[0] ? <img src={car.photos[0].cloudUrl || car.photos[0].dataUrl} alt={car.name} /> : <CarFront size={26} />}
-                  <span>
-                    <strong>{car.name}</strong>
-                    <em>{car.chassisModel || car.chassis} · {templateModeLabel(car)}</em>
-                    <small>{carTunes.length} tune{carTunes.length === 1 ? "" : "s"}</small>
-                  </span>
-                </button>
-                <div className="buttonRow">
-                  <button className="smallPill" type="button" onClick={() => setEditing(car)}>
-                    <Pencil size={16} />
-                    Edit
-                  </button>
-                  <button className="smallPill" type="button" onClick={() => onCreateTune(car.id)}>
-                    <Wrench size={16} />
-                    Tune
-                  </button>
-                  <button className="smallPill" type="button" onClick={() => duplicateLast(car)} disabled={!carTunes.length}>
-                    <CopyPlus size={16} />
-                    Duplicate last
-                  </button>
-                </div>
-              </AppCard>
-            );
-          })}
-        </div>
-      ) : null}
-
-      {detailCar ? (
-        <section className="carDetailPanel">
-          <header>
-            <div>
-              <p>Car detail</p>
-              <h2>{detailCar.name}</h2>
-              <span>{detailCar.brand || "Brand not set"} · {detailCar.chassisModel || detailCar.chassis}</span>
-            </div>
-            <button className="iconButton" type="button" onClick={() => setEditing(detailCar)} aria-label={`Edit ${detailCar.name}`}>
-              <Pencil size={19} />
-            </button>
-          </header>
-
-          {detailCar.photos?.length ? (
-            <div className="carPhotoStrip">
-              {detailCar.photos.map((photo) => (
-                <img key={photo.id} src={photo.cloudUrl || photo.dataUrl} alt={photo.label} />
-              ))}
-            </div>
-          ) : (
-            <div className="carPhotoEmpty">
-              <Camera size={24} />
-              <span>No car photo yet</span>
-            </div>
-          )}
-
-          <dl className="carSpecs">
-            <div><dt>Template</dt><dd>{isOfficialTemplate(detailCar) ? "Official PDF eligible" : "Universal Setup Sheet Mode"}</dd></div>
-            <div><dt>Drivetrain</dt><dd>{detailCar.drivetrainType || "Not set"}</dd></div>
-            <div><dt>Motor layout</dt><dd>{detailCar.motorLayout || "Not set"}</dd></div>
-            <div><dt>Scale</dt><dd>{detailCar.scale || "Not set"}</dd></div>
-            <div><dt>Electronics</dt><dd>{[detailCar.motor, detailCar.esc, detailCar.servo, detailCar.gyro].filter(Boolean).join(" / ") || "Not set"}</dd></div>
-            <div><dt>Body / tire</dt><dd>{[detailCar.body, detailCar.defaultTire].filter(Boolean).join(" / ") || "Not set"}</dd></div>
-            <div><dt>Home track</dt><dd>{detailCar.homeTrack || "Not set"}</dd></div>
-          </dl>
-
-          {detailCar.notes ? <p className="carNotes">{detailCar.notes}</p> : null}
-
-          <div className="buttonRow">
-            <button className="primaryAction" type="button" onClick={() => onCreateTune(detailCar.id)}>
-              <Wrench size={18} />
-              Create tune
-            </button>
-            <button className="smallPill" type="button" onClick={() => duplicateLast(detailCar)} disabled={!(tunesByCar.get(detailCar.id)?.length)}>
-              <CopyPlus size={16} />
-              Duplicate last tune
-            </button>
-            <button className="smallPill dangerPill" type="button" onClick={() => setDeleteTarget(detailCar)}>
-              <Trash2 size={16} />
-              Delete
-            </button>
-          </div>
-
-          <section className="connectedTunes">
-            <h3>Tunes for this car</h3>
-            {(tunesByCar.get(detailCar.id) ?? []).length ? (
-              (tunesByCar.get(detailCar.id) ?? []).map((tune) => (
-                <TuneCard key={tune.id} tune={tune} car={detailCar} onView={() => onSelectTune(tune.id)} onClone={() => onDuplicateTune(tune)} />
-              ))
-            ) : (
-              <EmptyState title="Tunes" body="No tunes yet. Create a baseline setup for your next track day." />
-            )}
+        <>
+          <section className="garageBrandGrid" aria-label="Garage brands">
+            {brandGroups.map((group) => (
+              <button
+                key={group.brandSlug}
+                className={`garageBrandBox ${selectedBrand?.brandSlug === group.brandSlug ? "active" : ""}`}
+                type="button"
+                onClick={() => setSelectedBrandSlug(group.brandSlug)}
+              >
+                <BrandLogo brandSlug={group.brandSlug} brandName={group.brandName} size="large" variant="wordmark" />
+                <span>
+                  <strong>{group.brandName}</strong>
+                  <em>{group.cars.length} car{group.cars.length === 1 ? "" : "s"} / {group.tunes.length} tune{group.tunes.length === 1 ? "" : "s"}</em>
+                </span>
+              </button>
+            ))}
           </section>
-        </section>
-      ) : null}
 
-      <button className="floatingAddCar primaryAction" type="button" onClick={() => setEditing(emptyCar())}>
-        <Plus size={19} />
-        Add car
-      </button>
+          {selectedBrand ? (
+            <section className="garageBrandPanel">
+              <header>
+                <BrandLogo brandSlug={selectedBrand.brandSlug} brandName={selectedBrand.brandName} size="large" variant="wordmark" />
+                <div>
+                  <h2>{selectedBrand.brandName}</h2>
+                  <span>{selectedBrand.cars.length} garage car{selectedBrand.cars.length === 1 ? "" : "s"} / {selectedBrand.tunes.length} saved tune{selectedBrand.tunes.length === 1 ? "" : "s"}</span>
+                </div>
+              </header>
+
+              <div className="garageBrandCars" aria-label={`${selectedBrand.brandName} cars`}>
+                {selectedBrand.cars.map((car) => {
+                  const carTunes = tunesByCar.get(car.id) ?? [];
+                  const info = chassisInfoFromCar(car);
+                  const isOpen = openCarId === car.id;
+                  return (
+                    <article className={`garageCarCompact ${isOpen ? "open" : ""}`} key={car.id}>
+                      <button
+                        className="garageCarSummary"
+                        type="button"
+                        aria-expanded={isOpen}
+                        onClick={() => setOpenCarId((current) => current === car.id ? "" : car.id)}
+                      >
+                        <span className="garageCarMark">
+                          <BrandLogo brandSlug={info.brandSlug} brandName={info.brand} size="small" variant="mark" />
+                        </span>
+                        <span className="garageCarText">
+                          <strong>{car.name}</strong>
+                          <em>{info.model || car.chassis || "Chassis model not set"}</em>
+                          <small>{carTunes.length ? `${carTunes.length} saved tune${carTunes.length === 1 ? "" : "s"}` : "No tunes yet"}</small>
+                        </span>
+                        <span className="garageTuneDisclosure">
+                          <span>{carTunes.length ? "Tunes" : "Add tune"}</span>
+                          <ChevronDown size={18} />
+                        </span>
+                      </button>
+
+                      {isOpen ? (
+                        <div className="garageCarTuneTray">
+                          {carTunes.length ? (
+                            carTunes.map((tune) => (
+                              <div className="garageCarTuneOptionRow" key={tune.id}>
+                                <button className="garageCarTuneOption" type="button" onClick={() => onSelectTune(tune.id)}>
+                                  <span>
+                                    <strong>{tune.name.trim() || "Untitled tune"}</strong>
+                                    <em>{[tune.track || "Track not set", tune.surface || "Surface not set"].join(" / ")}</em>
+                                  </span>
+                                  <small>{Number.isNaN(Date.parse(tune.updatedAt)) ? "Updated recently" : new Date(tune.updatedAt).toLocaleDateString()}</small>
+                                </button>
+                                <button className="garageTunePdfButton" type="button" onClick={() => onExportTunePdf(tune)} aria-label={`Export PDF for ${tune.name.trim() || "Untitled tune"}`}>
+                                  <Download size={16} />
+                                  PDF
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="garageCarTuneEmpty">
+                              <strong>No tunes saved for this chassis yet.</strong>
+                              <span>Create a baseline setup, then use this dropdown to jump back into each tune.</span>
+                            </div>
+                          )}
+                          <button className="garageCarTuneCreate" type="button" onClick={() => onCreateTune(car.id)}>
+                            <Wrench size={15} />
+                            Create tune for this chassis
+                          </button>
+                        </div>
+                      ) : null}
+
+                      <div className="garageCarActions">
+                        <button className="smallPill" type="button" onClick={() => setEditing(car)}>
+                          <Pencil size={15} />
+                          Edit
+                        </button>
+                        <button className="smallPill" type="button" onClick={() => onCreateTune(car.id)}>
+                          <Wrench size={15} />
+                          New tune
+                        </button>
+                        {carTunes.length ? (
+                          <button className="smallPill" type="button" onClick={() => duplicateLast(car)}>
+                            <CopyPlus size={15} />
+                            Duplicate
+                          </button>
+                        ) : null}
+                        <button className="smallPill dangerPill" type="button" onClick={() => setDeleteTarget(car)}>
+                          <Trash2 size={15} />
+                          Delete
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          ) : null}
+        </>
+      ) : null}
 
       {editing ? (
         <BottomSheet title={cars.some((car) => car.id === editing.id) ? "Edit car" : "Add car"} onClose={() => setEditing(null)}>
           <div className="carForm">
-            <TextField label="Car name" value={editing.name} placeholder="My RDX track car" onChange={(event) => setEditing({ ...editing, name: event.target.value })} />
-            <p className="helperText">Only car name and chassis are needed. Everything else can wait until later.</p>
-            <SelectField label="Brand / chassis suggestion" value={editing.chassis || ""} onChange={(event) => setEditing({ ...editing, chassis: event.target.value, brand: event.target.value.split(" ")[0] })}>
-              <option value="">Choose a chassis</option>
-              {chassisSuggestions.map((item) => <option key={item}>{item}</option>)}
-            </SelectField>
+            <p className="helperText">Add the chassis identity only. Tune parts, electronics, photos, and notes live inside each tune.</p>
             <div className="formSplit">
-              <SelectField label="Brand" value={editing.brand || ""} onChange={(event) => setEditing({ ...editing, brand: event.target.value })}>
+              <SelectField label="Chassis brand" value={editing.chassisBrandSlug || chassisInfoFromCar(editing).brandSlug} onChange={(event) => {
+                const brand = findChassisBrand(event.target.value);
+                setEditing({
+                  ...editing,
+                  brand: brand?.name ?? "",
+                  chassisBrand: brand?.name ?? "",
+                  chassisBrandSlug: event.target.value,
+                  chassisModel: brand?.models[0] ?? "Custom",
+                  chassisModelSlug: slugifyChassis(brand?.models[0] ?? "Custom")
+                });
+              }}>
                 <option value="">Choose brand</option>
-                {brands.map((item) => <option key={item}>{item}</option>)}
+                {chassisBrands.map((brand) => <option key={brand.slug} value={brand.slug}>{brand.name}</option>)}
               </SelectField>
-              <TextField label="Chassis model" value={editing.chassisModel || ""} placeholder="RDX, RMX, SD 2.0..." onChange={(event) => setEditing({ ...editing, chassisModel: event.target.value })} />
+              <TextField label="Chassis model" value={editing.chassisModel || ""} placeholder={modelsForBrand(editing.chassisBrandSlug || editing.brand).slice(0, 3).join(", ") || "Custom"} onChange={(event) => setEditing({ ...editing, chassisModel: event.target.value, chassisModelSlug: slugifyChassis(event.target.value) })} />
             </div>
             <div className="formSplit">
-              <TextField label="Chassis type" value={editing.chassisType || ""} placeholder="RWD drift" onChange={(event) => setEditing({ ...editing, chassisType: event.target.value })} />
-              <SelectField label="Drivetrain" value={editing.drivetrainType || ""} onChange={(event) => setEditing({ ...editing, drivetrainType: event.target.value })}>
-                <option value="">Choose</option>
-                {drivetrainTypes.map((item) => <option key={item}>{item}</option>)}
-              </SelectField>
-            </div>
-            <div className="formSplit">
-              <SelectField label="Motor layout" value={editing.motorLayout || ""} onChange={(event) => setEditing({ ...editing, motorLayout: event.target.value })}>
-                <option value="">Choose</option>
-                {motorLayouts.map((item) => <option key={item}>{item}</option>)}
-              </SelectField>
+              <TextField label="Chassis type" value={editing.chassisType || ""} placeholder="RWD drift" onChange={(event) => setEditing({ ...editing, chassisType: event.target.value, drivetrainType: event.target.value.includes("AWD") ? "AWD" : event.target.value.includes("CS") ? "CS" : event.target.value.includes("RWD") ? "RWD" : editing.drivetrainType })} />
               <TextField label="Scale" value={editing.scale || ""} placeholder="1/10" onChange={(event) => setEditing({ ...editing, scale: event.target.value })} />
             </div>
-            <div className="formSplit">
-              <TextField label="Motor" value={editing.motor || ""} onChange={(event) => setEditing({ ...editing, motor: event.target.value })} />
-              <TextField label="ESC" value={editing.esc || ""} onChange={(event) => setEditing({ ...editing, esc: event.target.value })} />
-            </div>
-            <div className="formSplit">
-              <TextField label="Servo" value={editing.servo || ""} onChange={(event) => setEditing({ ...editing, servo: event.target.value })} />
-              <TextField label="Gyro" value={editing.gyro || ""} onChange={(event) => setEditing({ ...editing, gyro: event.target.value })} />
-            </div>
-            <TextField label="Radio / Receiver" value={editing.radioReceiver || ""} onChange={(event) => setEditing({ ...editing, radioReceiver: event.target.value })} />
-            <div className="formSplit">
-              <TextField label="Battery" value={editing.battery || ""} onChange={(event) => setEditing({ ...editing, battery: event.target.value })} />
-              <TextField label="Body" value={editing.body || ""} onChange={(event) => setEditing({ ...editing, body: event.target.value })} />
-            </div>
-            <div className="formSplit">
-              <TextField label="Default tire" value={editing.defaultTire || ""} onChange={(event) => setEditing({ ...editing, defaultTire: event.target.value })} />
-              <TextField label="Home track" value={editing.homeTrack || ""} onChange={(event) => setEditing({ ...editing, homeTrack: event.target.value })} />
-            </div>
-            <TextAreaField label="Notes" value={editing.notes || ""} onChange={(event) => setEditing({ ...editing, notes: event.target.value })} />
-            <label className="photoUploader compactUploader">
-              <ImagePlus size={22} />
-              <span>Add car photo</span>
-              <small>Camera or gallery</small>
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                multiple
-                onChange={async (event) => {
-                  const newPhotos = await photosFromFiles(event.target.files, editing.photos);
-                  setEditing({ ...editing, photos: [...newPhotos, ...(editing.photos ?? [])] });
-                }}
-              />
-            </label>
-            {editing.photos?.length ? (
-              <div className="carPhotoStrip editable">
-                {editing.photos.map((photo) => <img key={photo.id} src={photo.cloudUrl || photo.dataUrl} alt={photo.label} />)}
-              </div>
-            ) : null}
             <div className="templateModeHint">
               {classifyTemplate(editing).officialTemplateEligible ? "Official PDF template will be enabled for this car." : "This car will use Universal Setup Sheet Mode."}
             </div>
@@ -337,11 +297,12 @@ export function GarageManager({
           </div>
         </BottomSheet>
       ) : null}
+
       {deleteTarget ? (
         <div className="modalShade" role="presentation">
           <section className="confirmModal" role="dialog" aria-modal="true" aria-labelledby="delete-car-title">
             <h2 id="delete-car-title">Delete car?</h2>
-            <p>This removes “{deleteTarget.name}” and tunes connected to this car from your garage. This cannot be undone.</p>
+            <p>This removes "{deleteTarget.name}" and tunes connected to this car from your garage. This cannot be undone.</p>
             <div className="buttonRow">
               <button className="smallPill" type="button" onClick={() => setDeleteTarget(null)}>Cancel</button>
               <button className="primaryAction destructive" type="button" onClick={() => deleteCar(deleteTarget)}>

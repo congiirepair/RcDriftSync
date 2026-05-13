@@ -8,94 +8,557 @@
   "pageWidth": 595.276,
   "pageHeight": 841.89,
   "text": [
-    { "fieldId": "date", "label": "Date", "page": 0, "pdfX": 202, "pdfY": 798, "fontSize": 8, "maxWidth": 70 },
-    { "fieldId": "driver", "label": "Driver", "page": 0, "pdfX": 202, "pdfY": 776, "fontSize": 8, "maxWidth": 80 },
-    { "fieldId": "drivingPlace", "label": "Driving Place", "page": 0, "pdfX": 202, "pdfY": 752, "fontSize": 8, "maxWidth": 100 },
-    { "fieldId": "body", "label": "Body", "page": 0, "pdfX": 443, "pdfY": 798, "fontSize": 8, "maxWidth": 80 },
-    { "fieldId": "wing", "label": "Wing", "page": 0, "pdfX": 443, "pdfY": 776, "fontSize": 8, "maxWidth": 80 },
-    { "fieldId": "tires", "label": "Tires", "page": 0, "pdfX": 443, "pdfY": 750, "fontSize": 8, "maxWidth": 80 },
-    { "fieldId": "frontRideHeight", "label": "Front Ride Height", "page": 0, "pdfX": 468, "pdfY": 699, "fontSize": 8, "maxWidth": 42, "suffix": "mm" },
-    { "fieldId": "frontCamber", "label": "Front Camber", "page": 0, "pdfX": 468, "pdfY": 677, "fontSize": 8, "maxWidth": 32, "suffix": "deg" },
-    { "fieldId": "frontToe", "label": "Front Toe", "page": 0, "pdfX": 530, "pdfY": 677, "fontSize": 8, "maxWidth": 32, "suffix": "deg" },
-    { "fieldId": "caster", "label": "Caster", "page": 0, "pdfX": 431, "pdfY": 657, "fontSize": 8, "maxWidth": 50 },
-    { "fieldId": "frontShockShaft", "label": "Front Shock Shaft", "page": 0, "pdfX": 431, "pdfY": 640, "fontSize": 8, "maxWidth": 105 },
-    { "fieldId": "frontSpring", "label": "Front Spring", "page": 0, "pdfX": 431, "pdfY": 606, "fontSize": 8, "maxWidth": 105 },
-    { "fieldId": "frontPiston", "label": "Front Piston", "page": 0, "pdfX": 431, "pdfY": 573, "fontSize": 8, "maxWidth": 78 },
-    { "fieldId": "frontHoles", "label": "Front Holes", "page": 0, "pdfX": 461, "pdfY": 559, "fontSize": 8, "maxWidth": 30 },
-    { "fieldId": "frontOil", "label": "Front Oil", "page": 0, "pdfX": 431, "pdfY": 535, "fontSize": 8, "maxWidth": 47 },
-    { "fieldId": "frontOring", "label": "Front O-ring", "page": 0, "pdfX": 488, "pdfY": 535, "fontSize": 8, "maxWidth": 36 },
-    { "fieldId": "frontRetainer", "label": "Front Retainer", "page": 0, "pdfX": 431, "pdfY": 491, "fontSize": 8, "maxWidth": 86 },
-    { "fieldId": "frontMemo", "label": "Front Memo", "page": 0, "pdfX": 431, "pdfY": 465, "fontSize": 8, "maxWidth": 112 },
-    { "fieldId": "rearRideHeight", "label": "Rear Ride Height", "page": 0, "pdfX": 467, "pdfY": 389, "fontSize": 8, "maxWidth": 42, "suffix": "mm" },
-    { "fieldId": "rearSkidAngle", "label": "Rear Skid Angle", "page": 0, "pdfX": 540, "pdfY": 389, "fontSize": 8, "maxWidth": 30, "suffix": "deg" },
-    { "fieldId": "rearCamber", "label": "Rear Camber", "page": 0, "pdfX": 467, "pdfY": 368, "fontSize": 8, "maxWidth": 32, "suffix": "deg" },
-    { "fieldId": "rearToe", "label": "Rear Toe", "page": 0, "pdfX": 529, "pdfY": 368, "fontSize": 8, "maxWidth": 32, "suffix": "deg" },
-    { "fieldId": "rearShockShaft", "label": "Rear Shock Shaft", "page": 0, "pdfX": 431, "pdfY": 329, "fontSize": 8, "maxWidth": 105 },
-    { "fieldId": "rearSpring", "label": "Rear Spring", "page": 0, "pdfX": 431, "pdfY": 294, "fontSize": 8, "maxWidth": 105 },
-    { "fieldId": "rearPiston", "label": "Rear Piston", "page": 0, "pdfX": 431, "pdfY": 260, "fontSize": 8, "maxWidth": 78 },
-    { "fieldId": "rearHoles", "label": "Rear Holes", "page": 0, "pdfX": 461, "pdfY": 246, "fontSize": 8, "maxWidth": 30 },
-    { "fieldId": "rearOil", "label": "Rear Oil", "page": 0, "pdfX": 431, "pdfY": 223, "fontSize": 8, "maxWidth": 47 },
-    { "fieldId": "rearOring", "label": "Rear O-ring", "page": 0, "pdfX": 488, "pdfY": 223, "fontSize": 8, "maxWidth": 36 },
-    { "fieldId": "rearRetainer", "label": "Rear Retainer", "page": 0, "pdfX": 431, "pdfY": 178, "fontSize": 8, "maxWidth": 86 },
-    { "fieldId": "rearMemo", "label": "Rear Memo", "page": 0, "pdfX": 431, "pdfY": 151, "fontSize": 8, "maxWidth": 112 },
-    { "fieldId": "frontWheel", "label": "Front Wheel", "page": 0, "pdfX": 158, "pdfY": 96, "fontSize": 8, "maxWidth": 94 },
-    { "fieldId": "frontOffset", "label": "Front Offset", "page": 0, "pdfX": 184, "pdfY": 70, "fontSize": 8, "maxWidth": 35, "suffix": "mm" },
-    { "fieldId": "rearWheel", "label": "Rear Wheel", "page": 0, "pdfX": 158, "pdfY": 49, "fontSize": 8, "maxWidth": 94 },
-    { "fieldId": "rearOffset", "label": "Rear Offset", "page": 0, "pdfX": 184, "pdfY": 23, "fontSize": 8, "maxWidth": 35, "suffix": "mm" },
-    { "fieldId": "weight", "label": "Weight", "page": 0, "pdfX": 220, "pdfY": 12, "fontSize": 8, "maxWidth": 38, "suffix": "g" },
-    { "fieldId": "servo", "label": "Servo", "page": 0, "pdfX": 263, "pdfY": 96, "fontSize": 8, "maxWidth": 82 },
-    { "fieldId": "servoHorn", "label": "Servo Horn", "page": 0, "pdfX": 282, "pdfY": 70, "fontSize": 8, "maxWidth": 38, "suffix": "mm" },
-    { "fieldId": "gyro", "label": "Gyro", "page": 0, "pdfX": 263, "pdfY": 27, "fontSize": 8, "maxWidth": 80 },
-    { "fieldId": "gain", "label": "Gain", "page": 0, "pdfX": 287, "pdfY": 12, "fontSize": 8, "maxWidth": 32 },
-    { "fieldId": "curve", "label": "Curve / Carve", "page": 0, "pdfX": 328, "pdfY": 12, "fontSize": 8, "maxWidth": 32 },
-    { "fieldId": "motor", "label": "Motor", "page": 0, "pdfX": 369, "pdfY": 96, "fontSize": 8, "maxWidth": 86 },
-    { "fieldId": "timing", "label": "Timing", "page": 0, "pdfX": 397, "pdfY": 70, "fontSize": 8, "maxWidth": 32, "suffix": "deg" },
-    { "fieldId": "battery", "label": "Battery", "page": 0, "pdfX": 369, "pdfY": 36, "fontSize": 8, "maxWidth": 90 },
-    { "fieldId": "pinionGear", "label": "Pinion Gear", "page": 0, "pdfX": 515, "pdfY": 84, "fontSize": 8, "maxWidth": 22, "suffix": "T" },
-    { "fieldId": "spurGear", "label": "Spur Gear", "page": 0, "pdfX": 515, "pdfY": 62, "fontSize": 8, "maxWidth": 22, "suffix": "T" },
-    { "fieldId": "esc", "label": "ESC", "page": 0, "pdfX": 472, "pdfY": 36, "fontSize": 8, "maxWidth": 86 },
-    { "fieldId": "boost", "label": "Boost", "page": 0, "pdfX": 515, "pdfY": 13, "fontSize": 8, "maxWidth": 24 },
-    { "fieldId": "turbo", "label": "Turbo", "page": 0, "pdfX": 515, "pdfY": -8, "fontSize": 8, "maxWidth": 24 }
-  ],
-  "checkboxes": [
-    { "id": "surface-plastic", "fieldId": "surface", "value": "Plastic Tile", "page": 0, "pdfX": 319, "pdfY": 790, "size": 7 },
-    { "id": "surface-carpet", "fieldId": "surface", "value": "Carpet", "page": 0, "pdfX": 319, "pdfY": 776, "size": 7 },
-    { "id": "surface-asphalt", "fieldId": "surface", "value": "Asphalt", "page": 0, "pdfX": 319, "pdfY": 762, "size": 7 },
-    { "id": "surface-concrete", "fieldId": "surface", "value": "Colored Concrete", "page": 0, "pdfX": 319, "pdfY": 748, "size": 7 },
-    { "id": "motor-high", "fieldId": "motorPosition", "value": "High Mount", "page": 0, "pdfX": 55, "pdfY": 379, "size": 7 },
-    { "id": "motor-low", "fieldId": "motorPosition", "value": "Low Mount", "page": 0, "pdfX": 55, "pdfY": 364, "size": 7 },
-    { "id": "diff-spool", "fieldId": "diff", "value": "Spool", "page": 0, "pdfX": 96, "pdfY": 193, "size": 7 },
-    { "id": "diff-gear", "fieldId": "diff", "value": "Gear Diff", "page": 0, "pdfX": 96, "pdfY": 178, "size": 7 },
-    { "id": "diff-ball", "fieldId": "diff", "value": "Ball Diff", "page": 0, "pdfX": 96, "pdfY": 164, "size": 7 },
-    { "id": "diff-lsd", "fieldId": "diff", "value": "LSD", "page": 0, "pdfX": 96, "pdfY": 150, "size": 7 },
-    { "id": "servo-forward", "fieldId": "servoPosition", "value": "forward", "page": 0, "pdfX": 264, "pdfY": 54, "size": 7 },
-    { "id": "servo-middle", "fieldId": "servoPosition", "value": "middle", "page": 0, "pdfX": 296, "pdfY": 54, "size": 7 },
-    { "id": "servo-rear", "fieldId": "servoPosition", "value": "rear", "page": 0, "pdfX": 330, "pdfY": 54, "size": 7 }
-  ],
-  "holeGroups": [
     {
-      "id": "frontShockTower",
-      "fieldId": "frontShockPosition",
-      "label": "Front Shock Tower",
+      "fieldId": "date",
+      "label": "Date",
       "page": 0,
-      "holes": [
-        { "id": "1", "label": "Hole 1", "pdfX": 48, "pdfY": 322 },
-        { "id": "2", "label": "Hole 2", "pdfX": 55, "pdfY": 322 },
-        { "id": "3", "label": "Hole 3", "pdfX": 63, "pdfY": 322 },
-        { "id": "4", "label": "Hole 4", "pdfX": 70, "pdfY": 313 }
-      ]
+      "pdfX": 256.6,
+      "pdfY": 813.9,
+      "fontSize": 8,
+      "maxWidth": 65
     },
     {
-      "id": "rearShockTower",
-      "fieldId": "rearShockPosition",
-      "label": "Rear Shock Tower",
+      "fieldId": "driver",
+      "label": "Driver",
       "page": 0,
-      "holes": [
-        { "id": "1", "label": "Hole 1", "pdfX": 284, "pdfY": 256 },
-        { "id": "2", "label": "Hole 2", "pdfX": 292, "pdfY": 256 },
-        { "id": "3", "label": "Hole 3", "pdfX": 300, "pdfY": 256 },
-        { "id": "4", "label": "Hole 4", "pdfX": 308, "pdfY": 247 }
-      ]
+      "pdfX": 264.9,
+      "pdfY": 792.3,
+      "fontSize": 8,
+      "maxWidth": 70
+    },
+    {
+      "fieldId": "drivingPlace",
+      "label": "Driving Place",
+      "page": 0,
+      "pdfX": 278.0,
+      "pdfY": 774.7,
+      "fontSize": 8,
+      "maxWidth": 75
+    },
+    {
+      "fieldId": "body",
+      "label": "Body",
+      "page": 0,
+      "pdfX": 492.7,
+      "pdfY": 814.4,
+      "fontSize": 8,
+      "maxWidth": 75
+    },
+    {
+      "fieldId": "wing",
+      "label": "Wing",
+      "page": 0,
+      "pdfX": 491.8,
+      "pdfY": 794.7,
+      "fontSize": 8,
+      "maxWidth": 75
+    },
+    {
+      "fieldId": "tires",
+      "label": "Tires",
+      "page": 0,
+      "pdfX": 491.3,
+      "pdfY": 776.8,
+      "fontSize": 8,
+      "maxWidth": 55
+    },
+    {
+      "fieldId": "frontRideHeight",
+      "label": "Front Ride Height",
+      "page": 0,
+      "pdfX": 459.5,
+      "pdfY": 739.3,
+      "fontSize": 8,
+      "maxWidth": 42
+    },
+    {
+      "fieldId": "frontCamber",
+      "label": "Front Camber",
+      "page": 0,
+      "pdfX": 473.5,
+      "pdfY": 715.8,
+      "fontSize": 8,
+      "maxWidth": 32
+    },
+    {
+      "fieldId": "frontToe",
+      "label": "Front Toe",
+      "page": 0,
+      "pdfX": 551.1,
+      "pdfY": 714.9,
+      "fontSize": 8,
+      "maxWidth": 32
+    },
+    {
+      "fieldId": "caster",
+      "label": "Caster",
+      "page": 0,
+      "pdfX": 431,
+      "pdfY": 657,
+      "fontSize": 8,
+      "maxWidth": 50
+    },
+    {
+      "fieldId": "frontShockShaft",
+      "label": "Front Shock Shaft",
+      "page": 0,
+      "pdfX": 431.1,
+      "pdfY": 658.6,
+      "fontSize": 8,
+      "maxWidth": 95
+    },
+    {
+      "fieldId": "frontSpring",
+      "label": "Front Spring",
+      "page": 0,
+      "pdfX": 431.1,
+      "pdfY": 635.5,
+      "fontSize": 8,
+      "maxWidth": 95
+    },
+    {
+      "fieldId": "frontPiston",
+      "label": "Front Piston",
+      "page": 0,
+      "pdfX": 435.9,
+      "pdfY": 611.0,
+      "fontSize": 8,
+      "maxWidth": 45
+    },
+    {
+      "fieldId": "frontHoles",
+      "label": "Front Holes",
+      "page": 0,
+      "pdfX": 494.4,
+      "pdfY": 611.4,
+      "fontSize": 8,
+      "maxWidth": 30
+    },
+    {
+      "fieldId": "frontOil",
+      "label": "Front Oil",
+      "page": 0,
+      "pdfX": 432.0,
+      "pdfY": 584.8,
+      "fontSize": 8,
+      "maxWidth": 45
+    },
+    {
+      "fieldId": "frontOring",
+      "label": "Front O-ring",
+      "page": 0,
+      "pdfX": 434.6,
+      "pdfY": 560.0,
+      "fontSize": 8,
+      "maxWidth": 55
+    },
+    {
+      "fieldId": "frontRetainer",
+      "label": "Front Retainer",
+      "page": 0,
+      "pdfX": 431,
+      "pdfY": 491,
+      "fontSize": 8,
+      "maxWidth": 86
+    },
+    {
+      "fieldId": "frontMemo",
+      "label": "Front Memo",
+      "page": 0,
+      "pdfX": 431,
+      "pdfY": 465,
+      "fontSize": 8,
+      "maxWidth": 112
+    },
+    {
+      "fieldId": "rearRideHeight",
+      "label": "Rear Ride Height",
+      "page": 0,
+      "pdfX": 459.9,
+      "pdfY": 432.1,
+      "fontSize": 8,
+      "maxWidth": 42
+    },
+    {
+      "fieldId": "rearSkidAngle",
+      "label": "Rear Skid Angle",
+      "page": 0,
+      "pdfX": 540,
+      "pdfY": 389,
+      "fontSize": 8,
+      "maxWidth": 30
+    },
+    {
+      "fieldId": "rearCamber",
+      "label": "Rear Camber",
+      "page": 0,
+      "pdfX": 472.6,
+      "pdfY": 408.1,
+      "fontSize": 8,
+      "maxWidth": 32
+    },
+    {
+      "fieldId": "rearToe",
+      "label": "Rear Toe",
+      "page": 0,
+      "pdfX": 547.2,
+      "pdfY": 409.4,
+      "fontSize": 8,
+      "maxWidth": 32
+    },
+    {
+      "fieldId": "rearShockShaft",
+      "label": "Rear Shock Shaft",
+      "page": 0,
+      "pdfX": 431.1,
+      "pdfY": 351.0,
+      "fontSize": 8,
+      "maxWidth": 95
+    },
+    {
+      "fieldId": "rearSpring",
+      "label": "Rear Spring",
+      "page": 0,
+      "pdfX": 430.7,
+      "pdfY": 324.3,
+      "fontSize": 8,
+      "maxWidth": 95
+    },
+    {
+      "fieldId": "rearPiston",
+      "label": "Rear Piston",
+      "page": 0,
+      "pdfX": 432.9,
+      "pdfY": 298.6,
+      "fontSize": 8,
+      "maxWidth": 45
+    },
+    {
+      "fieldId": "rearHoles",
+      "label": "Rear Holes",
+      "page": 0,
+      "pdfX": 489.6,
+      "pdfY": 299.0,
+      "fontSize": 8,
+      "maxWidth": 30
+    },
+    {
+      "fieldId": "rearOil",
+      "label": "Rear Oil",
+      "page": 0,
+      "pdfX": 431.1,
+      "pdfY": 274.2,
+      "fontSize": 8,
+      "maxWidth": 45
+    },
+    {
+      "fieldId": "rearOring",
+      "label": "Rear O-ring",
+      "page": 0,
+      "pdfX": 432.0,
+      "pdfY": 251.0,
+      "fontSize": 8,
+      "maxWidth": 55
+    },
+    {
+      "fieldId": "rearRetainer",
+      "label": "Rear Retainer",
+      "page": 0,
+      "pdfX": 431,
+      "pdfY": 178,
+      "fontSize": 8,
+      "maxWidth": 86
+    },
+    {
+      "fieldId": "rearMemo",
+      "label": "Rear Memo",
+      "page": 0,
+      "pdfX": 431,
+      "pdfY": 151,
+      "fontSize": 8,
+      "maxWidth": 112
+    },
+    {
+      "fieldId": "frontWheel",
+      "label": "Front Wheel",
+      "page": 0,
+      "pdfX": 162.8,
+      "pdfY": 136.7,
+      "fontSize": 8,
+      "maxWidth": 95
+    },
+    {
+      "fieldId": "frontOffset",
+      "label": "Front Offset",
+      "page": 0,
+      "pdfX": 192.9,
+      "pdfY": 112.7,
+      "fontSize": 8,
+      "maxWidth": 35
+    },
+    {
+      "fieldId": "rearWheel",
+      "label": "Rear Wheel",
+      "page": 0,
+      "pdfX": 161.9,
+      "pdfY": 84.8,
+      "fontSize": 8,
+      "maxWidth": 95
+    },
+    {
+      "fieldId": "rearOffset",
+      "label": "Rear Offset",
+      "page": 0,
+      "pdfX": 193.3,
+      "pdfY": 59.0,
+      "fontSize": 8,
+      "maxWidth": 35
+    },
+    {
+      "fieldId": "weight",
+      "label": "Weight",
+      "page": 0,
+      "pdfX": 220,
+      "pdfY": 12,
+      "fontSize": 8,
+      "maxWidth": 38
+    },
+    {
+      "fieldId": "servo",
+      "label": "Servo",
+      "page": 0,
+      "pdfX": 265.7,
+      "pdfY": 137.1,
+      "fontSize": 8,
+      "maxWidth": 80
+    },
+    {
+      "fieldId": "servoHorn",
+      "label": "Servo Horn",
+      "page": 0,
+      "pdfX": 287.1,
+      "pdfY": 114.0,
+      "fontSize": 8,
+      "maxWidth": 38
+    },
+    {
+      "fieldId": "gyro",
+      "label": "Gyro",
+      "page": 0,
+      "pdfX": 266.2,
+      "pdfY": 60.3,
+      "fontSize": 8,
+      "maxWidth": 80
+    },
+    {
+      "fieldId": "gain",
+      "label": "Gain",
+      "page": 0,
+      "pdfX": 269.7,
+      "pdfY": 36.8,
+      "fontSize": 8,
+      "maxWidth": 32
+    },
+    {
+      "fieldId": "curve",
+      "label": "Curve / Carve",
+      "page": 0,
+      "pdfX": 327.7,
+      "pdfY": 37.2,
+      "fontSize": 8,
+      "maxWidth": 32
+    },
+    {
+      "fieldId": "motor",
+      "label": "Motor",
+      "page": 0,
+      "pdfX": 369.6,
+      "pdfY": 137.6,
+      "fontSize": 8,
+      "maxWidth": 75
+    },
+    {
+      "fieldId": "timing",
+      "label": "Timing",
+      "page": 0,
+      "pdfX": 403.6,
+      "pdfY": 115.8,
+      "fontSize": 8,
+      "maxWidth": 32
+    },
+    {
+      "fieldId": "battery",
+      "label": "Battery",
+      "page": 0,
+      "pdfX": 371.3,
+      "pdfY": 82.6,
+      "fontSize": 8,
+      "maxWidth": 80
+    },
+    {
+      "fieldId": "pinionGear",
+      "label": "Pinion Gear",
+      "page": 0,
+      "pdfX": 510.5,
+      "pdfY": 140.2,
+      "fontSize": 8,
+      "maxWidth": 22
+    },
+    {
+      "fieldId": "spurGear",
+      "label": "Spur Gear",
+      "page": 0,
+      "pdfX": 510.5,
+      "pdfY": 116.6,
+      "fontSize": 8,
+      "maxWidth": 22
+    },
+    {
+      "fieldId": "esc",
+      "label": "ESC",
+      "page": 0,
+      "pdfX": 474.8,
+      "pdfY": 83.0,
+      "fontSize": 8,
+      "maxWidth": 75
+    },
+    {
+      "fieldId": "boost",
+      "label": "Boost",
+      "page": 0,
+      "pdfX": 507.1,
+      "pdfY": 57.7,
+      "fontSize": 8,
+      "maxWidth": 24
+    },
+    {
+      "fieldId": "turbo",
+      "label": "Turbo",
+      "page": 0,
+      "pdfX": 507.9,
+      "pdfY": 37.2,
+      "fontSize": 8,
+      "maxWidth": 24
     }
-  ]
+  ],
+  "checkboxes": [
+    {
+      "id": "surface-plastic",
+      "fieldId": "surface",
+      "value": "Plastic Tile",
+      "page": 0,
+      "pdfX": 319,
+      "pdfY": 790,
+      "size": 7
+    },
+    {
+      "id": "surface-carpet",
+      "fieldId": "surface",
+      "value": "Carpet",
+      "page": 0,
+      "pdfX": 319,
+      "pdfY": 776,
+      "size": 7
+    },
+    {
+      "id": "surface-asphalt",
+      "fieldId": "surface",
+      "value": "Asphalt",
+      "page": 0,
+      "pdfX": 319,
+      "pdfY": 762,
+      "size": 7
+    },
+    {
+      "id": "surface-concrete",
+      "fieldId": "surface",
+      "value": "Colored Concrete",
+      "page": 0,
+      "pdfX": 319,
+      "pdfY": 748,
+      "size": 7
+    },
+    {
+      "id": "motor-high",
+      "fieldId": "motorPosition",
+      "value": "High Mount",
+      "page": 0,
+      "pdfX": 55,
+      "pdfY": 379,
+      "size": 7
+    },
+    {
+      "id": "motor-low",
+      "fieldId": "motorPosition",
+      "value": "Low Mount",
+      "page": 0,
+      "pdfX": 55,
+      "pdfY": 364,
+      "size": 7
+    },
+    {
+      "id": "diff-spool",
+      "fieldId": "diff",
+      "value": "Spool",
+      "page": 0,
+      "pdfX": 96,
+      "pdfY": 193,
+      "size": 7
+    },
+    {
+      "id": "diff-gear",
+      "fieldId": "diff",
+      "value": "Gear Diff",
+      "page": 0,
+      "pdfX": 96,
+      "pdfY": 178,
+      "size": 7
+    },
+    {
+      "id": "diff-ball",
+      "fieldId": "diff",
+      "value": "Ball Diff",
+      "page": 0,
+      "pdfX": 96,
+      "pdfY": 164,
+      "size": 7
+    },
+    {
+      "id": "diff-lsd",
+      "fieldId": "diff",
+      "value": "LSD",
+      "page": 0,
+      "pdfX": 96,
+      "pdfY": 150,
+      "size": 7
+    },
+    {
+      "id": "servo-forward",
+      "fieldId": "servoPosition",
+      "value": "forward",
+      "page": 0,
+      "pdfX": 264,
+      "pdfY": 54,
+      "size": 7
+    },
+    {
+      "id": "servo-middle",
+      "fieldId": "servoPosition",
+      "value": "middle",
+      "page": 0,
+      "pdfX": 296,
+      "pdfY": 54,
+      "size": 7
+    },
+    {
+      "id": "servo-rear",
+      "fieldId": "servoPosition",
+      "value": "rear",
+      "page": 0,
+      "pdfX": 330,
+      "pdfY": 54,
+      "size": 7
+    }
+  ],
+  "holeGroups": []
 }

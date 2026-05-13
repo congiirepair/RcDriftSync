@@ -14,13 +14,37 @@ interface UniversalPdfSection {
   rows: UniversalPdfRow[];
 }
 
+interface UniversalPdfOptions {
+  shareUrl?: string;
+}
+
 const pageSize: [number, number] = [595.276, 841.89];
 const margin = 36;
-const text = rgb(0.08, 0.13, 0.13);
-const muted = rgb(0.38, 0.45, 0.44);
-const accent = rgb(0.03, 0.5, 0.39);
-const line = rgb(0.84, 0.88, 0.86);
-const panel = rgb(0.96, 0.98, 0.97);
+const text = rgb(0.07, 0.1, 0.13);
+const muted = rgb(0.35, 0.42, 0.5);
+const accent = rgb(0, 0.55, 0.95);
+const accent2 = rgb(0, 0.82, 1);
+const dark = rgb(0.02, 0.05, 0.09);
+const darkPanel = rgb(0.05, 0.1, 0.15);
+const line = rgb(0.72, 0.82, 0.9);
+const panel = rgb(0.96, 0.985, 1);
+const softPanel = rgb(0.9, 0.96, 1);
+const ignoredAdditionalKeys = new Set([
+  "id",
+  "ownerId",
+  "ownerUsername",
+  "ownerDisplayName",
+  "shareId",
+  "visibility",
+  "cloneEnabled",
+  "pdfDownloadEnabled",
+  "createdAt",
+  "updatedAt",
+  "dataUrl",
+  "cloudUrl",
+  "publicId",
+  "provider"
+]);
 
 function valueFor(tune: Tune, row: UniversalPdfRow) {
   if (row.value !== undefined) return row.value;
@@ -33,7 +57,12 @@ function valueFor(tune: Tune, row: UniversalPdfRow) {
   if (row.fieldId === "rating") return tune.rating;
   if (row.fieldId === "tags") return tune.tags.join(", ");
   if (row.fieldId === "notes") return tune.notes;
-  return tune.values[row.fieldId] ?? tune.selections[row.fieldId] ?? "";
+  return firstValue(
+    tune.values[row.fieldId],
+    tune.selections[row.fieldId],
+    structuredValueFor(tune, row.fieldId),
+    advancedValueFor(tune, row.fieldId)
+  );
 }
 
 function cleanValue(value: unknown) {
@@ -42,12 +71,155 @@ function cleanValue(value: unknown) {
   return String(value);
 }
 
+function hasValue(value: unknown) {
+  const cleaned = cleanValue(value).trim();
+  return Boolean(cleaned && !["Skipped", "Not applicable", "N/A", "Not sure", "Skip for now"].includes(cleaned));
+}
+
+function firstValue(...values: unknown[]) {
+  return values.find(hasValue) ?? "";
+}
+
+function partValue(part?: { brand?: string; model?: string; notes?: string; length?: string; offset?: string; width?: string; shims?: string; toeAngle?: string | number; rate?: string }) {
+  if (!part) return "";
+  return [part.brand, part.model, part.length, part.offset ? `${part.offset} offset` : "", part.width ? `${part.width} wide` : "", part.rate, part.toeAngle ? `${part.toeAngle} toe` : "", part.shims ? `${part.shims} shims` : ""]
+    .filter(hasValue)
+    .join(" ");
+}
+
+function profileName(item?: { selectedProfileId?: string; profileSnapshot?: string | Record<string, string | number | boolean | string[]> }) {
+  if (!item?.profileSnapshot) return item?.selectedProfileId ?? "";
+  if (typeof item.profileSnapshot === "string") return item.profileSnapshot;
+  return firstValue(item.profileSnapshot.profileName, item.profileSnapshot.name, item.selectedProfileId);
+}
+
+function advancedValueFor(tune: Tune, fieldId: string) {
+  return firstValue(
+    tune.advancedSetup?.frontAlignment?.[fieldId],
+    tune.advancedSetup?.rearAlignment?.[fieldId],
+    tune.advancedSetup?.shocks?.[fieldId],
+    tune.advancedSetup?.drivetrain?.[fieldId],
+    tune.advancedSetup?.weightBalance?.[fieldId],
+    tune.advancedSetup?.bodyAero?.[fieldId],
+    tune.advancedSetup?.officialPdfFields?.[fieldId]
+  );
+}
+
+function structuredValueFor(tune: Tune, fieldId: string) {
+  const map: Record<string, unknown> = {
+    chassisBrand: tune.customChassisBrand || tune.chassisBrand || tune.chassisSetup?.chassis?.brand,
+    chassisModel: tune.customChassisModel || tune.chassisModel || tune.chassisSetup?.chassis?.model,
+    chassisDeck: tune.chassisSetup?.chassis?.deck,
+    chassisCustomizations: tune.chassisSetup?.chassis?.customizations,
+    frontDamper: partValue(tune.chassisSetup?.front?.dampers),
+    frontSpringBrand: tune.chassisSetup?.front?.spring?.brand,
+    frontSpring: partValue(tune.chassisSetup?.front?.spring),
+    frontKnuckle: partValue(tune.chassisSetup?.front?.knuckle),
+    frontAxle: partValue(tune.chassisSetup?.front?.axle),
+    frontWheel: partValue(tune.chassisSetup?.front?.wheel),
+    frontWheelBrand: tune.chassisSetup?.front?.wheel?.brand,
+    frontWheelOffset: tune.chassisSetup?.front?.wheel?.offset,
+    frontWheelWidth: tune.chassisSetup?.front?.wheel?.width,
+    frontUpperArm: partValue(tune.chassisSetup?.front?.upperArm),
+    frontLowerArm: partValue(tune.chassisSetup?.front?.lowerArm),
+    frontLowerArmShims: tune.chassisSetup?.front?.lowerArm?.shims,
+    frontToeBlock: partValue(tune.chassisSetup?.front?.toeBlock),
+    rearDamper: partValue(tune.chassisSetup?.rear?.dampers),
+    rearUpperArm: partValue(tune.chassisSetup?.rear?.upperArm),
+    rearLowerArm: partValue(tune.chassisSetup?.rear?.lowerArm),
+    rearLowerArmShims: tune.chassisSetup?.rear?.lowerArm?.shims,
+    rearHubCarrier: partValue(tune.chassisSetup?.rear?.hubCarrier),
+    rearAxle: partValue(tune.chassisSetup?.rear?.axle),
+    rearAxleLength: tune.chassisSetup?.rear?.axle?.length,
+    rearWheel: partValue(tune.chassisSetup?.rear?.wheel),
+    rearWheelBrand: tune.chassisSetup?.rear?.wheel?.brand,
+    rearWheelOffset: tune.chassisSetup?.rear?.wheel?.offset,
+    rearWheelWidth: tune.chassisSetup?.rear?.wheel?.width,
+    rearToeBlock: partValue(tune.chassisSetup?.rear?.toeBlock),
+    escBrand: tune.electronics?.esc?.brand,
+    escModel: tune.electronics?.esc?.customName || tune.electronics?.esc?.model,
+    escProfileName: profileName(tune.electronics?.esc),
+    escFirmwareVersion: tune.electronics?.esc?.firmware,
+    escNotes: tune.electronics?.esc?.notes,
+    motor: tune.electronics?.motor?.customName || tune.electronics?.motor?.model,
+    motorBrand: tune.electronics?.motor?.brand,
+    motorTurns: tune.electronics?.motor?.turns,
+    motorTiming: tune.electronics?.motor?.timing,
+    motorRotor: tune.electronics?.motor?.rotor,
+    servoBrand: tune.electronics?.servo?.brand,
+    servoModel: tune.electronics?.servo?.customName || tune.electronics?.servo?.model,
+    servoProfileName: profileName(tune.electronics?.servo),
+    servoNotes: tune.electronics?.servo?.notes,
+    gyroBrand: tune.electronics?.gyro?.brand,
+    gyroModel: tune.electronics?.gyro?.customName || tune.electronics?.gyro?.model,
+    gyroProfileName: profileName(tune.electronics?.gyro),
+    gyroGain: tune.electronics?.gyro?.gain ?? tune.electronics?.gyro?.settings?.gain,
+    gyroMode: tune.electronics?.gyro?.mode ?? tune.electronics?.gyro?.settings?.mode,
+    gyroNotes: tune.electronics?.gyro?.notes,
+    radioBrand: tune.electronics?.receiver?.brand,
+    radioModel: tune.electronics?.receiver?.customName || tune.electronics?.receiver?.model,
+    battery: tune.electronics?.battery?.customName || tune.electronics?.battery?.model
+  };
+  const electronicsSettings = {
+    ...tune.electronics?.esc?.settings,
+    ...tune.electronics?.servo?.settings,
+    ...tune.electronics?.gyro?.settings,
+    ...tune.electronics?.motor?.settings
+  };
+  return firstValue(map[fieldId], electronicsSettings[fieldId]);
+}
+
 function rowsFor(ids: Array<[string, string]>): UniversalPdfRow[] {
   return ids.map(([label, fieldId]) => ({ label, fieldId }));
 }
 
+function prettyLabel(key: string) {
+  return key
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[_-]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase())
+    .replace(/\bEsc\b/g, "ESC")
+    .replace(/\bFdr\b/g, "FDR")
+    .replace(/\bKpi\b/g, "KPI");
+}
+
+function flattenRecord(record: unknown, prefix: string, out: UniversalPdfRow[], seen: Set<string>) {
+  if (!record || typeof record !== "object" || Array.isArray(record)) return;
+  Object.entries(record as Record<string, unknown>).forEach(([key, value]) => {
+    if (ignoredAdditionalKeys.has(key) || key.toLowerCase().includes("slug")) return;
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (seen.has(path)) return;
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      flattenRecord(value, path, out, seen);
+      return;
+    }
+    if (!hasValue(value)) return;
+    seen.add(path);
+    out.push({ label: prettyLabel(path.split(".").join(" / ")), value: value as string | number | boolean | string[] });
+  });
+}
+
+function additionalSavedRows(tune: Tune, usedFieldIds: Set<string>) {
+  const rows: UniversalPdfRow[] = [];
+  const seen = new Set<string>();
+  Object.entries(tune.values ?? {}).forEach(([key, value]) => {
+    if (usedFieldIds.has(key) || ignoredAdditionalKeys.has(key) || !hasValue(value)) return;
+    seen.add(key);
+    rows.push({ label: prettyLabel(key), value });
+  });
+  Object.entries(tune.selections ?? {}).forEach(([key, value]) => {
+    if (usedFieldIds.has(key) || seen.has(key) || ignoredAdditionalKeys.has(key) || !hasValue(value)) return;
+    seen.add(key);
+    rows.push({ label: prettyLabel(key), value });
+  });
+  flattenRecord(tune.advancedSetup, "Advanced", rows, seen);
+  flattenRecord(tune.electronics, "Electronics", rows, seen);
+  flattenRecord(tune.chassisSetup, "Chassis Setup", rows, seen);
+  return rows.filter((row) => cleanValue(row.value) !== "Skipped").slice(0, 140);
+}
+
 function sectionsFor(tune: Tune, car: Car): UniversalPdfSection[] {
-  return [
+  const sections: UniversalPdfSection[] = [
     {
       title: "Tune Basics",
       rows: [
@@ -87,20 +259,24 @@ function sectionsFor(tune: Tune, car: Car): UniversalPdfSection[] {
     {
       title: "Expected Car Feel",
       rows: feelLabels.map((item) => {
-        const value = feelForTune(tune)[item.key];
-        return { label: item.label, value: `${value}/5 (${value <= 2 ? item.low : value >= 4 ? item.high : "balanced"})` };
+        const value = Number(feelForTune(tune)[item.key] ?? 5);
+        return { label: item.label, value: `${value}/10 (${value <= 3 ? item.low : value >= 8 ? item.high : "balanced"})` };
       })
     },
-    { title: "Front Setup", rows: rowsFor([["Ride height", "frontRideHeight"], ["Camber", "frontCamber"], ["Toe", "frontToe"], ["Caster", "caster"], ["KPI", "kpi"], ["Ackerman", "ackerman"], ["Track width", "frontTrackWidth"], ["Wheel offset", "frontWheelOffset"], ["Spring", "frontSpring"], ["Shock oil", "frontShockOil"], ["Piston", "frontPiston"], ["Shock shaft", "frontShockShaft"], ["Shock position", "frontShockPosition"], ["Upper arm / link", "frontUpperLink"], ["Lower arm", "frontLowerArm"], ["Knuckle", "frontKnuckle"], ["Hub", "frontHub"], ["Spacer notes", "frontSpacerNotes"], ["Memo", "frontMemo"]]) },
-    { title: "Rear Setup", rows: rowsFor([["Ride height", "rearRideHeight"], ["Camber", "rearCamber"], ["Toe", "rearToe"], ["Skid angle", "skidAngle"], ["Track width", "rearTrackWidth"], ["Wheel offset", "rearWheelOffset"], ["Spring", "rearSpring"], ["Shock oil", "rearShockOil"], ["Piston", "rearPiston"], ["Shock shaft", "rearShockShaft"], ["Shock position", "rearShockPosition"], ["Upper arm / link", "rearUpperLink"], ["Lower arm", "rearLowerArm"], ["Hub carrier", "rearHubCarrier"], ["Spacer notes", "rearSpacerNotes"], ["Memo", "rearMemo"]]) },
+    { title: "Front Setup", rows: rowsFor([["Ride height", "frontRideHeight"], ["Camber", "frontCamber"], ["Toe", "frontToe"], ["Caster", "caster"], ["KPI", "kpi"], ["Ackerman", "ackerman"], ["Track width", "frontTrackWidth"], ["Wheel offset", "frontWheelOffset"], ["Spring", "frontSpring"], ["Shock oil", "frontShockOil"], ["Piston", "frontPiston"], ["Shock shaft", "frontShockShaft"], ["Shock position", "frontShockPosition"], ["Upper arm / link", "frontUpperLink"], ["Lower arm", "frontLowerArm"], ["Knuckle", "frontKnuckle"], ["Knuckle plate", "frontKnucklePlate"], ["Hub", "frontHub"], ["Offset spacer", "frontOffsetSpacer"], ["FF suspension mount", "ffToeBlock"], ["FF left insert", "ffToeBlockLeftInsert"], ["FF right insert", "ffToeBlockRightInsert"], ["FR suspension mount", "frToeBlock"], ["FR left insert", "frToeBlockLeftInsert"], ["FR right insert", "frToeBlockRightInsert"], ["FF shim", "ffToeBlockShim"], ["FR shim", "frToeBlockShim"], ["Spacer notes", "frontSpacerNotes"], ["Memo", "frontMemo"]]) },
+    { title: "Rear Setup", rows: rowsFor([["Ride height", "rearRideHeight"], ["Camber", "rearCamber"], ["Toe", "rearToe"], ["Skid angle", "skidAngle"], ["Track width", "rearTrackWidth"], ["Wheel offset", "rearWheelOffset"], ["Spring", "rearSpring"], ["Shock oil", "rearShockOil"], ["Piston", "rearPiston"], ["Shock shaft", "rearShockShaft"], ["Shock position", "rearShockPosition"], ["Upper arm / link", "rearUpperLink"], ["Lower arm", "rearLowerArm"], ["Hub carrier", "rearHubCarrier"], ["Offset spacer", "rearOffsetSpacer"], ["RF suspension mount", "rfToeBlock"], ["RF left insert", "rfToeBlockLeftInsert"], ["RF right insert", "rfToeBlockRightInsert"], ["RR suspension mount", "rrToeBlock"], ["RR left insert", "rrToeBlockLeftInsert"], ["RR right insert", "rrToeBlockRightInsert"], ["RF shim", "rfToeBlockShim"], ["RR shim", "rrToeBlockShim"], ["Spacer notes", "rearSpacerNotes"], ["Memo", "rearMemo"]]) },
     { title: "Drivetrain", rows: rowsFor([["Motor position", "motorPosition"], ["Ball diff setting", "ballDiffSetting"], ["Gear diff oil", "gearDiffOil"], ["LSD setting", "lsdSetting"], ["Spur gear", "spurGear"], ["Pinion gear", "pinionGear"], ["Final drive ratio", "finalDriveRatio"], ["Belt / shaft notes", "beltShaftNotes"], ["Memo", "drivetrainMemo"]]) },
     { title: "Weight and Body", rows: rowsFor([["Battery position", "batteryPosition"], ["Added weight", "addedWeight"], ["Weight location", "weightLocation"], ["Chassis brace", "chassisBrace"], ["Body shell", "bodyShell"], ["Wing", "aeroWing"], ["Aero notes", "aeroNotes"], ["Weight balance notes", "weightBalanceNotes"]]) },
-    { title: "ESC Tune", rows: rowsFor([["ESC brand", "escBrand"], ["ESC model", "escModel"], ["Profile name", "escProfileName"], ["Throttle curve", "throttleCurve"], ["Throttle punch", "throttlePunch"], ["Brake strength", "brakeStrength"], ["Drag brake", "dragBrake"], ["Neutral brake", "neutralBrake"], ["Initial brake", "initialBrake"], ["Boost timing", "boostTiming"], ["Boost start RPM", "boostStartRpm"], ["Boost end RPM", "boostEndRpm"], ["Turbo timing", "turboTiming"], ["Turbo delay", "turboDelay"], ["Turbo slope", "turboSlope"], ["Motor timing", "motorTiming"], ["PWM frequency", "pwmFrequency"], ["Drive frequency", "driveFrequency"], ["Brake frequency", "brakeFrequency"], ["BEC voltage", "becVoltage"], ["Current limit", "currentLimit"], ["Reverse strength", "reverseStrength"], ["Motor rotation", "motorRotation"], ["Firmware", "escFirmwareVersion"], ["Notes", "escNotes"]]) },
+    { title: "ESC Tune", rows: rowsFor([["ESC brand", "escBrand"], ["ESC model", "escModel"], ["Profile name", "escProfileName"], ["Power capacitor", "powerCapacitor"], ["Capacitor connection", "acuvancePowerConnection"], ["Capacitor install", "acuvancePowerInstallMethod"], ["Capacitor mount", "acuvancePowerMountLocation"], ["Capacitor wiring", "acuvancePowerWiringNotes"], ["Throttle curve", "throttleCurve"], ["Throttle punch", "throttlePunch"], ["Brake strength", "brakeStrength"], ["Drag brake", "dragBrake"], ["Neutral brake", "neutralBrake"], ["Initial brake", "initialBrake"], ["Boost timing", "boostTiming"], ["Boost start RPM", "boostStartRpm"], ["Boost end RPM", "boostEndRpm"], ["Turbo timing", "turboTiming"], ["Turbo delay", "turboDelay"], ["Turbo slope", "turboSlope"], ["Motor timing", "motorTiming"], ["PWM frequency", "pwmFrequency"], ["Drive frequency", "driveFrequency"], ["Brake frequency", "brakeFrequency"], ["BEC voltage", "becVoltage"], ["Current limit", "currentLimit"], ["Reverse strength", "reverseStrength"], ["Motor rotation", "motorRotation"], ["Firmware", "escFirmwareVersion"], ["Notes", "escNotes"]]) },
     { title: "Servo Tune", rows: rowsFor([["Servo brand", "servoBrand"], ["Servo model", "servoModel"], ["Horn length", "servoHornLength"], ["Spline", "servoSpline"], ["Speed setting", "servoSpeedSetting"], ["Torque setting", "servoTorqueSetting"], ["Endpoint left", "endpointLeft"], ["Endpoint right", "endpointRight"], ["Center trim", "centerTrim"], ["Subtrim", "subtrim"], ["Deadband", "deadband"], ["Frequency", "servoFrequency"], ["Voltage", "servoVoltage"], ["Mode", "directMode"], ["Saver / solid horn", "servoSaver"], ["Notes", "servoNotes"]]) },
     { title: "Gyro Tune", rows: rowsFor([["Gyro brand", "gyroBrand"], ["Gyro model", "gyroModel"], ["Gain", "gyroGain"], ["Mode", "gyroMode"], ["Endpoint setting", "gyroEndpointSetting"], ["Curve setting", "gyroCurveSetting"], ["Gain from transmitter", "gainFromTransmitter"], ["Direction", "gyroDirection"], ["Notes", "gyroNotes"]]) },
     { title: "Radio Tune", rows: rowsFor([["Radio brand", "radioBrand"], ["Radio model", "radioModel"], ["Steering dual rate", "steeringDualRate"], ["Steering expo", "steeringExpo"], ["Throttle expo", "throttleExpo"], ["Throttle curve", "radioThrottleCurve"], ["Brake curve", "brakeCurve"], ["Channel mixing notes", "channelMixingNotes"], ["Steering endpoint left", "steeringEndpointLeft"], ["Steering endpoint right", "steeringEndpointRight"], ["Throttle endpoint", "throttleEndpoint"], ["Brake endpoint", "brakeEndpoint"], ["Notes", "radioNotes"]]) },
     { title: "Driver Notes", rows: rowsFor([["General notes", "generalNotes"], ["Track notes", "trackNotes"], ["What changed", "whatChanged"], ["How it felt", "howItFelt"], ["Next changes to try", "nextChanges"]]) }
-  ].map((section) => ({
+  ];
+  const usedFieldIds = new Set(sections.flatMap((section) => section.rows.map((row) => row.fieldId).filter(Boolean) as string[]));
+  const additionalRows = additionalSavedRows(tune, usedFieldIds);
+  if (additionalRows.length) sections.push({ title: "Additional Saved Parameters", rows: additionalRows });
+  return sections.map((section) => ({
     ...section,
     rows: section.rows.filter((row) => cleanValue(valueFor(tune, row)) !== "Skipped")
   }));
@@ -130,12 +306,24 @@ function ensureSpace(pdf: PDFDocument, currentPage: PDFPage, y: number, needed: 
 }
 
 function drawFooter(page: PDFPage) {
+  page.drawLine({ start: { x: margin, y: 30 }, end: { x: pageSize[0] - margin, y: 30 }, thickness: 0.75, color: line });
+  page.drawText("RC Drift Sync | rcdriftsync.com", { x: margin, y: 16, size: 8, color: muted });
+  page.drawText("Digital garage setup sheet", { x: pageSize[0] - 148, y: 16, size: 8, color: muted });
+  return;
   page.drawText("RC Drift Sync · rcdriftsync.com", { x: margin, y: 18, size: 8, color: muted });
   page.drawRectangle({ x: pageSize[0] - 98, y: 14, width: 62, height: 62, borderColor: line, borderWidth: 1 });
   page.drawText("QR", { x: pageSize[0] - 77, y: 41, size: 12, color: muted });
 }
 
 function drawHeader(page: PDFPage, bold: PDFFont, tune: Tune, car: Car) {
+  page.drawRectangle({ x: 0, y: pageSize[1] - 112, width: pageSize[0], height: 112, color: dark });
+  page.drawRectangle({ x: 0, y: pageSize[1] - 112, width: pageSize[0], height: 4, color: accent2 });
+  page.drawRectangle({ x: margin, y: pageSize[1] - 88, width: pageSize[0] - margin * 2, height: 58, borderColor: accent, borderWidth: 1, color: darkPanel });
+  page.drawText("RC DRIFT SYNC", { x: margin + 14, y: pageSize[1] - 53, size: 21, font: bold, color: rgb(0.94, 0.98, 1) });
+  page.drawText("Themed tuning parameter sheet", { x: margin + 16, y: pageSize[1] - 72, size: 9.5, color: rgb(0.55, 0.84, 1) });
+  page.drawText(tune.name.slice(0, 34), { x: 300, y: pageSize[1] - 52, size: 13, font: bold, color: rgb(0.94, 0.98, 1) });
+  page.drawText(`${car.name} | ${car.chassisModel || car.chassis}`.slice(0, 50), { x: 300, y: pageSize[1] - 70, size: 8.5, color: rgb(0.68, 0.82, 0.94) });
+  return;
   page.drawRectangle({ x: 0, y: pageSize[1] - 92, width: pageSize[0], height: 92, color: rgb(0.05, 0.09, 0.1) });
   page.drawText("RC Drift Sync", { x: margin, y: pageSize[1] - 40, size: 22, font: bold, color: rgb(0.92, 0.98, 0.96) });
   page.drawText("Universal RC Drift Setup Sheet", { x: margin, y: pageSize[1] - 62, size: 11, color: rgb(0.65, 0.78, 0.74) });
@@ -144,19 +332,21 @@ function drawHeader(page: PDFPage, bold: PDFFont, tune: Tune, car: Car) {
 }
 
 function drawSection(page: PDFPage, y: number, section: UniversalPdfSection, bold: PDFFont) {
-  page.drawRectangle({ x: margin, y: y - 24, width: pageSize[0] - margin * 2, height: 24, color: panel });
-  page.drawText(section.title, { x: margin + 10, y: y - 17, size: 11, font: bold, color: accent });
+  page.drawRectangle({ x: margin, y: y - 26, width: pageSize[0] - margin * 2, height: 26, borderColor: accent, borderWidth: 0.7, color: softPanel });
+  page.drawRectangle({ x: margin, y: y - 26, width: 5, height: 26, color: accent2 });
+  page.drawText(section.title.toUpperCase(), { x: margin + 12, y: y - 18, size: 10.5, font: bold, color: rgb(0.02, 0.18, 0.28) });
   return y - 34;
 }
 
 function drawRow(page: PDFPage, y: number, row: UniversalPdfRow, tune: Tune, font: PDFFont, bold: PDFFont) {
-  const labelWidth = 126;
+  const labelWidth = 132;
   const valueWidth = pageSize[0] - margin * 2 - labelWidth - 18;
   const value = cleanValue(valueFor(tune, row));
   const lines = wrapText(value, font, 8.5, valueWidth);
   const rowHeight = Math.max(22, lines.length * 11 + 9);
-  page.drawLine({ start: { x: margin, y: y - rowHeight + 3 }, end: { x: pageSize[0] - margin, y: y - rowHeight + 3 }, thickness: 0.4, color: line });
-  page.drawText(row.label, { x: margin + 6, y: y - 14, size: 8.2, font: bold, color: muted });
+  page.drawRectangle({ x: margin, y: y - rowHeight + 3, width: pageSize[0] - margin * 2, height: rowHeight - 3, borderColor: rgb(0.86, 0.92, 0.96), borderWidth: 0.35, color: rgb(0.995, 1, 1) });
+  page.drawRectangle({ x: margin, y: y - rowHeight + 3, width: labelWidth - 4, height: rowHeight - 3, color: panel });
+  page.drawText(row.label.slice(0, 29), { x: margin + 7, y: y - 14, size: 8.1, font: bold, color: muted });
   lines.slice(0, 4).forEach((lineText, index) => {
     page.drawText(lineText, { x: margin + labelWidth, y: y - 14 - index * 10.5, size: 8.5, font, color: text });
   });
@@ -197,14 +387,25 @@ async function drawPhotos(pdf: PDFDocument, page: PDFPage, y: number, tune: Tune
   return y - 110;
 }
 
-export async function generateUniversalTunePdf(tune: Tune, car: Car): Promise<Uint8Array> {
+function drawShareBlock(page: PDFPage, y: number, font: PDFFont, bold: PDFFont, options?: UniversalPdfOptions) {
+  page.drawRectangle({ x: margin, y: y - 78, width: pageSize[0] - margin * 2, height: 66, borderColor: accent, borderWidth: 0.7, color: panel });
+  page.drawText("Trackside reference", { x: margin + 12, y: y - 34, size: 10.5, font: bold, color: accent });
+  page.drawText("Use this PDF as a clean readout of the saved tune. Make changes in RC Drift Sync, then export a fresh sheet.", { x: margin + 12, y: y - 50, size: 8.2, font, color: muted });
+  if (options?.shareUrl) {
+    page.drawText(options.shareUrl.slice(0, 74), { x: margin + 12, y: y - 64, size: 7.5, font, color: text });
+  }
+  page.drawRectangle({ x: pageSize[0] - margin - 54, y: y - 70, width: 42, height: 42, borderColor: line, borderWidth: 0.8, color: rgb(1, 1, 1) });
+  page.drawText("QR", { x: pageSize[0] - margin - 39, y: y - 47, size: 10, font: bold, color: muted });
+}
+
+export async function generateUniversalTunePdf(tune: Tune, car: Car, options?: UniversalPdfOptions): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
   const font = await pdf.embedFont(StandardFonts.Helvetica);
   const bold = await pdf.embedFont(StandardFonts.HelveticaBold);
   let page = pdf.addPage(pageSize);
   drawHeader(page, bold, tune, car);
   drawFooter(page);
-  let y = pageSize[1] - 116;
+  let y = pageSize[1] - 136;
 
   for (const section of sectionsFor(tune, car).filter((section) => section.rows.length)) {
     ({ page, y } = ensureSpace(pdf, page, y, 52));
@@ -219,14 +420,12 @@ export async function generateUniversalTunePdf(tune: Tune, car: Car): Promise<Ui
   ({ page, y } = ensureSpace(pdf, page, y, 150));
   y = await drawPhotos(pdf, page, y, tune, font, bold);
   ({ page, y } = ensureSpace(pdf, page, y, 84));
-  page.drawRectangle({ x: margin, y: y - 74, width: pageSize[0] - margin * 2, height: 62, borderColor: line, borderWidth: 1, color: panel });
-  page.drawText("Future shared tune QR code", { x: margin + 12, y: y - 34, size: 10, font: bold, color: accent });
-  page.drawText("Share PDF later: this placeholder will point to rcdriftsync.com/tune/share/:shareId.", { x: margin + 12, y: y - 50, size: 8.5, font, color: muted });
+  drawShareBlock(page, y, font, bold, options);
 
   return pdf.save({ useObjectStreams: true });
 }
 
-export async function downloadUniversalTunePdf(tune: Tune, car: Car) {
-  const bytes = await generateUniversalTunePdf(tune, car);
+export async function downloadUniversalTunePdf(tune: Tune, car: Car, options?: UniversalPdfOptions) {
+  const bytes = await generateUniversalTunePdf(tune, car, options);
   downloadPdf(bytes, `${tune.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}-rc-drift-sync-universal.pdf`);
 }

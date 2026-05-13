@@ -1,6 +1,6 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { enableIndexedDbPersistence, getFirestore } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -18,13 +18,3 @@ export const firebaseApp: FirebaseApp | null = isFirebaseConfigured ? initialize
 export const auth = firebaseApp ? getAuth(firebaseApp) : null;
 export const firestore = firebaseApp ? getFirestore(firebaseApp) : null;
 export const storage = firebaseApp ? getStorage(firebaseApp) : null;
-
-export async function enableFirebaseOffline() {
-  if (!firestore) return false;
-  try {
-    await enableIndexedDbPersistence(firestore);
-    return true;
-  } catch {
-    return false;
-  }
-}

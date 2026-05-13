@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96" role="img" aria-label="MST placeholder mark">
+  <rect width="96" height="96" rx="22" fill="#050607"/>
+  <rect x="1" y="1" width="94" height="94" rx="21" fill="none" stroke="#2A2F35"/>
+  <text x="48" y="58" text-anchor="middle" fill="#F5F7FA" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="900">MS</text>
+  <path d="M21 70 C38 49, 58 49, 75 70" fill="none" stroke="#59D6FF" stroke-width="5" stroke-linecap="round"/>
+</svg>

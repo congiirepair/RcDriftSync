@@ -1,6 +1,7 @@
 import { openDB } from "idb";
 import type { AppData } from "../types";
 import { emptyAppData } from "../data/sampleData";
+import { syncAppDataSharedModel } from "../utils/sharedTuneModel";
 
 const DB_NAME = "rc-tune-pwa";
 const STORE = "app";
@@ -10,11 +11,13 @@ const SEEDED_TUNE_IDS = new Set(["tune-rdx-baseline", "tune-mc3-carpet"]);
 const SEEDED_PROFILE_IDS = new Set(["demo-driver"]);
 const SEEDED_TUNE_NAMES = new Set(["rdx baseline asphalt", "mc-3 carpet quick steer"]);
 
-const dbPromise = openDB(DB_NAME, 1, {
-  upgrade(db) {
-    db.createObjectStore(STORE);
-  }
-});
+function getDb() {
+  return openDB(DB_NAME, 1, {
+    upgrade(db) {
+      db.createObjectStore(STORE);
+    }
+  });
+}
 
 function normalizeAppData(data: AppData): AppData {
   const cars = (data.cars ?? []).filter((car) => !SEEDED_CAR_IDS.has(car.id));
@@ -29,7 +32,7 @@ function normalizeAppData(data: AppData): AppData {
     return !isSeededTune && (carIds.has(tune.carId) || !isPersonalOrLocal);
   });
   const tuneIds = new Set(tunes.map((tune) => tune.id));
-  return {
+  return syncAppDataSharedModel({
     ...data,
     cars,
     tunes,
@@ -47,11 +50,11 @@ function normalizeAppData(data: AppData): AppData {
       weeklyTrendingTunes: false,
       backupReminder: true
     }
-  };
+  });
 }
 
 export async function loadAppData(): Promise<AppData> {
-  const db = await dbPromise;
+  const db = await getDb();
   const stored = await db.get(STORE, KEY);
   if (stored) {
     const normalized = normalizeAppData(stored as AppData);
@@ -63,8 +66,17 @@ export async function loadAppData(): Promise<AppData> {
 }
 
 export async function saveAppData(data: AppData): Promise<void> {
-  const db = await dbPromise;
+  const db = await getDb();
   await db.put(STORE, normalizeAppData(data), KEY);
+}
+
+export async function clearAppData(): Promise<void> {
+  await new Promise<void>((resolve) => {
+    const request = indexedDB.deleteDatabase(DB_NAME);
+    request.onsuccess = () => resolve();
+    request.onerror = () => resolve();
+    request.onblocked = () => resolve();
+  });
 }
 
 export async function resetAppData(): Promise<AppData> {

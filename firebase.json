@@ -1,27 +1,42 @@
 {
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "runtime": "nodejs20"
+    }
+  ],
   "hosting": {
     "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "headers": [
       {
+        "source": "/",
+        "headers": [{ "key": "Cache-Control", "value": "no-store, max-age=0, must-revalidate" }]
+      },
+      {
         "source": "/index.html",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        "headers": [{ "key": "Cache-Control", "value": "no-store, max-age=0, must-revalidate" }]
+      },
+      {
+        "source": "/sw.js",
+        "headers": [{ "key": "Cache-Control", "value": "no-store, max-age=0, must-revalidate" }]
       },
       {
         "source": "/manifest.webmanifest",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        "headers": [{ "key": "Cache-Control", "value": "no-store, max-age=0, must-revalidate" }]
       },
       {
-        "source": "**/*.@(js|css|png|svg|webp|woff2)",
+        "source": "/assets/**",
+        "headers": [{ "key": "Cache-Control", "value": "no-store, max-age=0, must-revalidate" }]
+      },
+      {
+        "source": "**/*.@(png|svg|webp|woff2)",
         "headers": [{ "key": "Cache-Control", "value": "public,max-age=31536000,immutable" }]
       },
       {
         "source": "**/*.@(pdf)",
         "headers": [{ "key": "Cache-Control", "value": "public,max-age=86400" }]
-      },
-      {
-        "source": "/sw.js",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       }
     ],
     "rewrites": [{ "source": "**", "destination": "/index.html" }]
