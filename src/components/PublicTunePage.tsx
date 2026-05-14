@@ -42,6 +42,8 @@ const publicSections = [
       ["customChassisBrand", "Custom brand"],
       ["customChassisModel", "Custom model"],
       ["chassisDeck", "Deck"],
+      ["upperDeck", "Upper deck"],
+      ["lowerDeck", "Lower deck"],
       ["deck", "Deck"],
       ["conversionKit", "Conversion kit"],
       ["wheelbase", "Wheelbase"],
@@ -89,11 +91,15 @@ const publicSections = [
       ["rearShockShaft", "Shock shaft"],
       ["rearPiston", "Piston"],
       ["rearShockPosition", "Shock position"],
+      ["rearShockMountingNotes", "Shock mounting notes"],
       ["rearSpringBrand", "Spring brand"],
       ["rearSpring", "Spring"],
+      ["rearSwayBar", "Sway bar"],
+      ["rearSwayBarThickness", "Sway bar thickness"],
       ["rearUpperArm", "Upper arm"],
       ["rearLowerArm", "Lower arm"],
       ["rearLowerArmShims", "Lower arm shims"],
+      ["rearLowerArmSide", "Lower arm side"],
       ["rearHubCarrier", "Hub carrier"],
       ["rearActiveToe", "Active toe"],
       ["rearAxle", "Axle"],
@@ -246,9 +252,9 @@ function advancedValue(tune: Tune, fieldId: string) {
   );
 }
 
-function partValue(part?: { brand?: string; model?: string; notes?: string; length?: string; offset?: string; width?: string; shims?: string; toeAngle?: string | number; rate?: string }) {
+function partValue(part?: { brand?: string; model?: string; notes?: string; length?: string; offset?: string; width?: string; shims?: string; side?: string; toeAngle?: string | number; rate?: string }) {
   if (!part) return "";
-  return [part.brand, part.model, part.length, part.offset ? `${part.offset} offset` : "", part.width ? `${part.width} wide` : "", part.rate, part.toeAngle ? `${part.toeAngle} toe` : "", part.shims ? `${part.shims} shims` : ""]
+  return [part.brand, part.model, part.length, part.offset ? `${part.offset} offset` : "", part.width ? `${part.width} wide` : "", part.rate, part.toeAngle ? `${part.toeAngle} toe` : "", part.side ? `${part.side} side` : "", part.shims ? `${part.shims} shims` : ""]
     .filter(hasPublicValue)
     .join(" ");
 }
@@ -335,10 +341,12 @@ function tuneValue(tune: Tune, fieldId: string): PublicTuneValue {
     frontLowerArmShims: tune.chassisSetup?.front?.lowerArm?.shims,
     frontToeBlock: partValue(tune.chassisSetup?.front?.toeBlock),
     rearDamper: partValue(tune.chassisSetup?.rear?.dampers),
+    rearShockMountingNotes: tune.chassisSetup?.rear?.dampers?.notes,
     rearSpringBrand: tune.values.rearSpringBrand,
     rearUpperArm: partValue(tune.chassisSetup?.rear?.upperArm),
     rearLowerArm: partValue(tune.chassisSetup?.rear?.lowerArm),
     rearLowerArmShims: tune.chassisSetup?.rear?.lowerArm?.shims,
+    rearLowerArmSide: tune.chassisSetup?.rear?.lowerArm?.side,
     rearHubCarrier: partValue(tune.chassisSetup?.rear?.hubCarrier),
     rearAxle: partValue(tune.chassisSetup?.rear?.axle),
     rearAxleLength: tune.chassisSetup?.rear?.axle?.length,

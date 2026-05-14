@@ -7,7 +7,11 @@ const root = process.cwd();
 const sourceFiles = {
   productCatalog: "src/data/productCatalog.ts",
   rcParts: "src/data/rcParts.ts",
+  catalogExpansion20260513: "src/data/catalogExpansion20260513.ts",
   sourcedCatalog: "src/data/sourcedCatalogProducts.ts",
+  researchedVerified: "src/data/researchedVerifiedCatalogProducts.ts",
+  sakura: "src/data/sakuraCatalogProducts.ts",
+  shibata: "src/data/shibataGrkCatalogProducts.ts",
   sourcedWizard: "src/data/sourcedWizardProducts.ts",
   sourcedWheel: "src/data/sourcedWheelProducts.ts"
 };
@@ -21,14 +25,17 @@ const electronicsCategoryMap = {
   wheel: "frontWheels"
 };
 
-const supportPattern = /\b(pin|pins|shaft|shafts|screw|screws|nut|nuts|washer|washers|shim|shims|spacer|spacers|bearing|bearings|bushing|bushings|rod end|rod ends|ball cup|ball cups|mount|bracket|adapter|holder|post|posts|retainer|protector|cover|tape|decal|tool|grease|oil|fluid|spring end|cap|o-?ring|x-?ring|hub weight|weight|fan|capacitor|wire|connector)\b/i;
+const supportPattern = /\b(pin set|screw set|screws?|nuts?|washers?|bushings?|rod ends?|ball cups?|bracket|adapter|holder|posts?|retainer|protector|cover|tape|decal|stickers?|tool|spring end|o-?rings?|x-?rings?|fan|wire|connector)\b/i;
 
 const tuneRelevantCategories = new Set([
   "chassis",
   "decks",
+  "upperDecks",
+  "lowerDecks",
   "dampers",
   "springs",
   "frontKnuckles",
+  "knucklePlates",
   "rearHubCarriers",
   "frontAxles",
   "rearAxles",
@@ -39,13 +46,32 @@ const tuneRelevantCategories = new Set([
   "frontUpperArms",
   "rearUpperArms",
   "differentials",
+  "gearDiffs",
+  "ballDiffs",
+  "solidAxles",
+  "spurGears",
+  "pinionGears",
   "frontWheels",
   "rearWheels",
   "tires",
   "servos",
   "gyros",
   "motors",
-  "escs"
+  "escs",
+  "frontShockTowers",
+  "rearShockTowers",
+  "shockPistons",
+  "shockShafts",
+  "damperOils",
+  "motorRotors",
+  "motorStators",
+  "capacitors",
+  "motorMounts",
+  "bellcranks",
+  "slideRacks",
+  "steeringRacks",
+  "servoHorns",
+  "batteries"
 ]);
 
 function readSource(file) {
@@ -92,11 +118,11 @@ function arrayObjects(file, variableName) {
   return results;
 }
 
-function catalogItemsFromCalls(file) {
+function catalogItemsFromCalls(file, callName = "catalogItem") {
   const source = readSource(file);
   const results = [];
   function visit(node) {
-    if (ts.isCallExpression(node) && node.expression.getText() === "catalogItem" && node.arguments[0] && ts.isObjectLiteralExpression(node.arguments[0])) {
+    if (ts.isCallExpression(node) && node.expression.getText() === callName && node.arguments[0] && ts.isObjectLiteralExpression(node.arguments[0])) {
       results.push(objectRecord(node.arguments[0]));
     }
     ts.forEachChild(node, visit);
@@ -133,19 +159,33 @@ function groupBy(items, keyFn) {
 function wrongCategoryReason(item) {
   const category = item.category;
   const text = `${item.productName} ${item.modelNumber} ${item.notes ?? ""}`;
+  const labelText = `${item.productName} ${item.modelNumber}`;
   if (!tuneRelevantCategories.has(category)) return "";
-  if (supportPattern.test(text)) return "support/hardware/accessory wording in tune-relevant category";
-  if (category === "frontUpperArms" && !/upper arm|upper link/i.test(text)) return "not an actual front upper arm";
-  if (category === "rearUpperArms" && !/upper arm|upper link/i.test(text)) return "not an actual rear upper arm";
-  if ((category === "frontLowerArms" || category === "rearLowerArms") && !/lower arm|h arm|a arm/i.test(text)) return "not an actual lower arm";
+  if (supportPattern.test(labelText)) return "support/hardware/accessory wording in tune-relevant category";
+  if (category === "frontUpperArms" && !/upper.*arm|front\s+upper.*arm|rear\s+upper.*arm|upper link|upper.*wishbone/i.test(text)) return "not an actual front upper arm";
+  if (category === "rearUpperArms" && !/upper.*arm|front\s+upper.*arm|rear\s+upper.*arm|upper link|upper.*wishbone/i.test(text)) return "not an actual rear upper arm";
+  if ((category === "frontLowerArms" || category === "rearLowerArms") && (!/lower.*arm|front\s+lower.*arm|rear\s+lower.*arm|h arm|a arm|suspension arm|lower.*wishbone/i.test(text) || /upright set|suspension arm\s*&\s*upright|wheel hub|pin|shaft|rod end|ball stud|bearing|weight/i.test(text))) return "not an actual lower arm";
   if (category === "frontKnuckles" && !/knuckle|steering block|upright/i.test(text)) return "not a knuckle/upright";
-  if (category === "rearHubCarriers" && !/rear hub|hub carrier|rear upright|rear knuckle|upright/i.test(text)) return "not a rear hub carrier/upright";
+  if (category === "knucklePlates" && !/knuckle.*plate|plate.*knuckle/i.test(text)) return "not a knuckle plate";
+  if (category === "rearHubCarriers" && (!/rear hub|hub carrier|rear upright|rear knuckle|upright/i.test(text) || /plate/i.test(text))) return "not a rear hub carrier/upright";
+  if (category === "frontShockTowers" && !/front.*(shock|damper).*tower|ft.*(shock|damper).*tower/i.test(text)) return "not a front shock tower";
+  if (category === "rearShockTowers" && !/rear.*(shock|damper).*tower|rt.*(shock|damper).*tower|rear.*damper.*stay|damper.*stay/i.test(text)) return "not a rear shock tower";
+  if (category === "decks" && (!/\b(deck|chassis plate|main chassis|upper deck|lower deck|side deck|conversion plate)\b/i.test(text) || /\b(esc|motor|rear|front|servo|battery|body)\s+mount\b/i.test(labelText))) return "not a deck/chassis plate";
+  if ((category === "frontToeBlocks" || category === "rearToeBlocks") && /\b(upper arm mount|rear upper arm mount|servo mount|esc mount|battery mount|body mount|spring retainer|hex hub|connector|post|adapter)\b/i.test(text)) return "not a toe block/suspension mount";
   if (category === "gyros" && !/gyro|gyd|revox|sgs|dp-?302|yg-?302/i.test(text)) return "not a standalone gyro";
-  if (category === "escs" && /fan|capacitor|program|mount|plate|cover/i.test(text)) return "ESC accessory in ESC category";
-  if (category === "motors" && /mount|plate|fan|rotor|stator|screw/i.test(text)) return "motor accessory in motor category";
-  if (category === "servos" && /horn|mount|saver|case/i.test(text)) return "servo accessory in servo category";
-  if ((category === "frontWheels" || category === "rearWheels") && /tire set|tyre set|mounted|pre-mounted|hub|axle/i.test(text)) return "not a standalone wheel";
-  if (category === "tires" && /mounted|wheel set|rim set/i.test(text)) return "not a standalone tire";
+  if (category === "escs" && /fan|capacitor|program|mount|plate|cover/i.test(labelText)) return "ESC accessory in ESC category";
+  if (category === "motors" && /mount|plate|fan|rotor|stator|screw/i.test(labelText)) return "motor accessory in motor category";
+  if (category === "servos" && /horn|mount|saver|case/i.test(labelText)) return "servo accessory in servo category";
+  if (category === "servoHorns" && (!/servo\s*horn|horn arm/i.test(text) || /\b(rc28|rc8|1[-/ ]?24|1[-/ ]?28|axles?|steering block|suspension mount set)\b/i.test(text))) return "not a standalone 1/10 drift servo horn";
+  if (category === "shockPistons" && !/piston/i.test(text)) return "not a shock piston";
+  if (category === "shockShafts" && (!/(?:shock|damper).{0,30}shaft|shaft.{0,30}(?:shock|damper)/i.test(text) || /\bguide|e-?clips?|clip pack|hardware\b/i.test(labelText))) return "not a shock shaft";
+  if (category === "damperOils" && !/oil|fluid/i.test(text)) return "not damper/shock oil";
+  if (category === "motorRotors" && !/rotor/i.test(text)) return "not a motor rotor";
+  if (category === "motorStators" && !/stator/i.test(text)) return "not a motor stator";
+  if (category === "capacitors" && !/capacitor|cap\b/i.test(text)) return "not an ESC capacitor";
+  if (category === "dampers" && /combo|piston|shaft|rebuild|o-?ring|x-?ring|cap|retainer|oil|fluid|connector|spacer|shim/i.test(text) && !/oil absorber/i.test(text)) return "shock support item in damper category";
+  if ((category === "frontWheels" || category === "rearWheels") && /tire set|tyre set|rim[-\s]?tire|mounted|pre-mounted|hub|axle|stickers?|decals?/i.test(text)) return "not a standalone wheel";
+  if (category === "tires" && /mounted|pre-assembled|pre assembled|wheel set|rim set/i.test(text)) return "not a standalone tire";
   return "";
 }
 
@@ -162,6 +202,14 @@ function summarize(items, count = 10) {
 const rcParts = arrayObjects(sourceFiles.rcParts, "rcParts");
 const sourcedWheels = arrayObjects(sourceFiles.sourcedWheel, "sourcedWheelProducts");
 const sourcedCatalog = arrayObjects(sourceFiles.sourcedCatalog, "sourcedCatalogItems");
+const researchedVerified = catalogItemsFromCalls(sourceFiles.researchedVerified, "verifiedProduct");
+const catalogExpansion20260513 = catalogItemsFromCalls(sourceFiles.catalogExpansion20260513, "researchedItem");
+const sakuraCatalog = [
+  ...catalogItemsFromCalls(sourceFiles.sakura, "d5"),
+  ...catalogItemsFromCalls(sourceFiles.sakura, "d6"),
+  ...catalogItemsFromCalls(sourceFiles.sakura, "sakuraItem")
+].filter((item) => item.productName);
+const shibataCatalog = catalogItemsFromCalls(sourceFiles.shibata, "shibataItem").filter((item) => item.productName);
 const sourcedWizard = arrayObjects(sourceFiles.sourcedWizard, "sourcedWizardCatalogItems");
 const inlineCatalog = catalogItemsFromCalls(sourceFiles.productCatalog);
 const electronicsCatalog = rcParts
@@ -176,7 +224,7 @@ const sourcedWheelCatalog = sourcedWheels.flatMap((product) => [
   { ...product, category: "rearWheels" }
 ]);
 
-const rawItems = [...electronicsCatalog, ...inlineCatalog, ...sourcedCatalog, ...sourcedWizard, ...sourcedWheelCatalog].map((item, index) => ({
+const rawItems = [...electronicsCatalog, ...inlineCatalog, ...researchedVerified, ...catalogExpansion20260513, ...sakuraCatalog, ...shibataCatalog, ...sourcedCatalog, ...sourcedWizard, ...sourcedWheelCatalog].map((item, index) => ({
   index,
   ...item,
   id: item.id || item.slug || "",
@@ -186,9 +234,17 @@ const rawItems = [...electronicsCatalog, ...inlineCatalog, ...sourcedCatalog, ..
   modelNumber: item.modelNumber || item.partNumber || ""
 }));
 
-const exactGroups = groupBy(rawItems, (item) => [item.category, normalize(item.brand), normalize(item.productName), normalize(item.modelNumber)].join("|"));
-const nearGroups = groupBy(rawItems, (item) => [item.category, normalize(item.brand), normalize(`${item.brand} ${item.productName}`)].join("|"));
-const wrongCategoryItems = rawItems
+const isVisibleSelectorItem = (item) => item.tuneSelectable !== false && !item.hiddenFromTuneBuilder;
+const visibleItems = rawItems.filter(isVisibleSelectorItem);
+
+const rawExactGroups = groupBy(rawItems, (item) => [item.category, normalize(item.brand), normalize(item.productName), normalize(item.modelNumber)].join("|"));
+const rawNearGroups = groupBy(rawItems, (item) => [item.category, normalize(item.brand), normalize(`${item.brand} ${item.productName}`)].join("|"));
+const exactGroups = groupBy(visibleItems, (item) => [item.category, normalize(item.brand), normalize(item.productName), normalize(item.modelNumber)].join("|"));
+const nearGroups = groupBy(visibleItems, (item) => [item.category, normalize(item.brand), normalize(`${item.brand} ${item.productName}`)].join("|"));
+const rawWrongCategoryItems = rawItems
+  .map((item) => ({ ...item, reason: wrongCategoryReason(item) }))
+  .filter((item) => item.reason);
+const wrongCategoryItems = visibleItems
   .map((item) => ({ ...item, reason: wrongCategoryReason(item) }))
   .filter((item) => item.reason);
 
@@ -204,10 +260,20 @@ const report = {
     sourcedWheelProducts: sourcedWheels.length,
     sourcedWheelCatalogRows: sourcedWheelCatalog.length,
     sourcedCatalog: sourcedCatalog.length,
+    researchedVerified: researchedVerified.length,
+    catalogExpansion20260513: catalogExpansion20260513.length,
+    sakuraCatalog: sakuraCatalog.length,
+    shibataCatalog: shibataCatalog.length,
     sourcedWizard: sourcedWizard.length,
     inlineCatalog: inlineCatalog.length,
-    rawCatalogRows: rawItems.length
+    rawCatalogRows: rawItems.length,
+    visibleSelectorRows: visibleItems.length
   },
+  rawExactDuplicateGroups: rawExactGroups.length,
+  rawExactDuplicateRows: rawExactGroups.reduce((total, [, items]) => total + items.length, 0),
+  rawNearDuplicateGroups: rawNearGroups.length,
+  rawNearDuplicateRows: rawNearGroups.reduce((total, [, items]) => total + items.length, 0),
+  rawWrongCategoryRows: rawWrongCategoryItems.length,
   exactDuplicateGroups: exactGroups.length,
   exactDuplicateRows: exactGroups.reduce((total, [, items]) => total + items.length, 0),
   nearDuplicateGroups: nearGroups.length,

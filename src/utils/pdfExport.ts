@@ -92,6 +92,9 @@ const getValue = (tune: Tune, fieldId: string) => {
       case "rearHoles":
       case "rearRetainer":
       case "rearShockPosition":
+      case "rearShockMountingNotes":
+      case "rearSwayBar":
+      case "rearSwayBarThickness":
         return valueFromRecord(shocks, fieldId);
       case "frontCamber":
       case "frontToe":
@@ -101,6 +104,7 @@ const getValue = (tune: Tune, fieldId: string) => {
       case "rearToe":
       case "skidAngle":
       case "rearSkidAngle":
+      case "rearLowerArmSide":
         return valueFromRecord(rearAlignment, fieldId === "rearSkidAngle" ? "skidAngle" : fieldId);
       case "frontSpring":
         return pickValue(tune.chassisSetup?.front?.spring?.model, tune.chassisSetup?.front?.spring?.rate);

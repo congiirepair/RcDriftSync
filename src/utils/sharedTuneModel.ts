@@ -247,6 +247,7 @@ function hydrateValuesFromStructuredTune(tune: Tune, car?: Car) {
   fillMissingValue(values, "chassisBrand", tune.chassisBrand || car?.chassisBrand || car?.brand || chassis?.chassis?.brand);
   fillMissingValue(values, "chassisModel", tune.chassisModel || car?.chassisModel || car?.chassis || chassis?.chassis?.model);
   fillMissingValue(values, "chassisDeck", chassis?.chassis?.deck);
+  fillMissingValue(values, "lowerDeck", values.chassisDeck ?? chassis?.chassis?.deck);
   fillMissingValue(values, "chassisCustomizations", chassis?.chassis?.customizations);
   fillMissingValue(values, "frontDamperBrand", chassis?.front?.dampers?.brand);
   fillMissingValue(values, "frontDamper", chassis?.front?.dampers?.model);
@@ -285,6 +286,8 @@ function hydrateValuesFromStructuredTune(tune: Tune, car?: Car) {
   fillMissingValue(values, "rearLowerArmBrand", chassis?.rear?.lowerArm?.brand);
   fillMissingValue(values, "rearLowerArm", chassis?.rear?.lowerArm?.model);
   fillMissingValue(values, "rearLowerArmShims", chassis?.rear?.lowerArm?.shims);
+  fillMissingValue(values, "rearLowerArmSide", chassis?.rear?.lowerArm?.side);
+  fillMissingValue(values, "rearShockMountingNotes", chassis?.rear?.dampers?.notes);
   fillMissingValue(values, "rearHubCarrierBrand", chassis?.rear?.hubCarrier?.brand);
   fillMissingValue(values, "rearHubCarrier", chassis?.rear?.hubCarrier?.model);
   fillMissingValue(values, "activeToe", chassis?.rear?.hubCarrier?.tunableSettings?.activeToe);
@@ -333,7 +336,7 @@ function buildChassisSetup(tune: Tune, car?: Car): TuneChassisSetup {
       ...existing.chassis,
       brand: tune.chassisBrand || car?.chassisBrand || car?.brand || existing.chassis?.brand || "",
       model: tune.chassisModel || car?.chassisModel || car?.chassis || existing.chassis?.model || "",
-      deck: textValue(values.chassisDeck ?? values.chassisBrace ?? existing.chassis?.deck),
+      deck: textValue(values.lowerDeck ?? values.chassisDeck ?? values.chassisBrace ?? existing.chassis?.deck),
       customizations: textValue(values.chassisCustomizations ?? values.conversionKit ?? values.chassisVariant ?? existing.chassis?.customizations)
     },
     front: {
@@ -403,7 +406,7 @@ function buildChassisSetup(tune: Tune, car?: Car): TuneChassisSetup {
         ...existing.rear?.dampers,
         brand: textValue(values.rearDamperBrand ?? existing.rear?.dampers?.brand),
         model: textValue(values.rearDamper ?? values.rearDamperModel ?? values.rearShockStyle ?? existing.rear?.dampers?.model),
-        notes: textValue(values.rearShockTower ?? values.rearShockPiston ?? values.rearPiston ?? values.rearShockShaft ?? values.rearShockOil ?? values.rearShockPosition ?? existing.rear?.dampers?.notes)
+        notes: textValue(values.rearShockMountingNotes ?? values.rearShockTower ?? values.rearShockPiston ?? values.rearPiston ?? values.rearShockShaft ?? values.rearShockOil ?? values.rearShockPosition ?? existing.rear?.dampers?.notes)
       },
       upperArm: {
         ...existing.rear?.upperArm,
@@ -416,6 +419,7 @@ function buildChassisSetup(tune: Tune, car?: Car): TuneChassisSetup {
         ...existing.rear?.lowerArm,
         brand: textValue(values.rearLowerArmBrand ?? existing.rear?.lowerArm?.brand),
         model: textValue(values.rearLowerArm ?? existing.rear?.lowerArm?.model),
+        side: textValue(values.rearLowerArmSide ?? existing.rear?.lowerArm?.side),
         shims: textValue(values.rearLowerArmShims ?? values.rearSpacerNotes ?? existing.rear?.lowerArm?.shims),
         notes: textValue(values.rearSpacerNotes ?? existing.rear?.lowerArm?.notes)
       },
@@ -458,8 +462,8 @@ function buildAdvancedSetup(tune: Tune): TuneAdvancedSetup {
   return {
     ...(tune.advancedSetup ?? {}),
     frontAlignment: { ...(tune.advancedSetup?.frontAlignment ?? {}), ...compactRecord(values, ["frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "steeringRackPosition", "tieRodPosition", "frontTrackWidth", "frontKnucklePlate", "trail", "ffToeBlockBrand", "ffToeBlock", "ffToeBlockPartNumber", "ffToeBlockLeftInsert", "ffToeBlockRightInsert", "frToeBlockBrand", "frToeBlock", "frToeBlockPartNumber", "frToeBlockLeftInsert", "frToeBlockRightInsert", "ffToeBlockShim", "frToeBlockShim", "frontAntiDiveNotes", "bumpSteerNotes"]) },
-    rearAlignment: { ...(tune.advancedSetup?.rearAlignment ?? {}), ...compactRecord(values, ["rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "toeBlockSuspensionMount", "rfToeBlockBrand", "rfToeBlock", "rfToeBlockPartNumber", "rfToeBlockLeftInsert", "rfToeBlockRightInsert", "rrToeBlockBrand", "rrToeBlock", "rrToeBlockPartNumber", "rrToeBlockLeftInsert", "rrToeBlockRightInsert", "activeToe", "rfToeBlockShim", "rrToeBlockShim", "rearSquatNotes"]) },
-    shocks: { ...(tune.advancedSetup?.shocks ?? {}), ...compactRecord(values, ["frontRideHeight", "rearRideHeight", "frontDamper", "rearDamper", "frontShockTower", "rearShockTower", "frontShockOil", "rearShockOil", "frontPiston", "rearPiston", "frontShockPiston", "rearShockPiston", "frontShockShaft", "rearShockShaft", "frontShockPosition", "rearShockPosition", "frontDroop", "rearDroop", "frontPreload", "rearPreload", "frontSwayBar", "rearSwayBar"]) },
+    rearAlignment: { ...(tune.advancedSetup?.rearAlignment ?? {}), ...compactRecord(values, ["rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearLowerArmSide", "toeBlockSuspensionMount", "rfToeBlockBrand", "rfToeBlock", "rfToeBlockPartNumber", "rfToeBlockLeftInsert", "rfToeBlockRightInsert", "rrToeBlockBrand", "rrToeBlock", "rrToeBlockPartNumber", "rrToeBlockLeftInsert", "rrToeBlockRightInsert", "activeToe", "rfToeBlockShim", "rrToeBlockShim", "rearSquatNotes"]) },
+    shocks: { ...(tune.advancedSetup?.shocks ?? {}), ...compactRecord(values, ["frontRideHeight", "rearRideHeight", "frontDamper", "rearDamper", "frontShockTower", "rearShockTower", "frontShockOil", "rearShockOil", "frontPiston", "rearPiston", "frontShockPiston", "rearShockPiston", "frontShockShaft", "rearShockShaft", "frontShockPosition", "rearShockPosition", "rearShockMountingNotes", "frontDroop", "rearDroop", "frontPreload", "rearPreload", "frontSwayBar", "rearSwayBar", "rearSwayBarThickness"]) },
     drivetrain: { ...(tune.advancedSetup?.drivetrain ?? {}), ...compactRecord(values, ["driveType", "motorPosition", "diffType", "ballDiffSetting", "gearDiffOil", "lsdSetting", "spurGear", "pinionGear", "finalDriveRatio", "gearPitch", "diffOil", "diffGrease", "diffShimSetup", "rearAxleType", "beltShaftNotes"]) },
     weightBalance: { ...(tune.advancedSetup?.weightBalance ?? {}), ...compactRecord(values, ["batteryPosition", "addedWeight", "weightLocation", "weightBias", "frontWeight", "rearWeight", "sideWeight", "weightBalanceNotes"]) },
     bodyAero: { ...(tune.advancedSetup?.bodyAero ?? {}), ...compactRecord(values, ["body", "bodyShell", "bodyWeight", "wing", "aeroWing", "wingPosition", "bodyMountPosition", "aeroNotes"]) },

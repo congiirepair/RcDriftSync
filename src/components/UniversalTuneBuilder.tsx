@@ -61,6 +61,14 @@ function calculateFinalDriveRatio(spur: unknown, pinion: unknown, internalRatio:
   return ((spurTeeth / pinionTeeth) * internal).toFixed(2);
 }
 
+const shockTowerHoleOptions = ["Hole 1 top", "Hole 2", "Hole 3", "Hole 4", "Hole 5 lower", BASIC_CUSTOM_OPTION];
+const armDamperHoleOptions = ["Inner", "2nd from inside", "Center", "2nd from outside", "Outer", BASIC_CUSTOM_OPTION];
+const rearHubCarrierHoleOptions = ["Upper inner", "Upper middle", "Upper outer", "Lower inner", "Lower middle", "Lower outer", BASIC_CUSTOM_OPTION];
+const steeringMountHoleOptions = ["Inner", "Middle", "Outer", "Forward", "Rearward", BASIC_CUSTOM_OPTION];
+const slideRackPositionOptions = ["Position 1", "Position 2", "Position 3", "Position 4", "Custom / Other"];
+const ddssHoleOptions = ["Inner hole", "Middle hole", "Outer hole", "Upper hole", "Lower hole", BASIC_CUSTOM_OPTION];
+const ifsMountOptions = ["Bellcrank inner", "Bellcrank middle", "Bellcrank outer", "Rocker inner", "Rocker middle", "Rocker outer", BASIC_CUSTOM_OPTION];
+
 interface UniversalTuneBuilderProps {
   cars: Car[];
   tunes: Tune[];
@@ -79,7 +87,7 @@ interface UniversalTuneBuilderProps {
 
 type ProfiledElectronicsCategory = "esc" | "servo" | "gyro";
 type BuilderTabId = "chassis" | "track" | "front" | "rear" | "drivetrain" | "tires" | "electronics" | "esc" | "servo" | "gyro" | "radio" | "feel" | "photos" | "notes" | "pdf";
-type PitlaneProductTab = "all" | "motor" | "esc" | "gyro" | "servo" | "other";
+type PitlaneProductTab = "all" | "motor" | "esc" | "gyro" | "servo" | "tires" | "frontWheels" | "rearWheels" | "other";
 type PitlanePage = "menu" | "chassis" | "surface" | "electronics" | "tires";
 
 interface UniversalField {
@@ -219,12 +227,15 @@ const universalSections: UniversalSection[] = [
       { id: "rearPiston", label: "Rear piston holes / diameter", type: "text" },
       { id: "rearShockShaft", label: "Rear shock shaft", type: "text" },
       { id: "rearShockPosition", label: "Rear shock position upper / lower", type: "text" },
+      { id: "rearShockMountingNotes", label: "Rear shock mounting location", type: "textarea" },
       { id: "rearDroop", label: "Rear droop", type: "text" },
       { id: "rearPreload", label: "Rear preload", type: "text" },
       { id: "rearSwayBar", label: "Rear sway bar", type: "text" },
+      { id: "rearSwayBarThickness", label: "Rear sway bar thickness", type: "text" },
       { id: "rearShockStyle", label: "Rear shock style", type: "text" },
       { id: "rearUpperLink", label: "Rear upper arm / link position", type: "text" },
       { id: "rearLowerArm", label: "Rear lower arm position", type: "text" },
+      { id: "rearLowerArmSide", label: "Reve D lower arm side", type: "text" },
       { id: "rearHubCarrier", label: "Rear hub carrier", type: "text" },
       { id: "rearOffsetSpacer", label: "Rear offset spacer", type: "text", helper: "Spacer added at the rear wheel hub/hex to fine-tune track width or wheel clearance." },
       { id: "rearHubSpacers", label: "Rear hub spacers", type: "text" },
@@ -482,6 +493,10 @@ const basicFieldIds = new Set([
   "tags",
   "notes",
   "chassisDeck",
+  "upperDeck",
+  "upperDeckBrand",
+  "lowerDeck",
+  "lowerDeckBrand",
   "chassisCustomizations",
   "conversionKit",
   "frontDamperBrand",
@@ -512,6 +527,10 @@ const basicFieldIds = new Set([
   "rearLowerArmBrand",
   "rearLowerArm",
   "rearLowerArmShims",
+  "rearLowerArmSide",
+  "rearShockMountingNotes",
+  "rearSwayBar",
+  "rearSwayBarThickness",
   "rearHubCarrierBrand",
   "rearHubCarrier",
   "rearAxleLength",
@@ -676,6 +695,8 @@ function fieldValue(tune: Tune, field: UniversalField) {
     rearDamper: tune.chassisSetup?.rear?.dampers?.model,
     rearLowerArm: tune.chassisSetup?.rear?.lowerArm?.model,
     rearLowerArmShims: tune.chassisSetup?.rear?.lowerArm?.shims,
+    rearLowerArmSide: tune.chassisSetup?.rear?.lowerArm?.side,
+    rearShockMountingNotes: tune.chassisSetup?.rear?.dampers?.notes,
     rearHubCarrier: tune.chassisSetup?.rear?.hubCarrier?.model,
     rearAxleLength: tune.chassisSetup?.rear?.axle?.length,
     rearWheelBrand: tune.chassisSetup?.rear?.wheel?.brand,
@@ -733,6 +754,7 @@ function patchSharedSetupValue(tune: Tune, fieldId: string, value: BuilderValue)
 
   switch (fieldId) {
     case "chassisDeck":
+    case "lowerDeck":
     case "chassisBrace":
       chassisSetup.chassis.deck = stringValue;
       break;
@@ -833,6 +855,7 @@ function patchSharedSetupValue(tune: Tune, fieldId: string, value: BuilderValue)
       chassisSetup.rear.dampers.notes = stringValue;
       break;
     case "rearShockShaft":
+    case "rearShockMountingNotes":
       chassisSetup.rear.dampers.notes = stringValue;
       break;
     case "rearLowerArmBrand":
@@ -844,6 +867,9 @@ function patchSharedSetupValue(tune: Tune, fieldId: string, value: BuilderValue)
     case "rearLowerArmShims":
     case "rearSpacerNotes":
       chassisSetup.rear.lowerArm.shims = stringValue;
+      break;
+    case "rearLowerArmSide":
+      chassisSetup.rear.lowerArm.side = stringValue;
       break;
     case "rearHubCarrierBrand":
       chassisSetup.rear.hubCarrier.brand = stringValue;
@@ -2037,13 +2063,18 @@ function pitlaneProductName(item: ProductCatalogItem) {
 }
 
 function pitlaneCategoriesForTab(tab: PitlaneProductTab, source: "electronics" | "tires"): ProductCatalogCategory[] {
-  if (source === "tires" && tab === "other") return ["tires", "frontWheels", "rearWheels"];
+  if (source === "tires") {
+    if (tab === "tires") return ["tires"];
+    if (tab === "frontWheels") return ["frontWheels"];
+    if (tab === "rearWheels") return ["rearWheels"];
+    return ["tires", "frontWheels", "rearWheels"];
+  }
   if (tab === "motor") return ["motors"];
   if (tab === "esc") return ["escs"];
   if (tab === "gyro") return ["gyros"];
   if (tab === "servo") return ["servos"];
-  if (tab === "other") return source === "tires" ? ["tires", "frontWheels", "rearWheels"] : ["capacitors"];
-  return source === "tires" ? ["tires", "frontWheels", "rearWheels"] : ["motors", "escs", "gyros", "servos"];
+  if (tab === "other") return ["capacitors"];
+  return ["motors", "escs", "gyros", "servos"];
 }
 
 function PitlaneProductBrowser({
@@ -2063,23 +2094,34 @@ function PitlaneProductBrowser({
   const [selectedId, setSelectedId] = useState("");
   const categories = pitlaneCategoriesForTab(activeTab, source);
   const allItems = getProductCatalog();
+  const categoryItems = categories.flatMap((category) => filterProductCatalog(allItems, {
+    category,
+    tuneSelectableOnly: true
+  }));
   const items = categories
     .flatMap((category) => filterProductCatalog(allItems, {
       category,
       brand: brand === "All" ? undefined : brand,
       tuneSelectableOnly: true
     }))
-    .slice(0, 24);
-  const brands = ["All", ...Array.from(new Set(items.map((item) => item.brand))).filter(Boolean).slice(0, 8)];
+    .slice(0, source === "tires" ? 48 : 24);
+  const brands = ["All", ...Array.from(new Set(categoryItems.map((item) => item.brand))).filter(Boolean).slice(0, source === "tires" ? 24 : 8)];
   const selected = items.find((item) => item.id === selectedId) ?? items[0];
-  const tabs: Array<{ id: PitlaneProductTab; label: string }> = [
-    { id: "all", label: "All" },
-    { id: "motor", label: "Motor" },
-    { id: "esc", label: "ESC" },
-    { id: "gyro", label: "Gyro" },
-    { id: "servo", label: "Servo" },
-    { id: "other", label: "Other" }
-  ];
+  const tabs: Array<{ id: PitlaneProductTab; label: string }> = source === "tires"
+    ? [
+        { id: "all", label: "All" },
+        { id: "tires", label: "Tires" },
+        { id: "frontWheels", label: "Front Wheels" },
+        { id: "rearWheels", label: "Rear Wheels" }
+      ]
+    : [
+        { id: "all", label: "All" },
+        { id: "motor", label: "Motor" },
+        { id: "esc", label: "ESC" },
+        { id: "gyro", label: "Gyro" },
+        { id: "servo", label: "Servo" },
+        { id: "other", label: "Other" }
+      ];
 
   return (
     <div className="pitlaneBrowserOverlay" role="presentation">
@@ -2146,6 +2188,10 @@ const beginnerHelpers: Record<string, string> = {
   chassisCatalogProduct: "The main chassis kit or platform this tune is for.",
   deckBrand: "Choose Stock if the deck is the original kit deck.",
   chassisDeck: "The main chassis plate or deck installed on the car.",
+  upperDeckBrand: "Choose Stock if the upper deck is the original kit upper deck.",
+  upperDeck: "The upper deck or top chassis brace installed on the car.",
+  lowerDeckBrand: "Choose Stock if the lower deck is the original kit lower deck.",
+  lowerDeck: "The lower deck or main chassis plate installed on the car.",
   transmissionGear: "Most drivers only need to know whether the gearbox is 3-gear or 4-gear.",
   frontShockTower: "The tower that holds the upper front shock positions.",
   rearShockTower: "The tower that holds the upper rear shock positions.",
@@ -2153,8 +2199,10 @@ const beginnerHelpers: Record<string, string> = {
   rearDamper: "The rear shock absorber/damper body installed on the car.",
   frontShockOil: "The oil weight used in the front dampers.",
   rearShockOil: "The oil weight used in the rear dampers.",
+  rearShockMountingNotes: "Describe the exact lower-arm hole, tower hole, spacers, and orientation so the rear shock setup is easy to repeat.",
   frontLowerArm: "The lower suspension arm used on the front suspension.",
   rearLowerArm: "The lower suspension arm used on the rear suspension.",
+  rearLowerArmSide: "Choose which side of the Reve D rear lower arm is being used for the shock mount.",
   frontUpperArm: "The upper arm or upper link used on the front suspension.",
   rearUpperArm: "The upper arm or upper link used on the rear suspension.",
   frontKnuckle: "The steering knuckle/upright used on the front suspension.",
@@ -2278,6 +2326,23 @@ function BasicTuneForm({
   const models = modelsForBrand(brandSlug);
   const selectedModel = tune.chassisModel || (models.includes(chassisInfo.model) ? chassisInfo.model : models[0] ?? "Custom");
   const isReveDMultiKnuckleChassis = brandSlug === "reve-d" && /rdx|mc-?iii|mc-?3/i.test(`${selectedModel} ${chassisInfo.model}`);
+  const rearLowerArmBrandText = String(tune.values.rearLowerArmBrand ?? tune.chassisSetup?.rear?.lowerArm?.brand ?? "");
+  const isReveDRearLowerArm = /\breve\s*d\b|\breved\b/i.test(rearLowerArmBrandText);
+  const frontSuspensionIdentity = [
+    tune.values.frontShockTowerBrand,
+    tune.values.frontShockTower,
+    tune.values.frontDamperBrand,
+    tune.values.frontDamper,
+    tune.values.frontLowerArmBrand,
+    tune.values.frontLowerArm,
+    tune.chassisBrand,
+    tune.customChassisBrand,
+    tune.chassisModel,
+    selectedModel,
+    chassisInfo.brand,
+    chassisInfo.model
+  ].join(" ");
+  const usesOverdoseIfs = /\boverdose\b|\bgalm\b|\bvacula\b|\bifs\b/i.test(frontSuspensionIdentity);
   const internalRatioPreset = suggestedInternalRatio(brandSlug);
   const internalDriveRatioValue = String(tune.values.internalDriveRatio ?? internalRatioPreset?.internalRatio ?? "");
   const autoFdrValue = calculateFinalDriveRatio(tune.values.spurGear, tune.values.pinionGear, internalDriveRatioValue);
@@ -2613,11 +2678,22 @@ function BasicTuneForm({
             }}
           />
           <PartSelector
-            label="Deck"
-            category="decks"
-            value={selectorValueFromFields("chassisDeck", "deckBrand", "decks", String(tune.values.deckBrand ?? tune.chassisBrand ?? chassisInfo.brand ?? ""), String(tune.chassisSetup?.chassis?.deck ?? ""))}
-            emptyLabel="Select deck"
-            onChange={(part) => patchPartSelector("chassisDeck", "deckBrand", "decks", part)}
+            label="Upper deck"
+            category="upperDecks"
+            value={selectorValueFromFields("upperDeck", "upperDeckBrand", "upperDecks", String(tune.values.upperDeckBrand ?? tune.values.deckBrand ?? tune.chassisBrand ?? chassisInfo.brand ?? ""), String(tune.values.upperDeck ?? ""))}
+            emptyLabel="Select upper deck"
+            onChange={(part) => patchPartSelector("upperDeck", "upperDeckBrand", "upperDecks", part)}
+          />
+          <PartSelector
+            label="Lower deck / main chassis plate"
+            category="lowerDecks"
+            value={selectorValueFromFields("lowerDeck", "lowerDeckBrand", "lowerDecks", String(tune.values.lowerDeckBrand ?? tune.values.deckBrand ?? tune.chassisBrand ?? chassisInfo.brand ?? ""), String(tune.values.lowerDeck ?? tune.values.chassisDeck ?? tune.chassisSetup?.chassis?.deck ?? ""))}
+            emptyLabel="Select lower deck"
+            onChange={(part) => {
+              const brand = part.brand ?? "";
+              const model = part.model || part.customName || "";
+              patchPartSelector("lowerDeck", "lowerDeckBrand", "lowerDecks", part, { chassisDeck: model, deckBrand: brand });
+            }}
           />
           <fieldset className="wizardChoiceGroup"><legend>Transmission</legend>{[BEGINNER_NOT_SURE_OPTION, "3 gear", "4 gear"].map((option) => <label key={option}><input type="radio" name={`transmission-${tune.id}`} checked={tune.values.transmissionGear === option} onChange={() => patchValues({ transmissionGear: option })} /><span>{option}</span></label>)}</fieldset>
           <div className="formSplit">
@@ -2696,6 +2772,7 @@ function BasicTuneForm({
       <BasicTuneSection title={activeTabId === "front" ? "Front setup" : "Rear setup"} helper={activeTabId === "front" ? "Front suspension, steering, shock, and wheel parts only." : "Rear suspension, toe, hub, shock, and wheel parts only."}>
         {activeTabId === "front" ? (
         <>
+        <TuneSubcategory title="Core front parts" helper="The main pieces most drivers check first.">
         <PartSelector
           label="Front shock tower"
           category="frontShockTowers"
@@ -2712,6 +2789,24 @@ function BasicTuneForm({
           helper={beginnerHelpers.frontDamper}
           onChange={(part) => patchPartSelector("frontDamper", "frontDamperBrand", "dampers", part)}
         />
+        <PartSelector
+          label="Front lower arm"
+          category="frontLowerArms"
+          value={selectorValueFromFields("frontLowerArm", "frontLowerArmBrand", "frontLowerArms", String(tune.chassisSetup?.front?.lowerArm?.brand ?? ""), String(tune.chassisSetup?.front?.lowerArm?.model ?? ""))}
+          emptyLabel="Select front lower arm"
+          helper={beginnerHelpers.frontLowerArm}
+          onChange={(part) => patchPartSelector("frontLowerArm", "frontLowerArmBrand", "frontLowerArms", part)}
+        />
+        <PartSelector
+          label="Front upper arm"
+          category="frontUpperArms"
+          value={selectorValueFromFields("frontUpperArm", "frontUpperArmBrand", "frontUpperArms", String(tune.chassisSetup?.front?.upperArm?.brand ?? ""), String(tune.values.frontUpperLink ?? tune.chassisSetup?.front?.upperArm?.model ?? ""))}
+          emptyLabel="Select front upper arm"
+          helper={beginnerHelpers.frontUpperArm}
+          onChange={(part) => patchPartSelector("frontUpperArm", "frontUpperArmBrand", "frontUpperArms", part, { frontUpperLink: part.model || part.customName || "" })}
+        />
+        </TuneSubcategory>
+        <TuneSubcategory title="Front shock details" helper="Piston, shaft, and oil details for deeper shock notes." defaultOpen={false}>
         <PartSelector
           label="Front piston"
           category="shockPistons"
@@ -2733,22 +2828,8 @@ function BasicTuneForm({
           emptyLabel="Select front damper oil"
           onChange={(part) => patchPartSelector("frontShockOil", "frontDamperOilBrand", "damperOils", part)}
         />
-        <PartSelector
-          label="Front lower arm"
-          category="frontLowerArms"
-          value={selectorValueFromFields("frontLowerArm", "frontLowerArmBrand", "frontLowerArms", String(tune.chassisSetup?.front?.lowerArm?.brand ?? ""), String(tune.chassisSetup?.front?.lowerArm?.model ?? ""))}
-          emptyLabel="Select front lower arm"
-          helper={beginnerHelpers.frontLowerArm}
-          onChange={(part) => patchPartSelector("frontLowerArm", "frontLowerArmBrand", "frontLowerArms", part)}
-        />
-        <PartSelector
-          label="Front upper arm"
-          category="frontUpperArms"
-          value={selectorValueFromFields("frontUpperArm", "frontUpperArmBrand", "frontUpperArms", String(tune.chassisSetup?.front?.upperArm?.brand ?? ""), String(tune.values.frontUpperLink ?? tune.chassisSetup?.front?.upperArm?.model ?? ""))}
-          emptyLabel="Select front upper arm"
-          helper={beginnerHelpers.frontUpperArm}
-          onChange={(part) => patchPartSelector("frontUpperArm", "frontUpperArmBrand", "frontUpperArms", part, { frontUpperLink: part.model || part.customName || "" })}
-        />
+        </TuneSubcategory>
+        <TuneSubcategory title="Front suspension mounts" helper="FF/FR mount choices and visual insert helper." defaultOpen={false}>
         <PartSelector
           label="FF suspension mount"
           category="frontToeBlocks"
@@ -2783,9 +2864,90 @@ function BasicTuneForm({
           partCategory: "frontToeBlocks",
           partBrand: String(tune.values.frToeBlockBrand ?? tune.values.frontToeBlockBrand ?? "")
         })}
+        </TuneSubcategory>
+        <TuneSubcategory title="Front geometry / mounting points" helper="Record the actual holes and steering positions used on the car." defaultOpen={false}>
+          {usesOverdoseIfs ? (
+            <>
+              <GeometryPointPicker
+                label="Overdose IFS damper / rocker position"
+                value={String(tune.values.frontIfsDamperPosition ?? "")}
+                options={ifsMountOptions}
+                helper="Use this instead of a normal front shock tower hole for GALM / Overdose-style inboard front suspension."
+                onChange={(value) => patchValues({ frontIfsDamperPosition: value })}
+              />
+              <TextAreaField
+                label="IFS mounting notes"
+                value={String(tune.values.frontIfsMountingNotes ?? "")}
+                placeholder="ex. Front rocker outer hole, damper side inner hole, 2mm spacer"
+                rows={3}
+                onChange={(event) => patchValues({ frontIfsMountingNotes: event.target.value })}
+              />
+            </>
+          ) : (
+            <>
+              <GeometryPointPicker
+                label="Front shock tower upper hole"
+                value={String(tune.values.frontShockTowerUpperHole ?? "")}
+                options={shockTowerHoleOptions}
+                helper="Choose the tower hole used by the top of the front damper."
+                onChange={(value) => patchValues({ frontShockTowerUpperHole: value })}
+              />
+              <GeometryPointPicker
+                label="Front lower arm damper hole"
+                value={String(tune.values.frontDamperLowerArmHole ?? "")}
+                options={armDamperHoleOptions}
+                helper="Choose the lower arm hole used by the bottom of the front damper."
+                onChange={(value) => patchValues({ frontDamperLowerArmHole: value })}
+              />
+              <TextAreaField
+                label="Front damper mounting notes"
+                value={String(tune.values.frontDamperMountingNotes ?? "")}
+                placeholder="ex. Top hole 3, lower arm outer hole, 2mm spacer behind ball end"
+                rows={3}
+                onChange={(event) => patchValues({ frontDamperMountingNotes: event.target.value })}
+              />
+            </>
+          )}
+          <GeometryPointPicker
+            label="Knuckle steering link hole"
+            value={String(tune.values.frontKnuckleSteeringLinkHole ?? "")}
+            options={steeringMountHoleOptions}
+            helper="Record the steering link position on the knuckle or knuckle plate."
+            onChange={(value) => patchValues({ frontKnuckleSteeringLinkHole: value })}
+          />
+          <GeometryPointPicker
+            label="Knuckle upper link / kingpin hole"
+            value={String(tune.values.frontKnuckleUpperLinkHole ?? "")}
+            options={steeringMountHoleOptions}
+            helper="Use for multi-hole knuckles or upper-link plates."
+            onChange={(value) => patchValues({ frontKnuckleUpperLinkHole: value })}
+          />
+          <GeometryPointPicker
+            label="Bellcrank Ackerman hole"
+            value={String(tune.values.bellcrankAckermanHole ?? "")}
+            options={steeringMountHoleOptions}
+            helper="Record the bellcrank hole used by the steering link."
+            onChange={(value) => patchValues({ bellcrankAckermanHole: value })}
+          />
+          <GeometryPointPicker
+            label="Sliding rack position"
+            value={String(tune.values.slideRackPosition ?? "")}
+            options={slideRackPositionOptions}
+            helper="For slide-rack cars, record the rack or link position."
+            onChange={(value) => patchValues({ slideRackPosition: value })}
+          />
+          <GeometryPointPicker
+            label="DDSS hole"
+            value={String(tune.values.ddssHole ?? "")}
+            options={ddssHoleOptions}
+            helper="For DDSS / direct steering systems, record the active steering hole."
+            onChange={(value) => patchValues({ ddssHole: value })}
+          />
+        </TuneSubcategory>
         </>
         ) : (
         <>
+        <TuneSubcategory title="Core rear parts" helper="Rear shocks, arms, and hub carrier essentials.">
         <PartSelector
           label="Rear shock tower"
           category="rearShockTowers"
@@ -2802,6 +2964,41 @@ function BasicTuneForm({
           helper={beginnerHelpers.rearDamper}
           onChange={(part) => patchPartSelector("rearDamper", "rearDamperBrand", "dampers", part)}
         />
+        <PartSelector
+          label="Rear lower arm"
+          category="rearLowerArms"
+          value={selectorValueFromFields("rearLowerArm", "rearLowerArmBrand", "rearLowerArms", String(tune.chassisSetup?.rear?.lowerArm?.brand ?? ""), String(tune.chassisSetup?.rear?.lowerArm?.model ?? ""))}
+          emptyLabel="Select rear lower arm"
+          helper={beginnerHelpers.rearLowerArm}
+          onChange={(part) => patchPartSelector("rearLowerArm", "rearLowerArmBrand", "rearLowerArms", part)}
+        />
+        {isReveDRearLowerArm ? (
+          <fieldset className="wizardChoiceGroup fieldWide">
+            <legend>Reve D rear lower arm side</legend>
+            {["Straight", "Curved"].map((option) => (
+              <label key={option}>
+                <input
+                  type="radio"
+                  name={`rear-lower-arm-side-${tune.id}`}
+                  checked={String(tune.values.rearLowerArmSide ?? tune.chassisSetup?.rear?.lowerArm?.side ?? "") === option}
+                  onChange={() => patchValues({ rearLowerArmSide: option })}
+                />
+                <span>{option}</span>
+              </label>
+            ))}
+            <small className="fieldHelper">{beginnerHelpers.rearLowerArmSide}</small>
+          </fieldset>
+        ) : null}
+        <PartSelector
+          label="Rear upper arm"
+          category="rearUpperArms"
+          value={selectorValueFromFields("rearUpperArm", "rearUpperArmBrand", "rearUpperArms", String(tune.chassisSetup?.rear?.upperArm?.brand ?? ""), String(tune.values.rearUpperLink ?? tune.chassisSetup?.rear?.upperArm?.model ?? ""))}
+          emptyLabel="Select rear upper arm"
+          helper={beginnerHelpers.rearUpperArm}
+          onChange={(part) => patchPartSelector("rearUpperArm", "rearUpperArmBrand", "rearUpperArms", part, { rearUpperLink: part.model || part.customName || "" })}
+        />
+        </TuneSubcategory>
+        <TuneSubcategory title="Rear shock details" helper="Mounting note, piston, shaft, and oil details." defaultOpen={false}>
         <PartSelector
           label="Rear piston"
           category="shockPistons"
@@ -2823,22 +3020,18 @@ function BasicTuneForm({
           emptyLabel="Select rear damper oil"
           onChange={(part) => patchPartSelector("rearShockOil", "rearDamperOilBrand", "damperOils", part)}
         />
-        <PartSelector
-          label="Rear lower arm"
-          category="rearLowerArms"
-          value={selectorValueFromFields("rearLowerArm", "rearLowerArmBrand", "rearLowerArms", String(tune.chassisSetup?.rear?.lowerArm?.brand ?? ""), String(tune.chassisSetup?.rear?.lowerArm?.model ?? ""))}
-          emptyLabel="Select rear lower arm"
-          helper={beginnerHelpers.rearLowerArm}
-          onChange={(part) => patchPartSelector("rearLowerArm", "rearLowerArmBrand", "rearLowerArms", part)}
-        />
-        <PartSelector
-          label="Rear upper arm"
-          category="rearUpperArms"
-          value={selectorValueFromFields("rearUpperArm", "rearUpperArmBrand", "rearUpperArms", String(tune.chassisSetup?.rear?.upperArm?.brand ?? ""), String(tune.values.rearUpperLink ?? tune.chassisSetup?.rear?.upperArm?.model ?? ""))}
-          emptyLabel="Select rear upper arm"
-          helper={beginnerHelpers.rearUpperArm}
-          onChange={(part) => patchPartSelector("rearUpperArm", "rearUpperArmBrand", "rearUpperArms", part, { rearUpperLink: part.model || part.customName || "" })}
-        />
+        <div className="builderField fieldWide">
+          <TextAreaField
+            label="Rear shock mounting location"
+            value={String(tune.values.rearShockMountingNotes ?? "")}
+            placeholder="ex. Lower arm 3rd hole from outside; top spaced 6mm from the shock tower"
+            rows={3}
+            onChange={(event) => patchValues({ rearShockMountingNotes: event.target.value })}
+          />
+          <small className="fieldHelper">{beginnerHelpers.rearShockMountingNotes}</small>
+        </div>
+        </TuneSubcategory>
+        <TuneSubcategory title="Rear suspension mounts" helper="RF/RR mount choices and visual insert helper." defaultOpen={false}>
         <PartSelector
           label="RF suspension mount"
           category="rearToeBlocks"
@@ -2873,6 +3066,60 @@ function BasicTuneForm({
           partCategory: "rearToeBlocks",
           partBrand: String(tune.values.rrToeBlockBrand ?? tune.values.rearToeBlockBrand ?? "")
         })}
+        </TuneSubcategory>
+        <TuneSubcategory title="Rear geometry / mounting points" helper="Record the holes, hub positions, and damper mounting points used on the rear of the car." defaultOpen={false}>
+          <GeometryPointPicker
+            label="Rear shock tower upper hole"
+            value={String(tune.values.rearShockTowerUpperHole ?? "")}
+            options={shockTowerHoleOptions}
+            helper="Choose the tower hole used by the top of the rear damper."
+            onChange={(value) => patchValues({ rearShockTowerUpperHole: value })}
+          />
+          <GeometryPointPicker
+            label="Rear lower arm damper hole"
+            value={String(tune.values.rearDamperLowerArmHole ?? "")}
+            options={armDamperHoleOptions}
+            helper="Choose the lower arm hole used by the bottom of the rear damper."
+            onChange={(value) => patchValues({ rearDamperLowerArmHole: value })}
+          />
+          <GeometryPointPicker
+            label="Rear hub upper link hole"
+            value={String(tune.values.rearHubCarrierUpperLinkHole ?? "")}
+            options={rearHubCarrierHoleOptions}
+            helper="Record the rear hub carrier hole used by the upper turnbuckle."
+            onChange={(value) => patchValues({ rearHubCarrierUpperLinkHole: value })}
+          />
+          <GeometryPointPicker
+            label="Rear hub lower link / axle height"
+            value={String(tune.values.rearHubCarrierLowerLinkHole ?? "")}
+            options={rearHubCarrierHoleOptions}
+            helper="Use when the hub carrier has lower link or axle-height choices."
+            onChange={(value) => patchValues({ rearHubCarrierLowerLinkHole: value })}
+          />
+          <TextAreaField
+            label="Rear hub and damper geometry notes"
+            value={String(tune.values.rearGeometryNotes ?? "")}
+            placeholder="ex. Upper link outer middle hole, axle center position, 1mm spacer outside ball stud"
+            rows={3}
+            onChange={(event) => patchValues({ rearGeometryNotes: event.target.value })}
+          />
+        </TuneSubcategory>
+        <TuneSubcategory title="Miscellaneous" helper="Optional rear sway bar notes." defaultOpen={false}>
+          <div className="formSplit">
+            <TextField
+              label="Sway Bar"
+              value={String(tune.values.rearSwayBar ?? "")}
+              placeholder="ex. Yokomo rear sway bar, soft, none"
+              onChange={(event) => patchValues({ rearSwayBar: event.target.value })}
+            />
+            <TextField
+              label="Sway bar thickness"
+              value={String(tune.values.rearSwayBarThickness ?? "")}
+              placeholder="ex. 1.2mm"
+              onChange={(event) => patchValues({ rearSwayBarThickness: event.target.value })}
+            />
+          </div>
+        </TuneSubcategory>
         </>
         )}
       </BasicTuneSection>
@@ -3349,15 +3596,62 @@ function BasicTuneSection({ title, helper = "Skip anything you do not know yet."
   );
 }
 
-function TuneSubcategory({ title, helper, children }: { title: string; helper?: string; children: ReactNode }) {
+function TuneSubcategory({ title, helper, children, defaultOpen = true }: { title: string; helper?: string; children: ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="tuneSubcategory">
-      <header>
-        <strong>{title}</strong>
-        {helper ? <span>{helper}</span> : null}
-      </header>
-      <div className="tuneSubcategoryBody">{children}</div>
+    <section className={`tuneSubcategory ${open ? "isOpen" : ""}`}>
+      <button className="tuneSubcategoryHeader" type="button" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+        <span>
+          <strong>{title}</strong>
+          {helper ? <em>{helper}</em> : null}
+        </span>
+        <ChevronDown size={17} aria-hidden="true" />
+      </button>
+      {open ? <div className="tuneSubcategoryBody">{children}</div> : null}
     </section>
+  );
+}
+
+function GeometryPointPicker({
+  label,
+  value,
+  options,
+  helper,
+  onChange
+}: {
+  label: string;
+  value: string;
+  options: string[];
+  helper?: string;
+  onChange: (value: string) => void;
+}) {
+  const selectedIndex = options.findIndex((option) => option === value);
+  return (
+    <fieldset className="geometryPointPicker fieldWide">
+      <legend>{label}</legend>
+      <div className="geometryPointRail" aria-hidden="true">
+        {options.slice(0, -1).map((option, index) => (
+          <span key={option} className={index === selectedIndex ? "selected" : ""}>
+            {index + 1}
+          </span>
+        ))}
+      </div>
+      <div className="geometryPointOptions" role="group" aria-label={label}>
+        {options.map((option) => (
+          <button
+            key={option}
+            type="button"
+            className={value === option ? "selected" : ""}
+            aria-pressed={value === option}
+            onClick={() => onChange(value === option ? "" : option)}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+      {value ? <strong className="geometryPointValue">Selected: {value}</strong> : null}
+      {helper ? <small className="fieldHelper">{helper}</small> : null}
+    </fieldset>
   );
 }
 

@@ -212,6 +212,10 @@ function canManageTune(account: UserAccount | null, tune: Tune | null | undefine
 
 const BASIC_TUNE_VALUE_KEYS = [
   "chassisDeck",
+  "upperDeck",
+  "upperDeckBrand",
+  "lowerDeck",
+  "lowerDeckBrand",
   "chassisCustomizations",
   "conversionKit",
   "frontDamperBrand",
@@ -230,6 +234,10 @@ const BASIC_TUNE_VALUE_KEYS = [
   "rearLowerArmBrand",
   "rearLowerArm",
   "rearLowerArmShims",
+  "rearLowerArmSide",
+  "rearShockMountingNotes",
+  "rearSwayBar",
+  "rearSwayBarThickness",
   "rearHubCarrierBrand",
   "rearHubCarrier",
   "rearAxleLength",
@@ -2284,7 +2292,7 @@ const detailSetupGroups: DetailSetupGroup[] = [
   {
     title: "Chassis",
     helper: "Platform, deck, mount positions, and chassis notes.",
-    keys: ["chassisCatalogProduct", "chassisBrand", "chassisModel", "chassisDeck", "deckBrand", "transmissionGear", "batteryPosition", "servoPosition", "motorPosition", "chassisCustomizations", "conversionKit", "chassisVariant"]
+    keys: ["chassisCatalogProduct", "chassisBrand", "chassisModel", "upperDeck", "upperDeckBrand", "lowerDeck", "lowerDeckBrand", "chassisDeck", "deckBrand", "transmissionGear", "batteryPosition", "servoPosition", "motorPosition", "chassisCustomizations", "conversionKit", "chassisVariant"]
   },
   {
     title: "Track",
@@ -2299,7 +2307,7 @@ const detailSetupGroups: DetailSetupGroup[] = [
   {
     title: "Rear Parts",
     helper: "Rear arms, hubs, axles, wheels, and rear mount blocks.",
-    keys: ["rearShockTower", "rearDamper", "rearDamperBrand", "rearShockOil", "rearDamperOilBrand", "rearShockPiston", "rearPiston", "rearShockShaft", "rearSpringBrand", "rearSpring", "rearUpperArm", "rearUpperArmBrand", "rearLowerArm", "rearLowerArmBrand", "rearLowerArmShims", "rearHubCarrier", "rearHubCarrierBrand", "activeToe", "rearAxle", "rearAxleBrand", "rearAxleLength", "rearHexHub", "rearWheel", "rearWheelBrand", "rearWheelOffset", "rearWheelWidth", "rfToeBlock", "rrToeBlock", "rfToeBlockShim", "rrToeBlockShim", "rearSpacerNotes", "rearMemo"]
+    keys: ["rearShockTower", "rearDamper", "rearDamperBrand", "rearShockOil", "rearDamperOilBrand", "rearShockPiston", "rearPiston", "rearShockShaft", "rearShockMountingNotes", "rearSpringBrand", "rearSpring", "rearSwayBar", "rearSwayBarThickness", "rearUpperArm", "rearUpperArmBrand", "rearLowerArm", "rearLowerArmBrand", "rearLowerArmShims", "rearLowerArmSide", "rearHubCarrier", "rearHubCarrierBrand", "activeToe", "rearAxle", "rearAxleBrand", "rearAxleLength", "rearHexHub", "rearWheel", "rearWheelBrand", "rearWheelOffset", "rearWheelWidth", "rfToeBlock", "rrToeBlock", "rfToeBlockShim", "rrToeBlockShim", "rearSpacerNotes", "rearMemo"]
   },
   {
     title: "Alignment",

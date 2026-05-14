@@ -29,6 +29,7 @@ interface PartSelectorProps {
   emptyLabel?: string;
   allowStock?: boolean;
   allowNotApplicable?: boolean;
+  allowSupportParts?: boolean;
   helper?: string;
   onChange: (value: PartSelectorValue) => void;
 }
@@ -89,7 +90,12 @@ function cleanPartTitle(label: string, partNumber?: string) {
     .replace(/\(\s*(?:left|right)\s+side\s*\)/gi, " ")
     .replace(/\b(?:left|right)\s+(?:or|\/)\s+(?:left|right)\b/gi, " ")
     .replace(/\b(?:left|right)\s+side\b/gi, " ")
+    .replace(/\b(?:left|right)\b/gi, " ")
     .replace(/\b(?:lh|rh|l\/h|r\/h)\b/gi, " ")
+    .replace(/\b(?:l\/r|r\/l)\b/gi, " ")
+    .replace(/\b(?:replacement|spare|optional?|option|upgrade)\s+parts?\b/gi, " ")
+    .replace(/\b(?:replacement|spare)\b/gi, " ")
+    .replace(/\b(?:set|kit)\b/gi, " ")
     .replace(/\[\s*\]/g, "")
     .replace(/\[\s*(?:[A-Z0-9][A-Z0-9.-]*\s*)+\]/gi, (match) => {
       const contents = match.slice(1, -1).trim().split(/\s+/);
@@ -146,6 +152,7 @@ export function PartSelector({
   emptyLabel,
   allowStock = true,
   allowNotApplicable = true,
+  allowSupportParts = false,
   helper,
   onChange
 }: PartSelectorProps) {
@@ -153,6 +160,7 @@ export function PartSelector({
   const [query, setQuery] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
   const [showSupportParts, setShowSupportParts] = useState(false);
+  const [customOpen, setCustomOpen] = useState(false);
   const [customDraft, setCustomDraft] = useState({
     brand: value.brand || "",
     name: value.customName || value.model || "",
@@ -180,6 +188,11 @@ export function PartSelector({
       .slice(0, 120),
     [brandFilter, categories, query, showSupportParts]
   );
+  const catalogGroups = useMemo(() => {
+    const groups = new Map<string, ProductCatalogItem[]>();
+    catalogItems.forEach((item) => groups.set(item.brand, [...(groups.get(item.brand) ?? []), item]));
+    return Array.from(groups.entries()).sort(([brandA], [brandB]) => brandA.localeCompare(brandB));
+  }, [catalogItems]);
 
   function chooseItem(item: ProductCatalogItem, variant?: ProductCatalogVariant) {
     const next = partValueFromItem(item, variant);
@@ -204,6 +217,7 @@ export function PartSelector({
     };
     saveRecentPart(category, next);
     onChange(next);
+    setCustomOpen(false);
     setOpen(false);
   }
 
@@ -252,16 +266,21 @@ export function PartSelector({
         <div className="partSelectorQuickActions">
           {allowStock ? <button type="button" onClick={() => chooseSimple("Stock")}>Use Stock</button> : null}
           {allowNotApplicable ? <button type="button" onClick={() => chooseSimple("Not applicable")}>Not applicable</button> : null}
-          <button type="button" onClick={() => setCustomDraft({ ...customDraft, name: query || customDraft.name })}>Use Custom</button>
+          <button type="button" onClick={() => {
+            setCustomDraft({ ...customDraft, name: query || customDraft.name });
+            setCustomOpen((current) => !current);
+          }}>{customOpen ? "Hide Custom" : "Use Custom"}</button>
           {selected ? <button type="button" onClick={() => {
             onChange({});
             setOpen(false);
           }}>Clear</button> : null}
         </div>
-        <label className="partSelectorSupportToggle">
-          <input type="checkbox" checked={showSupportParts} onChange={(event) => setShowSupportParts(event.target.checked)} />
-          <span>Show hardware / replacement parts</span>
-        </label>
+        {allowSupportParts ? (
+          <label className="partSelectorSupportToggle">
+            <input type="checkbox" checked={showSupportParts} onChange={(event) => setShowSupportParts(event.target.checked)} />
+            <span>Show hardware / replacement parts</span>
+          </label>
+        ) : <div className="partSelectorSupportToggle partSelectorSupportTogglePlaceholder" aria-hidden="true" />}
 
         {!query && !brandFilter && recentParts.length ? (
           <div className="partSelectorRecent">
@@ -282,59 +301,73 @@ export function PartSelector({
         ) : null}
 
         <div className="partSelectorResults">
-          {catalogItems.map((item) => (
-            item.variants && item.variants.length > 1 ? (
-              <div className="partSelectorVariantGroup" key={item.id}>
-                <div className="part-option part-option-heading">
-                  <span className="part-option-media">
-                    {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
-                  </span>
-                  <div className="part-option-copy">
-                    <div className="part-meta-row">
-                      <span className="part-brand">{item.brand}</span>
-                      {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
-                    </div>
-                    <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
-                  </div>
-                  {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
-                </div>
-                {item.variants.map((variant) => (
-                  <button key={`${item.id}-${variant.id}`} type="button" onClick={() => chooseItem(item, variant)}>
-                    <div className="part-option">
-                      <span className="part-option-media part-option-variant">Option</span>
+          {catalogGroups.map(([brand, items]) => (
+            <div className="partSelectorBrandGroup" key={brand}>
+              <div className="partSelectorBrandHeading">{brand}</div>
+              {items.map((item) => (
+                item.variants && item.variants.length > 1 ? (
+                  <div className="partSelectorVariantGroup" key={item.id}>
+                    <div className="part-option part-option-heading">
+                      <span className="part-option-media">
+                        {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
+                      </span>
                       <div className="part-option-copy">
                         <div className="part-meta-row">
-                          <span className="part-brand">Variant</span>
-                          {variant.sku ? <span className="part-number">{variant.sku}</span> : null}
+                          <span className="part-brand">{item.brand}</span>
+                          {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
                         </div>
-                        <div className="part-name">{variant.displayName}</div>
+                        <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
                       </div>
+                      {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
+                    </div>
+                    {item.variants.map((variant) => (
+                      <button key={`${item.id}-${variant.id}`} type="button" onClick={() => chooseItem(item, variant)}>
+                        <div className="part-option">
+                          <span className="part-option-media part-option-variant">Option</span>
+                          <div className="part-option-copy">
+                            <div className="part-meta-row">
+                              <span className="part-brand">Variant</span>
+                              {variant.sku ? <span className="part-number">{variant.sku}</span> : null}
+                            </div>
+                            <div className="part-name">{variant.displayName}</div>
+                          </div>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <button key={item.id} type="button" onClick={() => chooseItem(item, item.variants?.[0])}>
+                    <div className="part-option">
+                      <span className="part-option-media">
+                        {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
+                      </span>
+                      <div className="part-option-copy">
+                        <div className="part-meta-row">
+                          <span className="part-brand">{item.brand}</span>
+                          {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
+                        </div>
+                        <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
+                      </div>
+                      {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
                     </div>
                   </button>
-                ))}
-              </div>
-            ) : (
-              <button key={item.id} type="button" onClick={() => chooseItem(item, item.variants?.[0])}>
-                <div className="part-option">
-                  <span className="part-option-media">
-                    {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
-                  </span>
-                  <div className="part-option-copy">
-                    <div className="part-meta-row">
-                      <span className="part-brand">{item.brand}</span>
-                      {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
-                    </div>
-                    <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
-                  </div>
-                  {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
-                </div>
-              </button>
-            )
+                )
+              ))}
+            </div>
           ))}
-          {!catalogItems.length ? <p className="mutedText">No matching catalog parts yet. Use Custom below to save what you have.</p> : null}
+          {!catalogItems.length ? (
+            <div className="partSelectorEmpty">
+              <strong>No matching catalog parts yet.</strong>
+              <span>Save the part as Custom / Other and it will stay with this tune.</span>
+              <button type="button" onClick={() => {
+                setCustomDraft({ ...customDraft, name: query || customDraft.name });
+                setCustomOpen(true);
+              }}>Add custom part</button>
+            </div>
+          ) : null}
         </div>
 
-        <div className="partSelectorCustom">
+        {customOpen ? <div className="partSelectorCustom">
           <h4>Custom / Other</h4>
           <label>
             <span>{formatFormLabel("Custom brand")}</span>
@@ -355,7 +388,7 @@ export function PartSelector({
           <button className="primaryAction" type="button" onClick={saveCustom}>
             Save custom part
           </button>
-        </div>
+        </div> : null}
         <button className="partSelectorMobileBack" type="button" onClick={() => setOpen(false)}>
           Back to tune
         </button>

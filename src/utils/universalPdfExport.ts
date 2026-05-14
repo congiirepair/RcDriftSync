@@ -80,9 +80,9 @@ function firstValue(...values: unknown[]) {
   return values.find(hasValue) ?? "";
 }
 
-function partValue(part?: { brand?: string; model?: string; notes?: string; length?: string; offset?: string; width?: string; shims?: string; toeAngle?: string | number; rate?: string }) {
+function partValue(part?: { brand?: string; model?: string; notes?: string; length?: string; offset?: string; width?: string; shims?: string; side?: string; toeAngle?: string | number; rate?: string }) {
   if (!part) return "";
-  return [part.brand, part.model, part.length, part.offset ? `${part.offset} offset` : "", part.width ? `${part.width} wide` : "", part.rate, part.toeAngle ? `${part.toeAngle} toe` : "", part.shims ? `${part.shims} shims` : ""]
+  return [part.brand, part.model, part.length, part.offset ? `${part.offset} offset` : "", part.width ? `${part.width} wide` : "", part.rate, part.toeAngle ? `${part.toeAngle} toe` : "", part.side ? `${part.side} side` : "", part.shims ? `${part.shims} shims` : ""]
     .filter(hasValue)
     .join(" ");
 }
@@ -110,6 +110,8 @@ function structuredValueFor(tune: Tune, fieldId: string) {
     chassisBrand: tune.customChassisBrand || tune.chassisBrand || tune.chassisSetup?.chassis?.brand,
     chassisModel: tune.customChassisModel || tune.chassisModel || tune.chassisSetup?.chassis?.model,
     chassisDeck: tune.chassisSetup?.chassis?.deck,
+    lowerDeck: tune.values.lowerDeck ?? tune.chassisSetup?.chassis?.deck,
+    upperDeck: tune.values.upperDeck,
     chassisCustomizations: tune.chassisSetup?.chassis?.customizations,
     frontDamper: partValue(tune.chassisSetup?.front?.dampers),
     frontSpringBrand: tune.chassisSetup?.front?.spring?.brand,
@@ -125,9 +127,11 @@ function structuredValueFor(tune: Tune, fieldId: string) {
     frontLowerArmShims: tune.chassisSetup?.front?.lowerArm?.shims,
     frontToeBlock: partValue(tune.chassisSetup?.front?.toeBlock),
     rearDamper: partValue(tune.chassisSetup?.rear?.dampers),
+    rearShockMountingNotes: tune.chassisSetup?.rear?.dampers?.notes,
     rearUpperArm: partValue(tune.chassisSetup?.rear?.upperArm),
     rearLowerArm: partValue(tune.chassisSetup?.rear?.lowerArm),
     rearLowerArmShims: tune.chassisSetup?.rear?.lowerArm?.shims,
+    rearLowerArmSide: tune.chassisSetup?.rear?.lowerArm?.side,
     rearHubCarrier: partValue(tune.chassisSetup?.rear?.hubCarrier),
     rearAxle: partValue(tune.chassisSetup?.rear?.axle),
     rearAxleLength: tune.chassisSetup?.rear?.axle?.length,
@@ -215,6 +219,7 @@ function additionalSavedRows(tune: Tune, usedFieldIds: Set<string>) {
   flattenRecord(tune.advancedSetup, "Advanced", rows, seen);
   flattenRecord(tune.electronics, "Electronics", rows, seen);
   flattenRecord(tune.chassisSetup, "Chassis Setup", rows, seen);
+  flattenRecord(tune.visualSetup, "Visual Setup", rows, seen);
   return rows.filter((row) => cleanValue(row.value) !== "Skipped").slice(0, 140);
 }
 
@@ -264,7 +269,9 @@ function sectionsFor(tune: Tune, car: Car): UniversalPdfSection[] {
       })
     },
     { title: "Front Setup", rows: rowsFor([["Ride height", "frontRideHeight"], ["Camber", "frontCamber"], ["Toe", "frontToe"], ["Caster", "caster"], ["KPI", "kpi"], ["Ackerman", "ackerman"], ["Track width", "frontTrackWidth"], ["Wheel offset", "frontWheelOffset"], ["Spring", "frontSpring"], ["Shock oil", "frontShockOil"], ["Piston", "frontPiston"], ["Shock shaft", "frontShockShaft"], ["Shock position", "frontShockPosition"], ["Upper arm / link", "frontUpperLink"], ["Lower arm", "frontLowerArm"], ["Knuckle", "frontKnuckle"], ["Knuckle plate", "frontKnucklePlate"], ["Hub", "frontHub"], ["Offset spacer", "frontOffsetSpacer"], ["FF suspension mount", "ffToeBlock"], ["FF left insert", "ffToeBlockLeftInsert"], ["FF right insert", "ffToeBlockRightInsert"], ["FR suspension mount", "frToeBlock"], ["FR left insert", "frToeBlockLeftInsert"], ["FR right insert", "frToeBlockRightInsert"], ["FF shim", "ffToeBlockShim"], ["FR shim", "frToeBlockShim"], ["Spacer notes", "frontSpacerNotes"], ["Memo", "frontMemo"]]) },
-    { title: "Rear Setup", rows: rowsFor([["Ride height", "rearRideHeight"], ["Camber", "rearCamber"], ["Toe", "rearToe"], ["Skid angle", "skidAngle"], ["Track width", "rearTrackWidth"], ["Wheel offset", "rearWheelOffset"], ["Spring", "rearSpring"], ["Shock oil", "rearShockOil"], ["Piston", "rearPiston"], ["Shock shaft", "rearShockShaft"], ["Shock position", "rearShockPosition"], ["Upper arm / link", "rearUpperLink"], ["Lower arm", "rearLowerArm"], ["Hub carrier", "rearHubCarrier"], ["Offset spacer", "rearOffsetSpacer"], ["RF suspension mount", "rfToeBlock"], ["RF left insert", "rfToeBlockLeftInsert"], ["RF right insert", "rfToeBlockRightInsert"], ["RR suspension mount", "rrToeBlock"], ["RR left insert", "rrToeBlockLeftInsert"], ["RR right insert", "rrToeBlockRightInsert"], ["RF shim", "rfToeBlockShim"], ["RR shim", "rrToeBlockShim"], ["Spacer notes", "rearSpacerNotes"], ["Memo", "rearMemo"]]) },
+    { title: "Rear Setup", rows: rowsFor([["Ride height", "rearRideHeight"], ["Camber", "rearCamber"], ["Toe", "rearToe"], ["Skid angle", "skidAngle"], ["Track width", "rearTrackWidth"], ["Wheel offset", "rearWheelOffset"], ["Spring", "rearSpring"], ["Shock oil", "rearShockOil"], ["Piston", "rearPiston"], ["Shock shaft", "rearShockShaft"], ["Shock position", "rearShockPosition"], ["Shock mounting notes", "rearShockMountingNotes"], ["Sway bar", "rearSwayBar"], ["Sway bar thickness", "rearSwayBarThickness"], ["Upper arm / link", "rearUpperLink"], ["Lower arm", "rearLowerArm"], ["Lower arm side", "rearLowerArmSide"], ["Hub carrier", "rearHubCarrier"], ["Offset spacer", "rearOffsetSpacer"], ["RF suspension mount", "rfToeBlock"], ["RF left insert", "rfToeBlockLeftInsert"], ["RF right insert", "rfToeBlockRightInsert"], ["RR suspension mount", "rrToeBlock"], ["RR left insert", "rrToeBlockLeftInsert"], ["RR right insert", "rrToeBlockRightInsert"], ["RF shim", "rfToeBlockShim"], ["RR shim", "rrToeBlockShim"], ["Spacer notes", "rearSpacerNotes"], ["Memo", "rearMemo"]]) },
+    { title: "Front Geometry / Mounting Points", rows: rowsFor([["Front shock tower upper hole", "frontShockTowerUpperHole"], ["Front lower arm damper hole", "frontDamperLowerArmHole"], ["Front damper mounting notes", "frontDamperMountingNotes"], ["Overdose IFS damper / rocker position", "frontIfsDamperPosition"], ["IFS mounting notes", "frontIfsMountingNotes"], ["Knuckle steering link hole", "frontKnuckleSteeringLinkHole"], ["Knuckle upper link / kingpin hole", "frontKnuckleUpperLinkHole"], ["Bellcrank Ackerman hole", "bellcrankAckermanHole"], ["Sliding rack position", "slideRackPosition"], ["DDSS hole", "ddssHole"]]) },
+    { title: "Rear Geometry / Mounting Points", rows: rowsFor([["Rear shock tower upper hole", "rearShockTowerUpperHole"], ["Rear lower arm damper hole", "rearDamperLowerArmHole"], ["Rear hub upper link hole", "rearHubCarrierUpperLinkHole"], ["Rear hub lower link / axle height", "rearHubCarrierLowerLinkHole"], ["Rear hub and damper notes", "rearGeometryNotes"]]) },
     { title: "Drivetrain", rows: rowsFor([["Motor position", "motorPosition"], ["Ball diff setting", "ballDiffSetting"], ["Gear diff oil", "gearDiffOil"], ["LSD setting", "lsdSetting"], ["Spur gear", "spurGear"], ["Pinion gear", "pinionGear"], ["Final drive ratio", "finalDriveRatio"], ["Belt / shaft notes", "beltShaftNotes"], ["Memo", "drivetrainMemo"]]) },
     { title: "Weight and Body", rows: rowsFor([["Battery position", "batteryPosition"], ["Added weight", "addedWeight"], ["Weight location", "weightLocation"], ["Chassis brace", "chassisBrace"], ["Body shell", "bodyShell"], ["Wing", "aeroWing"], ["Aero notes", "aeroNotes"], ["Weight balance notes", "weightBalanceNotes"]]) },
     { title: "ESC Tune", rows: rowsFor([["ESC brand", "escBrand"], ["ESC model", "escModel"], ["Profile name", "escProfileName"], ["Power capacitor", "powerCapacitor"], ["Capacitor connection", "acuvancePowerConnection"], ["Capacitor install", "acuvancePowerInstallMethod"], ["Capacitor mount", "acuvancePowerMountLocation"], ["Capacitor wiring", "acuvancePowerWiringNotes"], ["Throttle curve", "throttleCurve"], ["Throttle punch", "throttlePunch"], ["Brake strength", "brakeStrength"], ["Drag brake", "dragBrake"], ["Neutral brake", "neutralBrake"], ["Initial brake", "initialBrake"], ["Boost timing", "boostTiming"], ["Boost start RPM", "boostStartRpm"], ["Boost end RPM", "boostEndRpm"], ["Turbo timing", "turboTiming"], ["Turbo delay", "turboDelay"], ["Turbo slope", "turboSlope"], ["Motor timing", "motorTiming"], ["PWM frequency", "pwmFrequency"], ["Drive frequency", "driveFrequency"], ["Brake frequency", "brakeFrequency"], ["BEC voltage", "becVoltage"], ["Current limit", "currentLimit"], ["Reverse strength", "reverseStrength"], ["Motor rotation", "motorRotation"], ["Firmware", "escFirmwareVersion"], ["Notes", "escNotes"]]) },

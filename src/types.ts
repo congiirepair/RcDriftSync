@@ -279,6 +279,7 @@ export interface TuneSetupAxle extends TuneSetupPart {
 
 export interface TuneSetupArm extends TuneSetupPart {
   shims?: string;
+  side?: string;
 }
 
 export interface TuneSetupToeBlock extends TuneSetupPart {

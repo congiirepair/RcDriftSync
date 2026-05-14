@@ -6,6 +6,13 @@ interface SourcedWheelProduct {
   productName: string;
   modelNumber: string;
   sourceUrl: string;
+  simplifiedName?: string;
+  displayName?: string;
+  tuneSelectable?: boolean;
+  hiddenFromTuneBuilder?: boolean;
+  reasonHidden?: string;
+  canonicalProductId?: string;
+  variants?: ProductCatalogItem["variants"];
 }
 
 // Sourced from Super-G R/C Drift Arena product feeds on 2026-05-06.
@@ -465,7 +472,10 @@ export const sourcedWheelProducts: SourcedWheelProduct[] = [
     brand: "K-Force",
     productName: "1-10 TAKECHI PROJECT RACING HART 4 SPOKE RIMS +6 (SILVER) + ADVAN TIRES [K FORCE] KF-5827T",
     modelNumber: "KF-5827T",
-    sourceUrl: "https://supergdrift.com/collections/rims/products/1-10-takechi-project-racing-hart-4-spoke-rims-silver-6-4-pack-advan-tires-mounted-inch-down-k-force-kf-5827t"
+    sourceUrl: "https://supergdrift.com/collections/rims/products/1-10-takechi-project-racing-hart-4-spoke-rims-silver-6-4-pack-advan-tires-mounted-inch-down-k-force-kf-5827t",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Mounted wheel/tire bundle, not a standalone wheel choice."
   },
   {
     brand: "K-Force",
@@ -1203,13 +1213,19 @@ export const sourcedWheelProducts: SourcedWheelProduct[] = [
     brand: "Overdose",
     productName: "BuzzBreak Cut-out letter rim sticker (Die-Cut) Decals for Wheels [Overdose] BB-ST-006",
     modelNumber: "BB-ST-006",
-    sourceUrl: "https://supergdrift.com/collections/rims/products/buzzbreak-cut-out-letter-rim-sticker-die-cut-decals-for-wheels-overdose-bb-st-006"
+    sourceUrl: "https://supergdrift.com/collections/rims/products/buzzbreak-cut-out-letter-rim-sticker-die-cut-decals-for-wheels-overdose-bb-st-006",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel decal/sticker accessory, not a standalone wheel."
   },
   {
     brand: "Overdose",
     productName: "BuzzBreak GRAFFITI TYPE Cut-out letter rim sticker (Die-Cut) Decals for Wheels [Overdose] BB-ST-010",
     modelNumber: "BB-ST-010",
-    sourceUrl: "https://supergdrift.com/collections/rims/products/buzzbreak-graffiti-type-cut-out-letter-rim-sticker-die-cut-decals-for-wheels-overdose-bb-st-010"
+    sourceUrl: "https://supergdrift.com/collections/rims/products/buzzbreak-graffiti-type-cut-out-letter-rim-sticker-die-cut-decals-for-wheels-overdose-bb-st-010",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel decal/sticker accessory, not a standalone wheel."
   },
   {
     brand: "Overdose",
@@ -1239,7 +1255,10 @@ export const sourcedWheelProducts: SourcedWheelProduct[] = [
     brand: "Overdose",
     productName: "BuzzBreak OVERDOSE TYPE Cut-out letter rim sticker (Die-Cut) Decals for Wheels [Overdose] BB-ST-008",
     modelNumber: "BB-ST-008",
-    sourceUrl: "https://supergdrift.com/collections/rims/products/buzzbreak-overdose-type-cut-out-letter-rim-sticker-die-cut-decals-for-wheels-overdose-bb-st-008"
+    sourceUrl: "https://supergdrift.com/collections/rims/products/buzzbreak-overdose-type-cut-out-letter-rim-sticker-die-cut-decals-for-wheels-overdose-bb-st-008",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel decal/sticker accessory, not a standalone wheel."
   },
   {
     brand: "Overdose",
@@ -1449,7 +1468,10 @@ export const sourcedWheelProducts: SourcedWheelProduct[] = [
     brand: "Pandora",
     productName: "DISPLAY SMALLER DIAMETER RIM-TIRE GLOWSTAR - STAR ROAD MESH - 30 WHEEL (inch down) [Pandora RC] PAC-544",
     modelNumber: "PAC-544",
-    sourceUrl: "https://supergdrift.com/collections/rims/products/display-smaller-diameter-rim-tire-glowstar-star-road-mesh-30-wheel-inch-down-pandora-rc-pac-544"
+    sourceUrl: "https://supergdrift.com/collections/rims/products/display-smaller-diameter-rim-tire-glowstar-star-road-mesh-30-wheel-inch-down-pandora-rc-pac-544",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rim/tire display bundle, not a standalone wheel choice."
   },
   {
     brand: "RC-Art",
@@ -1587,13 +1609,19 @@ export const sourcedWheelProducts: SourcedWheelProduct[] = [
     brand: "Reve D",
     productName: "Aluminum Brake Disc Type Front Axle Type R for RDX (4.5mm, 2 pieces) Wheel Hub [Reve D] D1-010FDR",
     modelNumber: "D1-010FDR",
-    sourceUrl: "https://supergdrift.com/collections/reve-d/products/aluminum-brake-disc-type-front-axle-type-r-for-rdx-4-5mm-2-pieces-wheel-hub-reve-d-d1-010fdr"
+    sourceUrl: "https://supergdrift.com/collections/reve-d/products/aluminum-brake-disc-type-front-axle-type-r-for-rdx-4-5mm-2-pieces-wheel-hub-reve-d-d1-010fdr",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel hub/axle accessory, not a standalone wheel."
   },
   {
     brand: "Reve D",
     productName: "Aluminum Brake Disc Type Rear Wheel Hub Type R for RDX (5.5mm, 2 pieces) [Reve D] D1-011RDR",
     modelNumber: "D1-011RDR",
-    sourceUrl: "https://supergdrift.com/collections/reve-d/products/aluminum-brake-disc-type-rear-wheel-hub-type-r-for-rdx-5-5mm-2-pieces-reve-d-d1-010rdr"
+    sourceUrl: "https://supergdrift.com/collections/reve-d/products/aluminum-brake-disc-type-rear-wheel-hub-type-r-for-rdx-5-5mm-2-pieces-reve-d-d1-010rdr",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel hub/axle accessory, not a standalone wheel."
   },
   {
     brand: "Reve D",
@@ -1671,25 +1699,37 @@ export const sourcedWheelProducts: SourcedWheelProduct[] = [
     brand: "Reve D",
     productName: "RDX ALUMINUM Front Axle Wheel Hub (4.5mm) Brake Disc [Reve D] D1-010FA",
     modelNumber: "D1-010FA",
-    sourceUrl: "https://supergdrift.com/collections/reve-d/products/rdx-aluminum-front-axle-wheel-hub-4-5mm-brake-disc-reve-d-d1-010fa"
+    sourceUrl: "https://supergdrift.com/collections/reve-d/products/rdx-aluminum-front-axle-wheel-hub-4-5mm-brake-disc-reve-d-d1-010fa",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel hub/axle accessory, not a standalone wheel."
   },
   {
     brand: "Reve D",
     productName: "RDX ALUMINUM Front Axle Wheel Hub (4.5mm) Brake Disc [Reve D] D1-010FDC",
     modelNumber: "D1-010FDC",
-    sourceUrl: "https://supergdrift.com/collections/reve-d/products/rdx-aluminum-front-axle-wheel-hub-4-5mm-brake-disc-reve-d-d1-010fdc"
+    sourceUrl: "https://supergdrift.com/collections/reve-d/products/rdx-aluminum-front-axle-wheel-hub-4-5mm-brake-disc-reve-d-d1-010fdc",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel hub/axle accessory, not a standalone wheel."
   },
   {
     brand: "Reve D",
     productName: "RDX ALUMINUM Rear Axle Wheel Hub (5.5mm) Brake Disc [Reve D] D1-011RDC",
     modelNumber: "D1-011RDC",
-    sourceUrl: "https://supergdrift.com/collections/reve-d/products/rdx-aluminum-front-axle-wheel-hub-4-0mm-brake-disc-reve-d-d1-011rdc"
+    sourceUrl: "https://supergdrift.com/collections/reve-d/products/rdx-aluminum-front-axle-wheel-hub-4-0mm-brake-disc-reve-d-d1-011rdc",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel hub/axle accessory, not a standalone wheel."
   },
   {
     brand: "Reve D",
     productName: "RDX EZ Type Wheel Hub 5.0mm - 7.0mm [Reve D] D1-011R50 D1-011R70",
     modelNumber: "D1-011R50 / D1-011R70",
-    sourceUrl: "https://supergdrift.com/collections/reve-d/products/rdx-ez-type-wheel-hub-5-0mm-7-0mm-reve-d-d1-011r50-d1-011r70"
+    sourceUrl: "https://supergdrift.com/collections/reve-d/products/rdx-ez-type-wheel-hub-5-0mm-7-0mm-reve-d-d1-011r50-d1-011r70",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel hub/axle accessory, not a standalone wheel."
   },
   {
     brand: "Reve D",
@@ -2193,6 +2233,14 @@ export const sourcedWheelProducts: SourcedWheelProduct[] = [
     brand: "Topline",
     productName: "HIGH TRACTION N Model Ver III Deep Face Concave Rims (Green) 5mm - 6mm - 7mm - 8mm [Topline RC] TDW-054G TDW-074G",
     modelNumber: "TDW-082G / TDW-062G / TDW-054G / TDW-074G",
+    simplifiedName: "N Model Ver III Deep Face Concave Wheel",
+    displayName: "N Model Ver III Deep Face Concave Wheel",
+    variants: [
+      { id: "green-5-6-7-8mm-tdw-g", color: "Green", offset: "5mm / 6mm / 7mm / 8mm", sku: "TDW-082G / TDW-062G / TDW-054G / TDW-074G", displayName: "Green / 5-8mm", sourceProductName: "HIGH TRACTION N Model Ver III Deep Face Concave Rims (Green) 5mm - 6mm - 7mm - 8mm [Topline RC] TDW-054G TDW-074G", sourceUrl: "https://supergdrift.com/collections/rims/products/high-traction-n-model-ver-iii-deep-face-concave-rims-green-5mm-6mm-7mm-8mm-topline-rc-tdw-054g-tdw-074g" },
+      { id: "bronze-gun-metal-6-7-8mm-tdw-br", color: "Bronze Gun Metal", offset: "6mm / 7mm / 8mm", sku: "TDW-082BR / TDW-062BR / TDW-074BR", displayName: "Bronze Gun Metal / 6-8mm", sourceProductName: "N Model Ver III Deep Face Concave Rims (Bronze Gun Metal) 6mm - 7mm - 8mm [Topline RC]", sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-bronze-gun-metal-6mm-7mm-8mm-topline-rc" },
+      { id: "white-5-6-7-8mm-tdw-wh", color: "White", offset: "5mm / 6mm / 7mm / 8mm", sku: "TDW-062WH / TDW-082WH / TDW-052WH / TDW-074WH", displayName: "White / 5-8mm", sourceProductName: "N Model Ver III Deep Face Concave Rims (WHITE) 5mm - 6mm - 7mm - 8mm [Topline RC]", sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-white-5mm-6mm-7mm-8mm-topline-rc" },
+      { id: "yellow-5-6-7-8mm-tdw-y", color: "Yellow", offset: "5mm / 6mm / 7mm / 8mm", sku: "TDW-082Y / TDW-062Y / TDW-074Y / TDW-054Y", displayName: "Yellow / 5-8mm", sourceProductName: "N Model Ver III Deep Face Concave Rims (Yellow) 5mm - 6mm - 7mm - 8mm [Topline RC]", sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-yellow-5mm-6mm-7mm-8mm-topline-rc" }
+    ],
     sourceUrl: "https://supergdrift.com/collections/rims/products/high-traction-n-model-ver-iii-deep-face-concave-rims-green-5mm-6mm-7mm-8mm-topline-rc-tdw-054g-tdw-074g"
   },
   {
@@ -2235,19 +2283,31 @@ export const sourcedWheelProducts: SourcedWheelProduct[] = [
     brand: "Topline",
     productName: "N Model Ver III Deep Face Concave Rims (Bronze Gun Metal) 6mm - 7mm - 8mm [Topline RC]",
     modelNumber: "TDW-082BR / TDW-062BR / TDW-074BR",
-    sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-bronze-gun-metal-6mm-7mm-8mm-topline-rc"
+    sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-bronze-gun-metal-6mm-7mm-8mm-topline-rc",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "topline-n-model-ver-iii-deep-face-concave-wheel",
+    reasonHidden: "Collapsed into the Topline N Model Ver III Deep Face Concave Wheel variant family."
   },
   {
     brand: "Topline",
     productName: "N Model Ver III Deep Face Concave Rims (WHITE) 5mm - 6mm - 7mm - 8mm [Topline RC]",
     modelNumber: "TDW-062WH / TDW-082WH / TDW-052WH / TDW-074WH",
-    sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-white-5mm-6mm-7mm-8mm-topline-rc"
+    sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-white-5mm-6mm-7mm-8mm-topline-rc",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "topline-n-model-ver-iii-deep-face-concave-wheel",
+    reasonHidden: "Collapsed into the Topline N Model Ver III Deep Face Concave Wheel variant family."
   },
   {
     brand: "Topline",
     productName: "N Model Ver III Deep Face Concave Rims (Yellow) 5mm - 6mm - 7mm - 8mm [Topline RC]",
     modelNumber: "TDW-082Y / TDW-062Y / TDW-074Y / TDW-054Y",
-    sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-yellow-5mm-6mm-7mm-8mm-topline-rc"
+    sourceUrl: "https://supergdrift.com/collections/rims/products/n-model-ver-iii-deep-face-concave-rims-yellow-5mm-6mm-7mm-8mm-topline-rc",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "topline-n-model-ver-iii-deep-face-concave-wheel",
+    reasonHidden: "Collapsed into the Topline N Model Ver III Deep Face Concave Wheel variant family."
   },
   {
     brand: "Topline",
@@ -2347,13 +2407,20 @@ function wheelCatalogItem(product: SourcedWheelProduct, category: "frontWheels" 
     category,
     brand: product.brand,
     productName: product.productName,
+    simplifiedName: product.simplifiedName,
+    displayName: product.displayName,
     modelNumber: product.modelNumber,
     compatibleChassis: ["Universal"],
     notes: "Sourced wheel/rim product. Verify fitment and offset before ordering.",
     tunableParameters: wheelTunableParameters,
     sourceUrl: product.sourceUrl,
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: product.tuneSelectable,
+    hiddenFromTuneBuilder: product.hiddenFromTuneBuilder,
+    reasonHidden: product.reasonHidden,
+    canonicalProductId: product.canonicalProductId,
+    variants: product.variants
   };
 }
 

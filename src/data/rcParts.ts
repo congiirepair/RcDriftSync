@@ -11,6 +11,9 @@ export interface RcPart {
   notes?: string;
   discontinued?: boolean;
   custom?: boolean;
+  tuneSelectable?: boolean;
+  hiddenFromTuneBuilder?: boolean;
+  reasonHidden?: string;
 }
 
 export const rcParts: RcPart[] = [
@@ -71,16 +74,106 @@ export const rcParts: RcPart[] = [
   { brand: "Gens Ace", model: "3500mAh HV Shorty", slug: "gens-ace-3500mah-hv-shorty", category: "battery", subcategory: "2s-shorty" },
   { brand: "Reedy", model: "Zappers SG5 Shorty", slug: "reedy-zappers-sg5-shorty", category: "battery", subcategory: "2s-shorty" },
 
-  { brand: "DS Racing", model: "LF-4", slug: "ds-racing-lf-4", category: "tire", subcategory: "drift-tire" },
-  { brand: "DS Racing", model: "LF-5", slug: "ds-racing-lf-5", category: "tire", subcategory: "drift-tire" },
-  { brand: "DS Racing", model: "LF-3", slug: "ds-racing-lf-3", category: "tire", subcategory: "drift-tire" },
-  { brand: "Reve D", model: "AS-01", slug: "reve-d-as-01", category: "tire", subcategory: "drift-tire" },
-  { brand: "Yokomo", model: "DRA", slug: "yokomo-dra", category: "tire", subcategory: "drift-tire" },
-  { brand: "Yokomo", model: "DRA Asphalt", slug: "yokomo-dra-asphalt", category: "tire", subcategory: "drift-tire" },
-  { brand: "Yokomo", model: "DRC Carpet / P-Tile", slug: "yokomo-drc-carpet-p-tile", category: "tire", subcategory: "drift-tire" },
-  { brand: "Yokomo", model: "DRC Pre-Assembled", slug: "yokomo-drc-pre-assembled", category: "tire", subcategory: "drift-tire" },
-  { brand: "Yokomo", model: "DRP P-Tile", slug: "yokomo-drp-p-tile", category: "tire", subcategory: "drift-tire" },
-  { brand: "MST", model: "CSR", slug: "mst-csr", category: "tire", subcategory: "drift-tire" },
+  {
+    brand: "DS Racing",
+    model: "LF-4",
+    slug: "ds-racing-lf-4",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into DS Racing Competition III and FINIX tire family selector rows."
+  },
+  {
+    brand: "DS Racing",
+    model: "LF-5",
+    slug: "ds-racing-lf-5",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into DS Racing Competition III and FINIX tire family selector rows."
+  },
+  {
+    brand: "DS Racing",
+    model: "LF-3",
+    slug: "ds-racing-lf-3",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into DS Racing Competition III and FINIX tire family selector rows."
+  },
+  {
+    brand: "Reve D",
+    model: "AS-01",
+    slug: "reve-d-as-01",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the sourced Reve D AS-01 drift tire catalog row."
+  },
+  {
+    brand: "Yokomo",
+    model: "DRA",
+    slug: "yokomo-dra",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the sourced Yokomo DRA drift competition tire catalog row."
+  },
+  {
+    brand: "Yokomo",
+    model: "DRA Asphalt",
+    slug: "yokomo-dra-asphalt",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the sourced Yokomo DRA drift competition tire catalog row."
+  },
+  {
+    brand: "Yokomo",
+    model: "DRC Carpet / P-Tile",
+    slug: "yokomo-drc-carpet-p-tile",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the sourced Yokomo DRC drift competition tire catalog row."
+  },
+  {
+    brand: "Yokomo",
+    model: "DRC Pre-Assembled",
+    slug: "yokomo-drc-pre-assembled",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Pre-assembled mounted tire/wheel set, not a standalone tire selector item."
+  },
+  {
+    brand: "Yokomo",
+    model: "DRP P-Tile",
+    slug: "yokomo-drp-p-tile",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the sourced Yokomo DRP drift competition tire catalog row."
+  },
+  {
+    brand: "MST",
+    model: "CSR",
+    slug: "mst-csr",
+    category: "tire",
+    subcategory: "drift-tire",
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the sourced MST CSR tire catalog row."
+  },
 
   { brand: "Reve D", model: "UL12", slug: "reve-d-ul12", category: "wheel", subcategory: "drift-wheel" },
   { brand: "Yokomo", model: "Racing Performer Wheel", slug: "yokomo-racing-performer-wheel", category: "wheel", subcategory: "drift-wheel" },

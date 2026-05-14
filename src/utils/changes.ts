@@ -9,8 +9,12 @@ const trackedLabels: Record<string, string> = {
   notes: "Notes",
   frontShockPosition: "Front shock position",
   rearShockPosition: "Rear shock position",
+  rearShockMountingNotes: "Rear shock mounting notes",
+  rearSwayBar: "Rear sway bar",
+  rearSwayBarThickness: "Rear sway bar thickness",
   frontUpperLink: "Front upper link",
   rearUpperLink: "Rear upper link",
+  rearLowerArmSide: "Rear lower arm side",
   armMount: "Arm mount",
   servoPosition: "Servo position"
 };

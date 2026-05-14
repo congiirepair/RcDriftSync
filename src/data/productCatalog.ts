@@ -1,4 +1,8 @@
 import { rcParts } from "./rcParts";
+import { catalogExpansion20260513Items } from "./catalogExpansion20260513";
+import { researchedVerifiedCatalogItems } from "./researchedVerifiedCatalogProducts";
+import { sakuraCatalogItems } from "./sakuraCatalogProducts";
+import { shibataGrkCatalogItems } from "./shibataGrkCatalogProducts";
 import { sourcedCatalogItems } from "./sourcedCatalogProducts";
 import { sourcedWheelCatalogItems } from "./sourcedWheelProducts";
 import { sourcedWizardCatalogItems } from "./sourcedWizardProducts";
@@ -6,6 +10,8 @@ import { sourcedWizardCatalogItems } from "./sourcedWizardProducts";
 export const productCatalogCategories = [
   "chassis",
   "decks",
+  "upperDecks",
+  "lowerDecks",
   "dampers",
   "springs",
   "frontKnuckles",
@@ -21,6 +27,11 @@ export const productCatalogCategories = [
   "escs",
   "escTuneProfiles",
   "differentials",
+  "gearDiffs",
+  "ballDiffs",
+  "solidAxles",
+  "spurGears",
+  "pinionGears",
   "frontLowerArms",
   "rearLowerArms",
   "rearHubCarriers",
@@ -40,6 +51,10 @@ export const productCatalogCategories = [
   "motorRotors",
   "motorStators",
   "capacitors",
+  "batteries",
+  "bellcranks",
+  "slideRacks",
+  "steeringRacks",
   "servoHorns",
   "electronicsBundles",
   "mountedWheelTireSets",
@@ -136,6 +151,8 @@ export const defaultTunableParametersByCategory: Partial<Record<ProductCatalogCa
   rearWheels: ["brand", "model", "offset", "diameter", "width", "notes"],
   tires: ["brand", "model", "compound", "diameter", "surface", "notes"],
   springs: ["brand", "model", "front/rear", "length", "rate if known", "notes"],
+  upperDecks: ["deck material", "brace position", "flex setting", "notes"],
+  lowerDecks: ["deck material", "chassis thickness", "battery position", "flex setting", "notes"],
   frontShockTowers: ["upper shock hole", "tower height", "spacer", "notes"],
   rearShockTowers: ["upper shock hole", "tower height", "spacer", "notes"],
   frontUpperArms: ["inner hole", "outer hole", "arm length", "spacer position", "notes"],
@@ -146,8 +163,18 @@ export const defaultTunableParametersByCategory: Partial<Record<ProductCatalogCa
   motorRotors: ["diameter", "magnet strength", "motor compatibility", "notes"],
   motorStators: ["turn rating", "motor compatibility", "notes"],
   capacitors: ["capacity", "voltage", "ESC compatibility", "mounting notes"],
+  batteries: ["cell count", "capacity", "C rating", "shape", "weight", "mounting notes"],
+  bellcranks: ["inner hole", "outer hole", "ackerman effect", "spacer position", "notes"],
+  slideRacks: ["rack position", "steering link hole", "spacer position", "notes"],
+  steeringRacks: ["rack position", "steering link hole", "spacer position", "notes"],
+  motorMounts: ["motor position", "gear mesh notes", "weight position", "notes"],
   servoHorns: ["spline", "length", "offset", "notes"],
-  differentials: ["type", "oil", "grease", "shim setup", "notes"]
+  differentials: ["type", "oil", "grease", "shim setup", "notes"],
+  gearDiffs: ["oil", "grease", "shim setup", "notes"],
+  ballDiffs: ["spring tension", "grease", "break-in notes", "notes"],
+  solidAxles: ["axle type", "drive cup", "shim setup", "notes"],
+  spurGears: ["tooth count", "pitch", "material", "notes"],
+  pinionGears: ["tooth count", "pitch", "material", "notes"]
 };
 
 function itemFromExistingPart(part: (typeof rcParts)[number], category: ProductCatalogCategory): ProductCatalogItem {
@@ -161,7 +188,10 @@ function itemFromExistingPart(part: (typeof rcParts)[number], category: ProductC
     notes: part.notes ?? "",
     tunableParameters: defaultTunableParametersByCategory[category] ?? [],
     userAdded: false,
-    verified: false
+    verified: false,
+    tuneSelectable: part.tuneSelectable,
+    hiddenFromTuneBuilder: part.hiddenFromTuneBuilder,
+    reasonHidden: part.reasonHidden
   };
 }
 
@@ -248,7 +278,7 @@ const hrcCatalogItems: ProductCatalogItem[] = hrcMountedDriftSets.flatMap((item)
 const hrcNerdCatalogItems: ProductCatalogItem[] = [
   catalogItem({
     id: "hrc-hrc000037-nerd-damper-ss-10mm-trf-od",
-    category: "dampers",
+    category: "shockShafts",
     brand: "HRC",
     productName: "NERD Damper SS Shaft - TRF / OD 10mm",
     modelNumber: "HRC000037",
@@ -260,7 +290,7 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
   }),
   catalogItem({
     id: "hrc-hrc000045-nerd-damper-slf-big-bore-11mm-yokomo",
-    category: "dampers",
+    category: "shockShafts",
     brand: "HRC",
     productName: "NERD Damper SLF Big Bore Shaft - Yokomo 11mm",
     modelNumber: "HRC000045",
@@ -272,7 +302,7 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
   }),
   catalogItem({
     id: "hrc-hrc000064-nerd-ultimo-dlc-10mm-trf-od",
-    category: "dampers",
+    category: "shockShafts",
     brand: "HRC",
     productName: "NERD ULTIMO DLC Damper Shaft - TRF / OD 10mm",
     modelNumber: "HRC000064",
@@ -284,7 +314,7 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
   }),
   catalogItem({
     id: "hrc-hrc000065-nerd-ultimo-dlc-11mm-yokomo",
-    category: "dampers",
+    category: "shockShafts",
     brand: "HRC",
     productName: "NERD ULTIMO DLC Damper Shaft - Yokomo 11mm",
     modelNumber: "HRC000065",
@@ -296,7 +326,7 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
   }),
   catalogItem({
     id: "hrc-hrc000039-nerd-adjustable-spring-retainer",
-    category: "dampers",
+    category: "shockAccessories",
     brand: "HRC",
     productName: "NERD Adjustable Spring Retainer",
     modelNumber: "HRC000039",
@@ -304,7 +334,10 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
     notes: "Threaded spring retainer for HRC NERD dampers; supports preload and damper length adjustment at the retainer.",
     tunableParameters: ["preload", "retainer height", "ball end position", "notes"],
     sourceUrl: "https://shopping.rc-art.net/products/e/4589744640391/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Spring retainer/support part, not a complete damper/shock."
   }),
   catalogItem({
     id: "hrc-hrc000037-hrc000039-nerd-ss-combo-trf-od",
@@ -316,7 +349,10 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
     notes: "Combo listing: two pairs of HRC000037 NERD shafts plus two pairs of HRC000039 spring retainers.",
     tunableParameters: ["damping dial turns", "Nd oil weight", "preload", "notes"],
     sourceUrl: "https://supergdrift.com/products/nerd-damper-ss-set-spring-retainers-combo-trf-od-hrc-hrc000037-hrc000039",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Combo support listing; hidden from the complete damper selector."
   }),
   catalogItem({
     id: "hrc-hrc000045-hrc000039-nerd-slf-big-bore-combo-yokomo",
@@ -328,19 +364,30 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
     notes: "Combo listing: two pairs of HRC000045 NERD big bore shafts plus two pairs of HRC000039 spring retainers.",
     tunableParameters: ["damping dial turns", "Nd oil weight", "preload", "notes"],
     sourceUrl: "https://supergdrift.com/products/nerd-damper-slf-big-bore-set-spring-retainers-combo-yokomo-yd2-hrc-hrc000045-hrc000039",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Combo support listing; hidden from the complete damper selector."
   }),
   catalogItem({
     id: "hrc-hrc000040-nerd-nd-shock-oil-10wt",
     category: "damperOils",
     brand: "HRC",
-    productName: "NERD Nd Shock Oil - 10 wt",
-    modelNumber: "HRC000040",
+    productName: "NERD Nd Shock Oil",
+    simplifiedName: "NERD Nd Shock Oil",
+    displayName: "NERD Nd Shock Oil",
+    modelNumber: "HRC000040 / HRC000041 / HRC000042",
     compatibleChassis: ["NERD Damper"],
-    notes: "Dedicated HRC Nd oil for NERD dampers; 10 wt is the softer option.",
+    notes: "Dedicated HRC Nd oil for NERD dampers, collapsed by weight.",
     tunableParameters: defaultTunableParametersByCategory.damperOils ?? [],
     sourceUrl: "https://supergdrift.com/products/nerd-damper-fluid-10-20-30-nd-shock-oil-hrc-hrc000040-hrc000041-hrc000042",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "10wt-hrc000040", displayName: "10 wt", sku: "HRC000040", size: "10 wt" },
+      { id: "20wt-hrc000041", displayName: "20 wt", sku: "HRC000041", size: "20 wt" },
+      { id: "30wt-hrc000042", displayName: "30 wt", sku: "HRC000042", size: "30 wt" }
+    ],
+    aliases: ["NERD Nd Shock Oil - 10 wt", "NERD Nd Shock Oil - 20 wt", "NERD Nd Shock Oil - 30 wt", "HRC000040", "HRC000041", "HRC000042"]
   }),
   catalogItem({
     id: "hrc-hrc000041-nerd-nd-shock-oil-20wt",
@@ -352,7 +399,12 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
     notes: "Dedicated HRC Nd oil for NERD dampers; 20 wt is the medium option.",
     tunableParameters: defaultTunableParametersByCategory.damperOils ?? [],
     sourceUrl: "https://supergdrift.com/products/nerd-damper-fluid-10-20-30-nd-shock-oil-hrc-hrc000040-hrc000041-hrc000042",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "hrc-hrc000040-nerd-nd-shock-oil-10wt",
+    canonicalVariantId: "20wt-hrc000041",
+    reasonHidden: "Collapsed into the HRC NERD Nd Shock Oil variant family."
   }),
   catalogItem({
     id: "hrc-hrc000042-nerd-nd-shock-oil-30wt",
@@ -364,7 +416,12 @@ const hrcNerdCatalogItems: ProductCatalogItem[] = [
     notes: "Dedicated HRC Nd oil for NERD dampers; 30 wt is the harder option.",
     tunableParameters: defaultTunableParametersByCategory.damperOils ?? [],
     sourceUrl: "https://supergdrift.com/products/nerd-damper-fluid-10-20-30-nd-shock-oil-hrc-hrc000040-hrc000041-hrc000042",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "hrc-hrc000040-nerd-nd-shock-oil-10wt",
+    canonicalVariantId: "30wt-hrc000042",
+    reasonHidden: "Collapsed into the HRC NERD Nd Shock Oil variant family."
   })
 ];
 
@@ -577,13 +634,20 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     id: "yokomo-y2-301ara-adjustable-suspension-mount-set",
     category: "rearToeBlocks",
     brand: "Yokomo",
-    productName: "Y2-301ARA Aluminum Adjustable Suspension Mount Set",
-    modelNumber: "Y2-301ARA",
+    productName: "Y2-301A Aluminum Adjustable Suspension Mount Set",
+    simplifiedName: "Y2-301A Aluminum Adjustable Suspension Mount Set",
+    displayName: "Y2-301A Aluminum Adjustable Suspension Mount Set",
+    modelNumber: "Y2-301ARA / Y2-301APA",
     compatibleChassis: ["YD-2", "YD-2Z", "RD 1.0", "SD 1.0", "SD 2.0", "SD 3.0"],
-    notes: "Aluminum adjustable suspension mount set with B/D/E mounts.",
+    notes: "Aluminum adjustable suspension mount set with B/D/E mounts. Color SKUs are collapsed as variants.",
     tunableParameters: ["toe angle", "mount width", "bushing", "shim", "position", "notes"],
     sourceUrl: "https://teamyokomo.com/parts/Y2-301ARA/",
-    verified: true
+    verified: true,
+    aliases: ["Y2-301ARA Aluminum Adjustable Suspension Mount Set", "Y2-301APA Aluminum Adjustable Suspension Mount Set", "Y2-301A Adjustable Suspension Mount"],
+    variants: [
+      { id: "red-y2-301ara", color: "Red", sku: "Y2-301ARA", displayName: "Red" },
+      { id: "purple-y2-301apa", color: "Purple", sku: "Y2-301APA", displayName: "Purple" }
+    ]
   }),
   catalogItem({
     id: "yokomo-y2-301db-brass-rear-suspension-mount-d",
@@ -619,19 +683,31 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Lightweight flexible chassis set for YD-2.",
     tunableParameters: ["deck material", "flex", "brace position", "battery position", "notes"],
     sourceUrl: "https://teamyokomo.com/parts/Y2-002TSA/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Complete chassis set, not a specific upper or lower deck selection."
   }),
   catalogItem({
     id: "yokomo-y2-sbbspa-slf-aluminum-big-bore-shock-set",
     category: "dampers",
     brand: "Yokomo",
-    productName: "Y2-SBBSPA SLF Aluminum Big Bore Shock Set",
-    modelNumber: "Y2-SBBSPA",
+    productName: "SLF Aluminum Big Bore Shock Set",
+    simplifiedName: "SLF Aluminum Big Bore Shock Set",
+    displayName: "SLF Aluminum Big Bore Shock Set",
+    modelNumber: "Y2-SBBSA / Y2-SBBSBL / Y2-SBBSPA / Y2-SBBSRA",
     compatibleChassis: ["YD-2", "YD-2E", "YD-2S", "YD-2SX", "YD-2Z", "YD-2 ZX", "RD 1.0", "SD 1.0", "SD 2.0", "SD 3.0"],
-    notes: "Super low-friction aluminum big bore shock set for YD-2.",
+    notes: "Super low-friction aluminum big bore shock set for YD/RD/SD/MD platforms. Color SKUs are collapsed as variants.",
     tunableParameters: ["shock oil", "piston", "shaft", "spring cup", "preload", "notes"],
     sourceUrl: "https://teamyokomo.com/parts/Y2-SBBSPA/",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-y2-sbbsa", color: "Black", sku: "Y2-SBBSA", displayName: "Black" },
+      { id: "blue-y2-sbbsbl", color: "Blue", sku: "Y2-SBBSBL", displayName: "Blue" },
+      { id: "purple-y2-sbbspa", color: "Purple", sku: "Y2-SBBSPA", displayName: "Purple" },
+      { id: "red-y2-sbbsra", color: "Red", sku: "Y2-SBBSRA", displayName: "Red" }
+    ],
+    aliases: ["Y2-SBBSA", "Y2-SBBSBL", "Y2-SBBSPA", "Y2-SBBSRA", "Yokomo SLF Big Bore Shock Set"]
   }),
   catalogItem({
     id: "reve-d-rdx-kit-standard-molded-shock-assembly",
@@ -655,7 +731,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "RDX standard molded shock cap and shock end replacement set.",
     tunableParameters: ["shock end", "cap", "maintenance notes", "notes"],
     sourceUrl: "https://teamreved.com/product/d1-s6m",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Shock cap/end replacement set, not a complete damper/shock."
   }),
   catalogItem({
     id: "reve-d-d1-s4moc-rdx-molded-shock-o-ring-cap",
@@ -667,7 +746,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "RDX standard molded shock O-ring cap replacement set.",
     tunableParameters: ["O-ring cap", "maintenance notes", "notes"],
     sourceUrl: "https://teamreved.com/product/d1-s4moc",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Shock O-ring cap replacement set, not a complete damper/shock."
   }),
   catalogItem({
     id: "yokomo-d-180a-rwd-drift-spring-set",
@@ -703,7 +785,32 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "8.0mm aluminum clamping wheel hub.",
     tunableParameters: ["hub thickness", "track width", "wheel spacing", "notes"],
     sourceUrl: "https://teamyokomo.com/parts/Y2-011CB8A/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Front wheel hub/hex spacing hardware, not a front axle shaft."
+  }),
+  catalogItem({
+    id: "reve-d-rdx-front-axle-series",
+    category: "frontAxles",
+    brand: "Reve D",
+    productName: "RDX Front Axle Series",
+    simplifiedName: "RDX Front Axle Series",
+    displayName: "RDX Front Axle Series",
+    modelNumber: "D1-010F / D1-010FA / D1-010FA2 / D1-010FDC",
+    partNumber: "D1-010F / D1-010FA / D1-010FA2 / D1-010FDC",
+    compatibleChassis: ["RDX"],
+    notes: "Reve D front axle family for RDX. Includes the standard steel axle, 4.0mm aluminum axle, 2.0mm aluminum axle for D1-MK-B2, and aluminum brake-disc front axle.",
+    tunableParameters: defaultTunableParametersByCategory.frontAxles ?? [],
+    sourceUrl: "https://teamreved.com/product-cat/drive-train",
+    verified: true,
+    variants: [
+      { id: "d1-010f-steel", sku: "D1-010F", displayName: "Steel Front Axle", sourceProductName: "RDX Steel Front Axle", sourceUrl: "https://teamreved.com/product/d1-010f" },
+      { id: "d1-010fa-aluminum-4mm", sku: "D1-010FA", size: "4.0mm", displayName: "Aluminum 4.0mm", sourceProductName: "RDX Aluminum Front Axle 4.0mm", sourceUrl: "https://teamreved.com/product/d1-010fa" },
+      { id: "d1-010fa2-aluminum-2mm", sku: "D1-010FA2", size: "2.0mm", displayName: "Aluminum 2.0mm D1-MK-B2", sourceProductName: "RDX Aluminum Front Axle 2.0mm", sourceUrl: "https://teamreved.com/product-cat/drive-train" },
+      { id: "d1-010fdc-brake-disc", sku: "D1-010FDC", displayName: "Aluminum Brake Disc", sourceProductName: "Aluminum Brake Disc Front Axle", sourceUrl: "https://www.hobbytown.com/reve-d-aluminum-brake-disk-front-axle-2-rv-d1-010fdc/p1546828" }
+    ],
+    aliases: ["D1-010F", "D1-010FA", "D1-010FA2", "D1-010FDC", "RDX Steel Front Axle", "RDX Aluminum Front Axle"]
   }),
   catalogItem({
     id: "yokomo-y2-010a-rear-universal-drive-shaft-49mm",
@@ -718,6 +825,81 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     verified: true
   }),
   catalogItem({
+    id: "yokomo-b9-010raa-rear-c-clip-universal-445mm",
+    category: "rearAxles",
+    brand: "Yokomo",
+    productName: "B9-010RAA Rear C-Clip Universal 44.5mm",
+    simplifiedName: "Rear C-Clip Universal 44.5mm",
+    displayName: "Rear C-Clip Universal 44.5mm",
+    modelNumber: "B9-010RAA",
+    partNumber: "B9-010RAA",
+    compatibleChassis: ["BD9", "BD10", "YD-2", "RD", "SD", "MD"],
+    notes: "Rear universal drive shaft set with 44.5mm aluminum bones.",
+    tunableParameters: defaultTunableParametersByCategory.rearAxles ?? [],
+    sourceUrl: "https://en.banzaihobby.com/products/b9-010raa-rear-c-clip-universal-for-bd-9",
+    verified: true
+  }),
+  catalogItem({
+    id: "yokomo-b9-01445ba-aluminum-universal-bone-445mm",
+    category: "rearAxles",
+    brand: "Yokomo",
+    productName: "B9-01445BA Aluminum Universal Bone 44.5mm",
+    simplifiedName: "Aluminum Universal Bone 44.5mm",
+    displayName: "Aluminum Universal Bone 44.5mm",
+    modelNumber: "B9-01445BA",
+    partNumber: "B9-01445BA",
+    compatibleChassis: ["BD9", "BD10", "YD-2", "RD", "SD", "MD"],
+    notes: "44.5mm aluminum universal bone used in BD9 standard rear universal shaft setups and compatible 44.5mm rear universal shaft builds.",
+    tunableParameters: defaultTunableParametersByCategory.rearAxles ?? [],
+    sourceUrl: "https://www.drifted.nl/en/aluminium-universal-bone-445mm-1pc.html",
+    verified: true
+  }),
+  catalogItem({
+    id: "mst-820004-rmx-2-universal-rear-driveshaft-42mm",
+    category: "rearAxles",
+    brand: "MST",
+    productName: "820004 RMX 2.0 Universal Rear Driveshaft 42mm",
+    simplifiedName: "RMX 2.0 Universal Rear Driveshaft 42mm",
+    displayName: "RMX 2.0 Universal Rear Driveshaft 42mm",
+    modelNumber: "820004",
+    partNumber: "820004",
+    compatibleChassis: ["RMX 2.0", "RMX 2.5", "RMX EX", "RMX-M", "RFX", "FXX 2.0"],
+    notes: "MST 42mm universal rear driveshaft assembly.",
+    tunableParameters: defaultTunableParametersByCategory.rearAxles ?? [],
+    sourceUrl: "https://www.rc-mst.com/product_info.php?class_sn=1&class_sn2=33&sn=3559",
+    verified: true
+  }),
+  catalogItem({
+    id: "mst-820005-cvd-universal-dogbone-shaft-44mm",
+    category: "rearAxles",
+    brand: "MST",
+    productName: "820005 CVD Universal Dogbone Shaft 44mm",
+    simplifiedName: "CVD Universal Dogbone Shaft 44mm",
+    displayName: "CVD Universal Dogbone Shaft 44mm",
+    modelNumber: "820005",
+    partNumber: "820005",
+    compatibleChassis: ["RMX", "RMX 2.0", "RMX 2.5", "RMX EX", "RMX-M", "MRX", "FRX", "FXX", "FXX 2.0"],
+    notes: "MST steel 44mm universal dogbone shaft for RC drift chassis.",
+    tunableParameters: defaultTunableParametersByCategory.rearAxles ?? [],
+    sourceUrl: "https://www.elitedriftshop.com/en/shop/mst-cvd-universal-dogbone-shaft-44mm-mst820005/",
+    verified: true
+  }),
+  catalogItem({
+    id: "mst-310065-universal-rear-axle",
+    category: "rearAxles",
+    brand: "MST",
+    productName: "310065 Universal Rear Axle",
+    simplifiedName: "Universal Rear Axle",
+    displayName: "Universal Rear Axle",
+    modelNumber: "310065",
+    partNumber: "310065",
+    compatibleChassis: ["RMX", "RMX 2.0", "RMX 2.5", "RMX EX", "RMX-M", "MRX", "FRX", "FXX", "FXX 2.0"],
+    notes: "MST universal rear axle component for RMX/FXX/MRX/FRX driveline setups.",
+    tunableParameters: defaultTunableParametersByCategory.rearAxles ?? [],
+    sourceUrl: "https://www.rc-mst.com/product_info.php?class_sn=1&class_sn2=33&sn=2729",
+    verified: true
+  }),
+  catalogItem({
     id: "mst-atk-v3-upright",
     category: "frontKnuckles",
     brand: "MST",
@@ -727,19 +909,29 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "MST ATK V3 front upright/knuckle listed in MST upgrade comparison materials.",
     tunableParameters: ["trail", "upper arm position", "lower arm position", "steering stop", "spacer position", "notes"],
     sourceUrl: "https://www.rc-mst.com/_upload/down_item_img/202508280847082a.pdf",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from front knuckle selector by catalog review; keep the aluminum ATK V3 upright row instead."
   }),
   catalogItem({
     id: "mst-820162-atk-v3-aluminum-front-upright",
     category: "frontKnuckles",
     brand: "MST",
-    productName: "820162 ATK V3 Aluminum Front Upright",
-    modelNumber: "820162",
+    productName: "ATK V3 Aluminum Front Upright",
+    simplifiedName: "ATK V3 Aluminum Front Upright",
+    displayName: "ATK V3 Aluminum Front Upright",
+    modelNumber: "820162BK / 820162R",
     compatibleChassis: ["RMX 2.0", "RMX 2.5", "RMX EX", "RMX-M", "MRX", "FRX"],
-    notes: "Aluminum ATK V3 front upright/hub set.",
+    notes: "Aluminum ATK V3 front upright/hub set. Color SKUs are grouped as variants.",
     tunableParameters: ["trail", "upper arm position", "lower arm position", "spacer position", "steering stop", "notes"],
     sourceUrl: "https://www.hobbytown.com/mst-aluminum-atk-v3-front-wheel-hub-uprights-red-2-mxs-820162r/p1644780",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-820162bk", color: "Black", sku: "820162BK", displayName: "Black" },
+      { id: "red-820162r", color: "Red", sku: "820162R", displayName: "Red" }
+    ],
+    aliases: ["MST ATK V3 Upright", "820162", "820162BK", "820162R"]
   }),
   catalogItem({
     id: "mst-820147-aluminum-front-lower-arm-set",
@@ -755,15 +947,18 @@ const chassisCatalogItems: ProductCatalogItem[] = [
   }),
   catalogItem({
     id: "mst-210575-aluminum-front-upper-arm-set",
-    category: "frontLowerArms",
+    category: "frontUpperArms",
     brand: "MST",
-    productName: "210575 Aluminum Front Upper Arm Set",
-    modelNumber: "210575",
+    productName: "RMX 2.0 Aluminum Front Upper Arm Set",
+    simplifiedName: "RMX 2.0 Aluminum Front Upper Arm Set",
+    displayName: "RMX 2.0 Aluminum Front Upper Arm Set",
+    modelNumber: "210575 / 210575R",
     compatibleChassis: ["RMX 2.0", "RMX 2.5", "FMX 2.0"],
     notes: "MST aluminum front upper arm set. Included in catalog as front suspension arm setup support.",
     tunableParameters: ["caster", "inner shim", "outer shim", "arm length", "spacer position", "notes"],
     sourceUrl: "https://www.driftmanjirc.com/products/mst-rmx-rrx-2-0-aluminium-upper-arm-set-rc-drift-car-210575",
-    verified: true
+    verified: true,
+    aliases: ["210575 Aluminum Front Upper Arm Set", "RMX 2.0 Aluminum Upper Arm Set (RED) [MST] 210575R"]
   }),
   catalogItem({
     id: "mst-210070-ht-rear-lower-arm-wheel-hub",
@@ -775,7 +970,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "HT rear lower arm and wheel hub listed in MST exploded view materials.",
     tunableParameters: ["inner shim", "outer shim", "arm length", "hub spacing", "notes"],
     sourceUrl: "https://www.rc-mst.com/_upload/down_item_img/202011040303542a.pdf",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Bundled rear lower arm and wheel hub row, not a clean rear lower arm selector item."
   }),
   catalogItem({
     id: "mst-230069-suspension-mount-set",
@@ -799,7 +997,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "ESC rear mount set from MST upgrade comparison material.",
     tunableParameters: ["ESC position", "weight bias", "rear traction", "notes"],
     sourceUrl: "https://www.rc-mst.com/_upload/down_item_img/202508280847082a.pdf",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "ESC rear mount support part, not an upper/lower deck or chassis plate."
   }),
   catalogItem({
     id: "mst-820157-dk-rwd-drift-spring-set",
@@ -817,13 +1018,33 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     id: "mst-820103-820112-suspension-coil-spring-set",
     category: "springs",
     brand: "MST",
-    productName: "820103-820112 Suspension Coil Spring Set",
-    modelNumber: "820103/820104/820105/820106/820110/820112",
+    productName: "MST Suspension Coil Spring Set",
+    simplifiedName: "MST Suspension Coil Spring Set",
+    displayName: "MST Suspension Coil Spring Set",
+    modelNumber: "820103 / 820104 / 820105 / 820106 / 820107 / 820108 / 820109 / 820110 / 820112",
     compatibleChassis: ["RMX 2.0", "RMX 2.5", "RRX", "FXX", "MRX", "FMX 2.0"],
-    notes: "MST suspension coil spring sets in multiple rates.",
+    notes: "MST suspension coil spring family collapsed by length and rate.",
     tunableParameters: ["front/rear", "spring length", "spring rate", "notes"],
     sourceUrl: "https://www.driftmanjirc.com/collections/rc-mst-max-speed-technology/products/rc-drift-suspension-coil-spring-set-mst-various-spring-rates-drift-manji",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "31mm-hard-820103", displayName: "31mm Hard", sku: "820103", size: "31mm" },
+      { id: "31mm-soft-820104", displayName: "31mm Soft", sku: "820104", size: "31mm" },
+      { id: "31mm-super-soft-820105", displayName: "31mm Super Soft", sku: "820105", size: "31mm" },
+      { id: "32mm-hard-820106", displayName: "32mm Hard", sku: "820106", size: "32mm" },
+      { id: "32mm-medium-820107", displayName: "32mm Medium", sku: "820107", size: "32mm" },
+      { id: "32mm-soft-820108", displayName: "32mm Soft", sku: "820108", size: "32mm" },
+      { id: "32mm-super-soft-820109", displayName: "32mm Super Soft", sku: "820109", size: "32mm" },
+      { id: "32mm-extreme-soft-820110", displayName: "32mm Extreme Soft", sku: "820110", size: "32mm" },
+      { id: "30mm-dk-coil-820112", displayName: "30mm DK Coil", sku: "820112", size: "30mm" }
+    ],
+    aliases: [
+      "32MM Coil (HARD) Drift Springs Set [MST] 820106",
+      "32MM Coil (MEDIUM) Drift Springs Set [MST] 820107",
+      "32MM Soft Drift Springs Set for 1/10 Drift Car [MST] 820108",
+      "32MM Super Soft Drift Springs Set [MST] 820109",
+      "32MM Extreme Soft Drift Springs Set [MST] 820110"
+    ]
   }),
   catalogItem({
     id: "mst-832109-gt-adjustable-offset-wheel",
@@ -889,13 +1110,18 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     id: "overdose-od2277-adjustable-aluminum-rear-hub-carriers",
     category: "rearHubCarriers",
     brand: "Overdose",
-    productName: "OD2277 Adjustable Aluminum Rear Hub Carriers",
-    modelNumber: "OD2277",
-    compatibleChassis: ["GALM", "GALM V2", "YD-2"],
-    notes: "Adjustable aluminum rear hub carriers with toe, tread, axle height, and upper arm mounting adjustment.",
+    productName: "Adjustable Aluminum Rear Upright",
+    modelNumber: "OD2277 / OD2278 / OD2279",
+    compatibleChassis: ["GALM", "GALM V2", "Vacula", "Vacula II", "XEX Vspec", "XEX specR", "YD-2", "YD-4"],
+    notes: "Adjustable aluminum rear upright for OD, YD-4, and YD-2 platforms with toe angle, tread width, axle height, and upper arm mounting adjustment.",
     tunableParameters: ["toe angle", "tread width", "axle height", "upper arm hole", "spacer position", "notes"],
-    sourceUrl: "https://www.elitedriftshop.com/en/shop/overdose-adjustable-aluminum-rear-hub-carriers-purple-od2277b/",
-    verified: true
+    sourceUrl: "https://shop.weld-jp.com/eshopdo/refer/vidOD2277.html?view_id=OD2277",
+    verified: true,
+    variants: [
+      { id: "purple-od2277", color: "Purple", sku: "OD2277", displayName: "Purple" },
+      { id: "red-od2278", color: "Red", sku: "OD2278", displayName: "Red" },
+      { id: "black-od2279", color: "Black", sku: "OD2279", displayName: "Black" }
+    ]
   }),
   catalogItem({
     id: "overdose-od2898-es-aluminum-rear-upright",
@@ -907,19 +1133,39 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "ES aluminum rear upright for GALM series.",
     tunableParameters: ["upper arm hole", "suspension shaft height", "pin diameter", "spacer position", "notes"],
     sourceUrl: "https://rckitout.com/product/overdose-es-aluminum-rear-upright-for-galm-series-red-od2898",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the ES Aluminum Rear Upright color-variant family."
   }),
   catalogItem({
-    id: "overdose-od2965-tc-aluminum-suspension-mount-572",
+    id: "overdose-tc-aluminum-low-mount-suspension-mount-galm",
     category: "rearToeBlocks",
     brand: "Overdose",
-    productName: "OD2965 TC Aluminum Suspension Mount 57.2mm",
-    modelNumber: "OD2965",
+    productName: "TC Aluminum Low Mount Suspension Mount for GALM",
+    modelNumber: "OD2920 / OD2921 / OD2922 / OD2923 / OD2924 / OD2925 / OD2926 / OD2927 / OD2928 / OD2965 / OD2966 / OD2967 / OD2968 / OD2969 / OD2970",
     compatibleChassis: ["GALM", "GALM V2"],
-    notes: "TAKE-C produced TC suspension mount, 57.2mm width.",
+    notes: "TAKE-C produced TC low-mount suspension mount for GALM. Available in 43.7mm, 48.2mm, 52.7mm, 57.2mm, and 61.7mm widths across purple, red, and black.",
     tunableParameters: ["mount width", "roll center", "toe angle", "shim", "position", "notes"],
-    sourceUrl: "https://rcpace.com/overdose-tc-aluminium-suspension-mount-57-2mm-for-galm-purple.html",
-    verified: true
+    sourceUrl: "https://supergdrift.com/products/tc-aluminum-low-mount-suspension-mounts-toe-blocks-43-7mm-48-2mm-52-7mm-57-2mm-61-7mm-red-purple-black-overdose",
+    verified: true,
+    variants: [
+      { id: "43-7mm-purple-od2920", color: "Purple", size: "43.7mm", sku: "OD2920", displayName: "43.7mm / Purple" },
+      { id: "43-7mm-red-od2921", color: "Red", size: "43.7mm", sku: "OD2921", displayName: "43.7mm / Red" },
+      { id: "43-7mm-black-od2922", color: "Black", size: "43.7mm", sku: "OD2922", displayName: "43.7mm / Black" },
+      { id: "48-2mm-purple-od2923", color: "Purple", size: "48.2mm", sku: "OD2923", displayName: "48.2mm / Purple" },
+      { id: "48-2mm-red-od2924", color: "Red", size: "48.2mm", sku: "OD2924", displayName: "48.2mm / Red" },
+      { id: "48-2mm-black-od2925", color: "Black", size: "48.2mm", sku: "OD2925", displayName: "48.2mm / Black" },
+      { id: "52-7mm-purple-od2926", color: "Purple", size: "52.7mm", sku: "OD2926", displayName: "52.7mm / Purple" },
+      { id: "52-7mm-red-od2927", color: "Red", size: "52.7mm", sku: "OD2927", displayName: "52.7mm / Red" },
+      { id: "52-7mm-black-od2928", color: "Black", size: "52.7mm", sku: "OD2928", displayName: "52.7mm / Black" },
+      { id: "57-2mm-purple-od2965", color: "Purple", size: "57.2mm", sku: "OD2965", displayName: "57.2mm / Purple" },
+      { id: "57-2mm-red-od2966", color: "Red", size: "57.2mm", sku: "OD2966", displayName: "57.2mm / Red" },
+      { id: "57-2mm-black-od2967", color: "Black", size: "57.2mm", sku: "OD2967", displayName: "57.2mm / Black" },
+      { id: "61-7mm-purple-od2968", color: "Purple", size: "61.7mm", sku: "OD2968", displayName: "61.7mm / Purple" },
+      { id: "61-7mm-red-od2969", color: "Red", size: "61.7mm", sku: "OD2969", displayName: "61.7mm / Red" },
+      { id: "61-7mm-black-od2970", color: "Black", size: "61.7mm", sku: "OD2970", displayName: "61.7mm / Black" }
+    ]
   }),
   catalogItem({
     id: "overdose-od3868-aluminum-rear-upper-arm-mount",
@@ -931,7 +1177,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Aluminum rear upper arm mount for GALM with multiple upper arm positions.",
     tunableParameters: ["upper arm position", "shock tower level", "camber gain", "notes"],
     sourceUrl: "https://www.drifted.nl/en/alum-rear-upper-arm-mount-for-galm-red.html",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear upper arm mount support/tuning bracket, not a suspension mount or toe block."
   }),
   catalogItem({
     id: "overdose-od2874-rear-mount-kit",
@@ -943,7 +1192,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Rear mount kit for GALM/GALM Ver.2.",
     tunableParameters: ["motor position", "rear traction", "weight bias", "notes"],
     sourceUrl: "https://www.mrcplaza.com.au/products/overdose-rear-mount-kit",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; motor/rear mount kit."
   }),
   catalogItem({
     id: "overdose-od3836-rear-mount-kit-type-2",
@@ -955,7 +1207,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Rear mount kit Type-2 for GALM/GALM Ver.2.",
     tunableParameters: ["motor position", "gear drive", "weight bias", "rear traction", "notes"],
     sourceUrl: "https://www.drifted.nl/nl/rear-mount-kit-type-2-for-galm-galm-ver2-red.html",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; motor/rear mount kit."
   }),
   catalogItem({
     id: "rhino-rr-1400-shark-adjustable-front-knuckle",
@@ -973,49 +1228,104 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     id: "rhino-rr-1100-shark-ball-bearing-lower-arms",
     category: "frontLowerArms",
     brand: "Rhino Racing",
-    productName: "RR-1100 SHARK Ball Bearing Lower Arms",
-    modelNumber: "RR-1100",
+    productName: "SHARK Lower Aluminum Arms",
+    modelNumber: "RR-1100R / RR-1100P / RR-1100B / RR-1100BL",
     compatibleChassis: ["Shark", "Shark Final Form", "YD-2", "RMX", "RDX"],
-    notes: "SHARK lower aluminum arms with bearing pivots and spring-loaded shimming.",
+    notes: "SHARK lower aluminum arms with low-friction pivots and spring-loaded shimming.",
     tunableParameters: ["inner shim", "outer shim", "track width", "spring-loaded shimming", "arm length", "notes"],
     sourceUrl: "https://supergdrift.com/collections/lower-upper-arms/products/shark-lower-aluminum-arms-red-purple-black-rhino-racing-rr-1100r-rr-1100p-rr-1100b",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "red-rr-1100r", color: "Red", sku: "RR-1100R", displayName: "Red" },
+      { id: "purple-rr-1100p", color: "Purple", sku: "RR-1100P", displayName: "Purple" },
+      { id: "black-rr-1100b", color: "Black", sku: "RR-1100B", displayName: "Black" },
+      { id: "blue-rr-1100bl", color: "Blue", sku: "RR-1100BL", displayName: "Blue" }
+    ]
   }),
   catalogItem({
     id: "rhino-rr-1100-shark-ball-bearing-rear-lower-arms",
     category: "rearLowerArms",
     brand: "Rhino Racing",
-    productName: "RR-1100 SHARK Ball Bearing Lower Arms",
-    modelNumber: "RR-1100",
+    productName: "SHARK Lower Aluminum Arms",
+    modelNumber: "RR-1100R / RR-1100P / RR-1100B / RR-1100BL",
     compatibleChassis: ["Shark", "Shark Final Form", "YD-2", "RMX", "RDX"],
-    notes: "SHARK lower aluminum arms used as front or rear lower arms depending on build.",
+    notes: "SHARK lower aluminum arms with low-friction pivots, used as front or rear lower arms depending on build.",
     tunableParameters: ["inner shim", "outer shim", "track width", "spring-loaded shimming", "arm length", "notes"],
     sourceUrl: "https://supergdrift.com/collections/lower-upper-arms/products/shark-lower-aluminum-arms-red-purple-black-rhino-racing-rr-1100r-rr-1100p-rr-1100b",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "red-rr-1100r", color: "Red", sku: "RR-1100R", displayName: "Red" },
+      { id: "purple-rr-1100p", color: "Purple", sku: "RR-1100P", displayName: "Purple" },
+      { id: "black-rr-1100b", color: "Black", sku: "RR-1100B", displayName: "Black" },
+      { id: "blue-rr-1100bl", color: "Blue", sku: "RR-1100BL", displayName: "Blue" }
+    ]
+  }),
+  catalogItem({
+    id: "rhino-rr-1105-sr-series-lower-rear-h-arms",
+    category: "rearLowerArms",
+    brand: "Rhino Racing",
+    productName: "SR Series Lower Rear H-Arms",
+    modelNumber: "RR-1105R / RR-1105P / RR-1105B / RR-1105BL",
+    compatibleChassis: ["Shark", "SHARK SR", "YD", "RD", "SD"],
+    notes: "SR Series lower rear H-arm set for Shark, YD, RD, and SD platforms. Includes lower rear arms and insert spacers.",
+    tunableParameters: ["inner shim", "outer shim", "track width", "insert spacer", "arm length", "notes"],
+    sourceUrl: "https://supergdrift.com/collections/lower-upper-arms/products/sr-series-lower-rear-h-arms-set-blue-red-purple-black-rhino-racing-rr-1105",
+    verified: true,
+    variants: [
+      { id: "red-rr-1105r", color: "Red", sku: "RR-1105R", displayName: "Red" },
+      { id: "purple-rr-1105p", color: "Purple", sku: "RR-1105P", displayName: "Purple" },
+      { id: "black-rr-1105b", color: "Black", sku: "RR-1105B", displayName: "Black" },
+      { id: "blue-rr-1105bl", color: "Blue", sku: "RR-1105BL", displayName: "Blue" }
+    ]
   }),
   catalogItem({
     id: "rhino-rr-1500-shark-rear-upright-set",
     category: "rearHubCarriers",
     brand: "Rhino Racing",
-    productName: "RR-1500 SHARK Rear Upright Set",
-    modelNumber: "RR-1500",
-    compatibleChassis: ["Shark", "Shark Final Form"],
+    productName: "SHARK Rear Upright",
+    modelNumber: "RR-1500B / RR-1500P / RR-1500R",
+    compatibleChassis: ["Shark", "Shark Final Form", "SHARK DDSS"],
     notes: "SHARK aluminum rear upright/knuckle set.",
     tunableParameters: ["upper arm hole", "active camber", "spacer position", "rear traction", "notes"],
     sourceUrl: "https://www.elitedriftshop.com/en/product/rhino-racing-shark-aluminum-rear-knuckles-uprights-purple-rr-1500p/",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-rr-1500b", color: "Black", sku: "RR-1500B", displayName: "Black" },
+      { id: "purple-rr-1500p", color: "Purple", sku: "RR-1500P", displayName: "Purple" },
+      { id: "red-rr-1500r", color: "Red", sku: "RR-1500R", displayName: "Red" }
+    ]
   }),
   catalogItem({
     id: "rhino-rr-1300-shark-suspension-mount-kit",
     category: "rearToeBlocks",
     brand: "Rhino Racing",
-    productName: "RR-1300 SHARK Suspension Mount Kit",
-    modelNumber: "RR-1300",
-    compatibleChassis: ["Shark", "Shark Final Form"],
-    notes: "SHARK suspension mount kit included in Final Form assemblies.",
+    productName: "SHARK Suspension Mount Set",
+    modelNumber: "RR-1300R / RR-1300P / RR-1300B",
+    compatibleChassis: ["Shark", "Shark Final Form", "SHARK DDSS", "Yokomo YD-2", "MST RMX", "Reve D RDX"],
+    notes: "SHARK aluminum suspension block set with front and rear suspension mounts. Supports active and non-active rear toe setup; H brace is needed for static setup.",
     tunableParameters: ["toe angle", "mount width", "bushing", "shim", "position", "notes"],
-    sourceUrl: "https://rhino-racing.com.cn/product/purple-shark-final-form-factory-assembled-chassis-kit-ifs-1-10-premium-rwd-drift-car-rr-2000p/",
-    verified: true
+    sourceUrl: "https://rhino-racing.com.cn/product/black-shark-suspension-mount-set-for-shark-ddss-yd2-rmx-rdx-rr-1300b/",
+    verified: true,
+    variants: [
+      {
+        id: "red-rr-1300r",
+        color: "Red",
+        sku: "RR-1300R",
+        displayName: "Red"
+      },
+      {
+        id: "purple-rr-1300p",
+        color: "Purple",
+        sku: "RR-1300P",
+        displayName: "Purple"
+      },
+      {
+        id: "black-rr-1300b",
+        color: "Black",
+        sku: "RR-1300B",
+        displayName: "Black"
+      }
+    ]
   }),
   catalogItem({
     id: "rhino-rr-800-shark-adjustable-chassis-kit",
@@ -1027,7 +1337,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "SHARK adjustable chassis kit included in Final Form assemblies.",
     tunableParameters: ["wheelbase", "deck flex", "battery position", "weight bias", "notes"],
     sourceUrl: "https://rhino-racing.com.cn/product/purple-shark-final-form-factory-assembled-chassis-kit-ifs-1-10-premium-rwd-drift-car-rr-2000p/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; chassis kit rather than a standalone deck."
   }),
   catalogItem({
     id: "team-associated-72277-dc10-ft-aluminum-steering-blocks",
@@ -1042,11 +1355,75 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     verified: true
   }),
   catalogItem({
+    id: "team-associated-72278-dc10-ft-aluminum-rear-hubs",
+    category: "rearHubCarriers",
+    brand: "Team Associated",
+    productName: "72278 DC10 FT Aluminum Rear Hubs",
+    simplifiedName: "DC10 FT Aluminum Rear Hubs",
+    displayName: "DC10 FT Aluminum Rear Hubs",
+    modelNumber: "72278",
+    partNumber: "ASC72278",
+    compatibleChassis: ["DC10", "DC10 RTR"],
+    notes: "Factory Team aluminum rear hubs for DC10.",
+    tunableParameters: defaultTunableParametersByCategory.rearHubCarriers ?? [],
+    sourceUrl: "https://www.horizonhobby.com/product/1-10-dc10-ft-aluminum-rear-hubs-team-associated/ASC72278.html",
+    verified: true
+  }),
+  catalogItem({
+    id: "team-associated-72210-dc10-molded-rear-hubs",
+    category: "rearHubCarriers",
+    brand: "Team Associated",
+    productName: "72210 DC10 Molded Rear Hubs",
+    simplifiedName: "DC10 Molded Rear Hubs",
+    displayName: "DC10 Molded Rear Hubs",
+    modelNumber: "72210",
+    partNumber: "ASC72210",
+    compatibleChassis: ["DC10", "DC10 RTR"],
+    notes: "Stock molded hub parts from the DC10 front and rear hubs set; shown here as the rear hub option.",
+    tunableParameters: defaultTunableParametersByCategory.rearHubCarriers ?? [],
+    sourceUrl: "https://www.associatedelectrics.com/teamassociated/parts/details/72210-ASC72210-dc10_front_and_rear_hubs/",
+    verified: true
+  }),
+  catalogItem({
+    id: "team-associated-72203-dc10-carbon-front-shock-tower",
+    category: "frontShockTowers",
+    brand: "Team Associated",
+    productName: "72203 DC10 Carbon Fiber Front Shock Tower",
+    simplifiedName: "DC10 Carbon Fiber Front Shock Tower",
+    displayName: "DC10 Carbon Fiber Front Shock Tower",
+    modelNumber: "72203",
+    partNumber: "ASC72203",
+    compatibleChassis: ["DC10", "DC10 RTR"],
+    notes: "Team Associated DC10 shock tower set includes one front and one rear carbon fiber shock tower.",
+    tunableParameters: defaultTunableParametersByCategory.frontShockTowers ?? [],
+    sourceUrl: "https://www.horizonhobby.com/product/carbon-fiber-front-and-rear-shock-towers-1-10-team-associated-dc10/ASC72203.html",
+    verified: true
+  }),
+  catalogItem({
+    id: "team-associated-72203-dc10-carbon-rear-shock-tower",
+    category: "rearShockTowers",
+    brand: "Team Associated",
+    productName: "72203 DC10 Carbon Fiber Rear Shock Tower",
+    simplifiedName: "DC10 Carbon Fiber Rear Shock Tower",
+    displayName: "DC10 Carbon Fiber Rear Shock Tower",
+    modelNumber: "72203",
+    partNumber: "ASC72203",
+    compatibleChassis: ["DC10", "DC10 RTR"],
+    notes: "Team Associated DC10 shock tower set includes one front and one rear carbon fiber shock tower.",
+    tunableParameters: defaultTunableParametersByCategory.rearShockTowers ?? [],
+    sourceUrl: "https://www.horizonhobby.com/product/carbon-fiber-front-and-rear-shock-towers-1-10-team-associated-dc10/ASC72203.html",
+    verified: true
+  }),
+  catalogItem({
     id: "team-associated-72280-dc10-ft-aluminum-front-upper-arms",
-    category: "frontLowerArms",
+    category: "frontUpperArms",
     brand: "Team Associated",
     productName: "72280 DC10 FT Aluminum Front Upper Arms",
+    simplifiedName: "DC10 FT Aluminum Front Upper Arms",
+    displayName: "DC10 FT Aluminum Front Upper Arms",
     modelNumber: "72280",
+    partNumber: "ASC72280",
+    productType: "front upper arm",
     compatibleChassis: ["DC10", "DC10 RTR"],
     notes: "Factory Team aluminum front upper arms for DC10.",
     tunableParameters: ["caster", "inner shim", "outer shim", "arm spacer", "notes"],
@@ -1081,13 +1458,27 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     id: "team-associated-72254-dc10-ft-aluminum-arm-mounts-ab",
     category: "frontToeBlocks",
     brand: "Team Associated",
-    productName: "72254 DC10 FT Aluminum Arm Mounts A/B",
-    modelNumber: "72254",
+    productName: "72254 / 72255 / 72256 DC10 FT Aluminum Arm Mount Set",
+    simplifiedName: "DC10 FT Aluminum Arm Mount Set",
+    displayName: "DC10 FT Aluminum Arm Mount Set",
+    modelNumber: "72254 / 72255 / 72256",
+    partNumber: "ASC72254 / ASC72255 / ASC72256",
+    productType: "toe block / suspension mount",
     compatibleChassis: ["DC10", "DC10 RTR"],
-    notes: "Factory Team aluminum arm mounts A/B for DC10.",
+    notes: "Factory Team DC10 aluminum suspension mount family collapsed into A/B, C, and D variants. Front/rear suspension mount selectors may both show this true mount family.",
     tunableParameters: ["arm mount insert", "shim", "caster/anti-squat setting", "notes"],
     sourceUrl: "https://www.associatedelectrics.com/news/latest_products/2936-new-ft-parts-for-the-dc10/",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "ab-asc72254", displayName: "A/B", sku: "ASC72254", sourceProductName: "DC10 FT Aluminum Arm Mounts A/B" },
+      { id: "c-asc72255", displayName: "C", sku: "ASC72255", sourceProductName: "DC10 FT Aluminum Arm Mount C" },
+      { id: "d-asc72256", displayName: "D", sku: "ASC72256", sourceProductName: "DC10 FT Aluminum Arm Mount D" }
+    ],
+    aliases: [
+      "72254 DC10 FT Aluminum Arm Mounts A/B",
+      "72255 DC10 FT Aluminum Arm Mount C",
+      "72256 DC10 FT Aluminum Arm Mount D"
+    ]
   }),
   catalogItem({
     id: "team-associated-72255-dc10-ft-aluminum-arm-mount-c",
@@ -1099,7 +1490,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Factory Team aluminum arm mount C for DC10.",
     tunableParameters: ["arm mount insert", "shim", "toe/anti-squat setting", "notes"],
     sourceUrl: "https://www.associatedelectrics.com/news/latest_products/2936-new-ft-parts-for-the-dc10/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "team-associated-72254-dc10-ft-aluminum-arm-mounts-ab",
+    canonicalVariantId: "c-asc72255",
+    reasonHidden: "Collapsed into the DC10 FT Aluminum Arm Mount Set variant family."
   }),
   catalogItem({
     id: "team-associated-72256-dc10-ft-aluminum-arm-mount-d",
@@ -1111,23 +1507,40 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Factory Team aluminum arm mount D for DC10.",
     tunableParameters: ["arm mount insert", "shim", "toe/anti-squat setting", "notes"],
     sourceUrl: "https://www.associatedelectrics.com/news/latest_products/2936-new-ft-parts-for-the-dc10/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "team-associated-72254-dc10-ft-aluminum-arm-mounts-ab",
+    canonicalVariantId: "d-asc72256",
+    reasonHidden: "Collapsed into the DC10 FT Aluminum Arm Mount Set variant family."
   }),
   catalogItem({
     id: "team-associated-72257-dc10-ft-aluminum-wheel-hex-65",
-    category: "frontAxles",
+    category: "wheelHexes",
     brand: "Team Associated",
-    productName: "72257 DC10 FT Aluminum Wheel Hex 6.5mm",
-    modelNumber: "72257",
+    productName: "72257 / 72258 DC10 FT Aluminum Wheel Hex",
+    simplifiedName: "DC10 FT Aluminum Wheel Hex",
+    displayName: "DC10 FT Aluminum Wheel Hex",
+    modelNumber: "72257 / 72258",
+    partNumber: "ASC72257 / ASC72258",
+    productType: "wheel hex",
     compatibleChassis: ["DC10", "DC10 RTR"],
-    notes: "Factory Team 6.5mm aluminum wheel hex for DC10.",
+    notes: "Factory Team DC10 aluminum wheel hex family collapsed into 6.5mm and 8.5mm variants.",
     tunableParameters: ["hex thickness", "track width", "wheel spacing", "notes"],
     sourceUrl: "https://www.associatedelectrics.com/news/latest_products/2922-new-ft-parts-for-the-dc10/",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "65mm-asc72257", displayName: "6.5mm", sku: "ASC72257", size: "6.5mm", sourceProductName: "DC10 FT Aluminum Wheel Hex 6.5mm" },
+      { id: "85mm-asc72258", displayName: "8.5mm", sku: "ASC72258", size: "8.5mm", sourceProductName: "DC10 FT Aluminum Wheel Hex 8.5mm" }
+    ],
+    aliases: [
+      "72257 DC10 FT Aluminum Wheel Hex 6.5mm",
+      "72258 DC10 FT Aluminum Wheel Hex 8.5mm"
+    ]
   }),
   catalogItem({
     id: "team-associated-72258-dc10-ft-aluminum-wheel-hex-85",
-    category: "rearAxles",
+    category: "wheelHexes",
     brand: "Team Associated",
     productName: "72258 DC10 FT Aluminum Wheel Hex 8.5mm",
     modelNumber: "72258",
@@ -1135,7 +1548,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Factory Team 8.5mm aluminum wheel hex for DC10.",
     tunableParameters: ["hex thickness", "track width", "wheel spacing", "notes"],
     sourceUrl: "https://www.associatedelectrics.com/news/latest_products/2922-new-ft-parts-for-the-dc10/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "team-associated-72257-dc10-ft-aluminum-wheel-hex-65",
+    canonicalVariantId: "85mm-asc72258",
+    reasonHidden: "Collapsed into the DC10 FT Aluminum Wheel Hex variant family."
   }),
   catalogItem({
     id: "reve-d-rd-002-asl-front-lower-arm",
@@ -1195,7 +1613,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Rear hub carrier plate for RD-012S with additional service hole.",
     tunableParameters: ["plate hole", "sway bar lever ratio", "weight mounting", "notes"],
     sourceUrl: "https://www.vertexrc-usa.com/index.php/shop-all/reved/rdx/reve-d-rear-hub-carrier-plate-for-rd-012s-rd-012psb.html",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear hub carrier plate accessory, not the complete rear hub carrier/upright."
   }),
   catalogItem({
     id: "topline-tdw-tp-655-rdx-rear-hub-carriers",
@@ -1219,7 +1640,49 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "Aluminum EZ type rear wheel hub for RDX rear axle.",
     tunableParameters: ["hub thickness", "wheel spacing", "track width", "notes"],
     sourceUrl: "https://revedriftarena.com/product/d1-011r50-ez-type-rear-wheel-hub-5-0mm/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel hub/hex spacing part, not a rear axle shaft."
+  }),
+  catalogItem({
+    id: "reve-d-us-b445s-universal-shaft-bone-445mm",
+    category: "rearAxles",
+    brand: "Reve D",
+    productName: "RDX Universal Shaft Steel Bone Series",
+    simplifiedName: "RDX Universal Shaft Bone Series",
+    displayName: "RDX Universal Shaft Bone Series",
+    modelNumber: "US-B445S / US-B470S",
+    partNumber: "US-B445S / US-B470S",
+    compatibleChassis: ["RDX", "YD-2", "MC-1", "RWD Drift"],
+    notes: "Reve D steel bones for US-S470S universal shaft setups. 44.5mm narrows rear track or clears third-party gear diffs with protectors; 47.0mm is the standard RDX bone length.",
+    tunableParameters: defaultTunableParametersByCategory.rearAxles ?? [],
+    sourceUrl: "https://teamreved.com/product/us-b445s",
+    verified: true,
+    variants: [
+      { id: "us-b445s-44-5mm", sku: "US-B445S", size: "44.5mm", displayName: "44.5mm Steel Bone", sourceProductName: "Steel Bone for Universal Drive Shaft 44.5mm", sourceUrl: "https://teamreved.com/product/us-b445s" },
+      { id: "us-b470s-47-0mm", sku: "US-B470S", size: "47.0mm", displayName: "47.0mm Steel Bone", sourceProductName: "Universal Drive Shaft Bone 47.0mm", sourceUrl: "https://www.hobbytown.com/reve-d-rdx-universal-drive-shaft-bone-47.0mm-rv-us-b470s/p1479577" }
+    ],
+    aliases: ["US-B445S Universal Shaft Bone 44.5mm", "US-B470S Universal Shaft Bone 47.0mm"]
+  }),
+  catalogItem({
+    id: "reve-d-us-s470s-universal-drive-shaft-47mm",
+    category: "rearAxles",
+    brand: "Reve D",
+    productName: "US-S470S Complete Universal Shaft 47.0mm",
+    simplifiedName: "RDX Complete Universal Shaft 47.0mm",
+    displayName: "RDX Complete Universal Shaft 47.0mm",
+    modelNumber: "US-S470S",
+    partNumber: "US-S470S",
+    compatibleChassis: ["RDX"],
+    notes: "Completed/assembled steel universal shaft with genuine RDX 47.0mm bone length. Two pieces included.",
+    tunableParameters: defaultTunableParametersByCategory.rearAxles ?? [],
+    sourceUrl: "https://teamreved.com/product/us-s470s",
+    verified: true,
+    variants: [
+      { id: "us-s470s-47-0mm-complete", sku: "US-S470S", size: "47.0mm", displayName: "47.0mm Complete Shaft" }
+    ],
+    aliases: ["Reve D Universal Drive Shaft Completed 47.0mm", "RDX Universal Shaft 47mm"]
   }),
   catalogItem({
     id: "reve-d-d1-011r70-ez-type-rear-wheel-hub-7mm",
@@ -1231,7 +1694,10 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "7.0mm version of the RDX EZ type rear wheel hub line.",
     tunableParameters: ["hub thickness", "wheel spacing", "track width", "notes"],
     sourceUrl: "https://revedriftarena.com/product/d1-011r50-ez-type-rear-wheel-hub-5-0mm/",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Wheel hub/hex spacing part, not a rear axle shaft."
   }),
   catalogItem({
     id: "reve-d-d1-s1s-r-tune-short-spring-set",
@@ -1255,7 +1721,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "RDX R-tune spring, soft.",
     tunableParameters: ["front/rear", "spring length", "spring rate", "orientation", "notes"],
     sourceUrl: "https://teamreved.com/product/d1-ss1s-mh-h",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "springs-reve-d-rdx-r-tune-spring-soft-medium-hard-or-hard-pair-of-springs-reve-d-d1-ss1s-d1-ss1mh-d1-ss1h",
+    canonicalVariantId: "soft-d1-ss1s",
+    reasonHidden: "Collapsed into the RDX R-Tune Spring variant family."
   }),
   catalogItem({
     id: "reve-d-d1-ss1mh-rdx-r-tune-spring-medium-hard",
@@ -1267,7 +1738,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "RDX R-tune spring, medium hard.",
     tunableParameters: ["front/rear", "spring length", "spring rate", "orientation", "notes"],
     sourceUrl: "https://teamreved.com/product/d1-ss1s-mh-h",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "springs-reve-d-rdx-r-tune-spring-soft-medium-hard-or-hard-pair-of-springs-reve-d-d1-ss1s-d1-ss1mh-d1-ss1h",
+    canonicalVariantId: "medium-hard-d1-ss1mh",
+    reasonHidden: "Collapsed into the RDX R-Tune Spring variant family."
   }),
   catalogItem({
     id: "reve-d-d1-ss1h-rdx-r-tune-spring-hard",
@@ -1279,7 +1755,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "RDX R-tune spring, hard.",
     tunableParameters: ["front/rear", "spring length", "spring rate", "orientation", "notes"],
     sourceUrl: "https://teamreved.com/product/d1-ss1s-mh-h",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "springs-reve-d-rdx-r-tune-spring-soft-medium-hard-or-hard-pair-of-springs-reve-d-d1-ss1s-d1-ss1mh-d1-ss1h",
+    canonicalVariantId: "hard-d1-ss1h",
+    reasonHidden: "Collapsed into the RDX R-Tune Spring variant family."
   }),
   catalogItem({
     id: "reve-d-rd-011fs-r-tune-2ws-front-spring-soft",
@@ -1291,7 +1772,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "R-tune 2WS front spring, soft.",
     tunableParameters: ["front/rear", "spring length", "spring rate", "notes"],
     sourceUrl: "https://teamreved.com/product/rd-011fs-fh",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "springs-reve-d-r-tune-2ws-front-springs-hard-2-springs-reve-d-rd-011fh",
+    canonicalVariantId: "soft-rd-011fs",
+    reasonHidden: "Collapsed into the R-Tune 2WS Front Spring variant family."
   }),
   catalogItem({
     id: "reve-d-rd-011fh-r-tune-2ws-front-spring-hard",
@@ -1303,7 +1789,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "R-tune 2WS front spring, hard.",
     tunableParameters: ["front/rear", "spring length", "spring rate", "notes"],
     sourceUrl: "https://teamreved.com/product/rd-011fs-fh",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "springs-reve-d-r-tune-2ws-front-springs-hard-2-springs-reve-d-rd-011fh",
+    canonicalVariantId: "hard-rd-011fh",
+    reasonHidden: "Collapsed into the R-Tune 2WS Front Spring variant family."
   }),
   catalogItem({
     id: "reve-d-rd-006as-spring-all-set",
@@ -1321,25 +1812,39 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     id: "reve-d-rw-ul12-wheel-offset-6",
     category: "frontWheels",
     brand: "Reve D",
-    productName: "RW-UL12 Competition Wheel Offset 6mm",
+    productName: "RW-UL12 Competition Wheel",
+    simplifiedName: "RW-UL12 Competition Wheel",
+    displayName: "RW-UL12 Competition Wheel",
     modelNumber: "RW-UL12",
     compatibleChassis: ["Universal", "RDX", "MC-1", "MC-2", "MC-III"],
-    notes: "UL12 12-spoke competition drift wheel, 6mm offset.",
+    notes: "UL12 12-spoke competition drift wheel collapsed into offset variants.",
     tunableParameters: ["offset", "diameter", "width", "color", "notes"],
     sourceUrl: "https://teamreved.com/product/rw-ul12",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "offset-6mm-rw-ul12", displayName: "6mm offset", size: "6mm offset", sku: "RW-UL12", sourceProductName: "RW-UL12 Competition Wheel Offset 6mm" },
+      { id: "offset-8mm-rw-ul12", displayName: "8mm offset", size: "8mm offset", sku: "RW-UL12", sourceProductName: "RW-UL12 Competition Wheel Offset 8mm" }
+    ],
+    aliases: ["RW-UL12 Competition Wheel Offset 6mm", "RW-UL12 Competition Wheel Offset 8mm", "UL12 Drift Wheel"]
   }),
   catalogItem({
     id: "reve-d-rw-ul12-wheel-offset-6-rear",
     category: "rearWheels",
     brand: "Reve D",
-    productName: "RW-UL12 Competition Wheel Offset 6mm",
+    productName: "RW-UL12 Competition Wheel",
+    simplifiedName: "RW-UL12 Competition Wheel",
+    displayName: "RW-UL12 Competition Wheel",
     modelNumber: "RW-UL12",
     compatibleChassis: ["Universal", "RDX", "MC-1", "MC-2", "MC-III"],
-    notes: "UL12 12-spoke competition drift wheel, 6mm offset.",
+    notes: "UL12 12-spoke competition drift wheel collapsed into offset variants.",
     tunableParameters: ["offset", "diameter", "width", "color", "notes"],
     sourceUrl: "https://teamreved.com/product/rw-ul12",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "offset-6mm-rw-ul12", displayName: "6mm offset", size: "6mm offset", sku: "RW-UL12", sourceProductName: "RW-UL12 Competition Wheel Offset 6mm" },
+      { id: "offset-8mm-rw-ul12", displayName: "8mm offset", size: "8mm offset", sku: "RW-UL12", sourceProductName: "RW-UL12 Competition Wheel Offset 8mm" }
+    ],
+    aliases: ["RW-UL12 Competition Wheel Offset 6mm", "RW-UL12 Competition Wheel Offset 8mm", "UL12 Drift Wheel"]
   }),
   catalogItem({
     id: "reve-d-rw-ul12-wheel-offset-8",
@@ -1351,7 +1856,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "UL12 12-spoke competition drift wheel, 8mm offset.",
     tunableParameters: ["offset", "diameter", "width", "color", "notes"],
     sourceUrl: "https://teamreved.com/news/2022082401",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rw-ul12-wheel-offset-6",
+    canonicalVariantId: "offset-8mm-rw-ul12",
+    reasonHidden: "Collapsed into the RW-UL12 Competition Wheel offset-variant family."
   }),
   catalogItem({
     id: "reve-d-rw-ul12-wheel-offset-8-rear",
@@ -1363,31 +1873,50 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "UL12 12-spoke competition drift wheel, 8mm offset.",
     tunableParameters: ["offset", "diameter", "width", "color", "notes"],
     sourceUrl: "https://teamreved.com/news/2022082401",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rw-ul12-wheel-offset-6-rear",
+    canonicalVariantId: "offset-8mm-rw-ul12",
+    reasonHidden: "Collapsed into the RW-UL12 Competition Wheel offset-variant family."
   }),
   catalogItem({
     id: "reve-d-rw-dp5-wheel-offset-6",
     category: "frontWheels",
     brand: "Reve D",
-    productName: "RW-DP5 Competition Wheel Offset 6mm",
+    productName: "RW-DP5 Competition Wheel",
+    simplifiedName: "RW-DP5 Competition Wheel",
+    displayName: "RW-DP5 Competition Wheel",
     modelNumber: "RW-DP5",
     compatibleChassis: ["Universal", "RDX", "MC-1", "MC-2", "MC-III"],
-    notes: "DP5 5-spoke competition drift wheel, 6mm offset.",
+    notes: "DP5 5-spoke competition drift wheel collapsed into offset variants.",
     tunableParameters: ["offset", "diameter", "width", "color", "notes"],
     sourceUrl: "https://teamreved.com/product-cat/tire-wheel",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "offset-6mm-rw-dp5", displayName: "6mm offset", size: "6mm offset", sku: "RW-DP5", sourceProductName: "RW-DP5 Competition Wheel Offset 6mm" },
+      { id: "offset-8mm-rw-dp5", displayName: "8mm offset", size: "8mm offset", sku: "RW-DP5", sourceProductName: "RW-DP5 Competition Wheel Offset 8mm" }
+    ],
+    aliases: ["RW-DP5 Competition Wheel Offset 6mm", "RW-DP5 Competition Wheel Offset 8mm"]
   }),
   catalogItem({
     id: "reve-d-rw-dp5-wheel-offset-6-rear",
     category: "rearWheels",
     brand: "Reve D",
-    productName: "RW-DP5 Competition Wheel Offset 6mm",
+    productName: "RW-DP5 Competition Wheel",
+    simplifiedName: "RW-DP5 Competition Wheel",
+    displayName: "RW-DP5 Competition Wheel",
     modelNumber: "RW-DP5",
     compatibleChassis: ["Universal", "RDX", "MC-1", "MC-2", "MC-III"],
-    notes: "DP5 5-spoke competition drift wheel, 6mm offset.",
+    notes: "DP5 5-spoke competition drift wheel collapsed into offset variants.",
     tunableParameters: ["offset", "diameter", "width", "color", "notes"],
     sourceUrl: "https://teamreved.com/product-cat/tire-wheel",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "offset-6mm-rw-dp5", displayName: "6mm offset", size: "6mm offset", sku: "RW-DP5", sourceProductName: "RW-DP5 Competition Wheel Offset 6mm" },
+      { id: "offset-8mm-rw-dp5", displayName: "8mm offset", size: "8mm offset", sku: "RW-DP5", sourceProductName: "RW-DP5 Competition Wheel Offset 8mm" }
+    ],
+    aliases: ["RW-DP5 Competition Wheel Offset 6mm", "RW-DP5 Competition Wheel Offset 8mm"]
   }),
   catalogItem({
     id: "reve-d-rw-dp5-wheel-offset-8",
@@ -1399,7 +1928,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "DP5 5-spoke competition drift wheel, 8mm offset.",
     tunableParameters: ["offset", "diameter", "width", "color", "notes"],
     sourceUrl: "https://teamreved.com/news/2022082401",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rw-dp5-wheel-offset-6",
+    canonicalVariantId: "offset-8mm-rw-dp5",
+    reasonHidden: "Collapsed into the RW-DP5 Competition Wheel offset-variant family."
   }),
   catalogItem({
     id: "reve-d-rw-dp5-wheel-offset-8-rear",
@@ -1411,7 +1945,12 @@ const chassisCatalogItems: ProductCatalogItem[] = [
     notes: "DP5 5-spoke competition drift wheel, 8mm offset.",
     tunableParameters: ["offset", "diameter", "width", "color", "notes"],
     sourceUrl: "https://teamreved.com/news/2022082401",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rw-dp5-wheel-offset-6-rear",
+    canonicalVariantId: "offset-8mm-rw-dp5",
+    reasonHidden: "Collapsed into the RW-DP5 Competition Wheel offset-variant family."
   }),
   catalogItem({
     id: "reve-d-d1-300fm-rdx-molded-front-sus-mount",
@@ -1574,7 +2113,10 @@ const differentialCatalogItems: ProductCatalogItem[] = [
     notes: "LSD conversion set for Yokomo original differential based applications.",
     tunableParameters: ["LSD plates", "diff oil", "shim setup", "notes"],
     sourceUrl: "https://www.amainhobbies.com/usukani-yokomo-original-differential-lsd-conversion-set-usu-us88508/p1623456",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "LSD conversion kit/support item; not a complete differential for the main diff selector."
   })
 ];
 
@@ -1830,13 +2372,14 @@ const researchedCatalogItems: ProductCatalogItem[] = [
     id: "acuvance-pulse-master",
     category: "capacitors",
     brand: "Acuvance",
-    productName: "Pulse Master",
-    simplifiedName: "Pulse Master",
+    productName: "Pulse Master Capacitor / Signal Device",
+    simplifiedName: "Pulse Master Capacitor / Signal Device",
+    displayName: "Pulse Master Capacitor / Signal Device",
     modelNumber: "OP-15120",
     compatibleChassis: ["Universal"],
-    notes: "Acuvance advanced power/signal device commonly paired with ESC electronics.",
+    notes: "Acuvance Pulse Master capacitor/signal correction device commonly paired with ESC electronics.",
     tunableParameters: defaultTunableParametersByCategory.capacitors ?? [],
-    sourceUrl: "https://acuvance-usa.com/capacitors.aspx",
+    sourceUrl: "https://www.driftparadiz.fr/en-en/products/pulse-master-capacitor-acuvance",
     verified: true
   }),
   catalogItem({
@@ -1884,12 +2427,19 @@ const researchedCatalogItems: ProductCatalogItem[] = [
     brand: "Yokomo",
     productName: "SP-03D V2 Brushless Drift Servo",
     simplifiedName: "SP-03D V2 Brushless Drift Servo",
-    modelNumber: "SP-03DV2A",
+    displayName: "SP-03D V2 Brushless Drift Servo",
+    modelNumber: "SP-03DV2A / SP-03DV2R / SP-03DV2P",
     compatibleChassis: ["Universal"],
-    notes: "Standalone programmable brushless drift servo.",
+    notes: "Standalone programmable brushless drift servo. Known color SKUs are collapsed as variants.",
     tunableParameters: defaultTunableParametersByCategory.servos ?? [],
     sourceUrl: "https://teamyokomo.com/parts/SP-03DV2A/",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-sp-03dv2a", color: "Black", sku: "SP-03DV2A", displayName: "Black" },
+      { id: "red-sp-03dv2r", color: "Red", sku: "SP-03DV2R", displayName: "Red" },
+      { id: "purple-sp-03dv2p", color: "Purple", sku: "SP-03DV2P", displayName: "Purple" }
+    ],
+    aliases: ["SP03D V2", "SP-03DV2", "SP-03DV2A", "SP-03DV2R", "SP-03DV2P"]
   }),
   catalogItem({
     id: "yokomo-rpx-ii-drift-spec-esc",
@@ -1897,25 +2447,19 @@ const researchedCatalogItems: ProductCatalogItem[] = [
     brand: "Yokomo",
     productName: "Racing Performer RPXII Drift Spec ESC",
     simplifiedName: "Racing Performer RPXII Drift Spec ESC",
-    modelNumber: "BL-RPX2DP",
+    modelNumber: "BL-RPX2D / BL-RPX2DBL / BL-RPX2DP / BL-RPX2DR",
     compatibleChassis: ["Universal"],
     notes: "Standalone Racing Performer drift-spec ESC.",
     tunableParameters: defaultTunableParametersByCategory.escs ?? [],
     sourceUrl: "https://teamyokomo.com/parts/BL-RPX2DP/",
-    verified: true
-  }),
-  catalogItem({
-    id: "yokomo-drc-drift-competition-tire",
-    category: "tires",
-    brand: "Yokomo",
-    productName: "DRC Drift Competition Tire",
-    simplifiedName: "DRC Drift Competition Tire",
-    modelNumber: "ZR-DRCA",
-    compatibleChassis: ["Universal"],
-    notes: "Standalone carpet/P-tile drift tire.",
-    tunableParameters: defaultTunableParametersByCategory.tires ?? [],
-    sourceUrl: "https://teamyokomo.com/parts/ZR-DRCA/",
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-bl-rpx2d", color: "Black", sku: "BL-RPX2D", displayName: "Black" },
+      { id: "blue-bl-rpx2dbl", color: "Blue", sku: "BL-RPX2DBL", displayName: "Blue" },
+      { id: "purple-bl-rpx2dp", color: "Purple", sku: "BL-RPX2DP", displayName: "Purple" },
+      { id: "red-bl-rpx2dr", color: "Red", sku: "BL-RPX2DR", displayName: "Red" }
+    ],
+    aliases: ["RPX II D", "RPXII D", "BL-RPX2D", "BL-RPX2DBL", "BL-RPX2DP", "BL-RPX2DR"]
   }),
   catalogItem({
     id: "yokomo-dra-drift-competition-tire",
@@ -1931,6 +2475,39 @@ const researchedCatalogItems: ProductCatalogItem[] = [
     verified: true
   }),
   catalogItem({
+    id: "yokomo-drc-drift-competition-tire",
+    category: "tires",
+    brand: "Yokomo",
+    productName: "DRC Drift Competition Tire",
+    simplifiedName: "DRC Drift Competition Tire",
+    modelNumber: "ZR-DRCA / ZR-DRC",
+    compatibleChassis: ["Universal"],
+    notes: "Standalone Yokomo DRC drift competition tire for carpet, P-tile, and similar indoor drift surfaces.",
+    tunableParameters: defaultTunableParametersByCategory.tires ?? [],
+    sourceUrl: "https://teamyokomo.com/parts/ZR-DRCA/",
+    verified: true,
+    variants: [
+      { id: "zr-drca-carpet-p-tile", compound: "DRC", sku: "ZR-DRCA", displayName: "DRC Carpet / P-Tile" },
+      { id: "zr-drc-carpet-concrete", compound: "DRC", sku: "ZR-DRC", displayName: "DRC Carpet / Concrete" }
+    ]
+  }),
+  catalogItem({
+    id: "yokomo-drp-drift-competition-tire",
+    category: "tires",
+    brand: "Yokomo",
+    productName: "DRP Drift Competition Tire",
+    simplifiedName: "DRP Drift Competition Tire",
+    modelNumber: "ZR-DRPA",
+    compatibleChassis: ["Universal"],
+    notes: "Standalone Yokomo DRP drift competition tire for P-tile surfaces.",
+    tunableParameters: defaultTunableParametersByCategory.tires ?? [],
+    sourceUrl: "https://teamyokomo.com/parts/ZR-DRPA/",
+    verified: true,
+    variants: [
+      { id: "zr-drpa-p-tile", compound: "DRP", sku: "ZR-DRPA", displayName: "DRP P-Tile" }
+    ]
+  }),
+  catalogItem({
     id: "mst-csr-fr-f-silver-dot-drift-tire",
     category: "tires",
     brand: "MST",
@@ -1944,6 +2521,81 @@ const researchedCatalogItems: ProductCatalogItem[] = [
     verified: true
   }),
   catalogItem({
+    id: "ds-racing-competition-iii-drift-tire",
+    category: "tires",
+    brand: "DS Racing",
+    productName: "Competition III Drift Tire",
+    simplifiedName: "Competition III Drift Tire",
+    modelNumber: "LF-1T / LF-2 / LF-3 / LF-4 / LF-5C / LF-5T",
+    compatibleChassis: ["Universal"],
+    notes: "Standalone DS Racing Competition III drift tire family.",
+    tunableParameters: defaultTunableParametersByCategory.tires ?? [],
+    sourceUrl: "https://supergdrift.com/collections/ds-racing",
+    verified: true,
+    variants: [
+      { id: "lf-1t", compound: "LF-1T", sku: "LF-1T", displayName: "LF-1T Asphalt" },
+      { id: "lf-2", compound: "LF-2", sku: "DSC-CS3-LF2", displayName: "LF-2" },
+      { id: "lf-3", compound: "LF-3", sku: "CS3-LF3", displayName: "LF-3" },
+      { id: "lf-3-29", compound: "LF-3", size: "29mm", sku: "CS3-LF3-29", displayName: "LF-3 / 29mm" },
+      { id: "lf-4", compound: "LF-4", sku: "LF-4", displayName: "LF-4" },
+      { id: "lf-5c", compound: "LF-5C", sku: "LF-5C", displayName: "LF-5C" },
+      { id: "lf-5t", compound: "LF-5T", sku: "LF-5T", displayName: "LF-5T" }
+    ]
+  }),
+  catalogItem({
+    id: "ds-racing-finix-realistic-treaded-drift-tire",
+    category: "tires",
+    brand: "DS Racing",
+    productName: "FINIX Realistic Treaded Drift Tire",
+    simplifiedName: "FINIX Realistic Treaded Drift Tire",
+    modelNumber: "LF-1 / LF-2 / LF-3 / LF-4 / LF-5",
+    compatibleChassis: ["Universal"],
+    notes: "Standalone DS Racing FINIX realistic treaded drift tire family.",
+    tunableParameters: defaultTunableParametersByCategory.tires ?? [],
+    sourceUrl: "https://supergdrift.com/collections/tires/products/finix-realistic-treaded-drift-tire-4-pack-ds-racing-lf-1-lf-2-lf-3-lf-4-lf-5",
+    verified: true,
+    variants: [
+      { id: "lf-1", compound: "LF-1", sku: "LF-1", displayName: "LF-1" },
+      { id: "lf-2", compound: "LF-2", sku: "LF-2", displayName: "LF-2" },
+      { id: "lf-3", compound: "LF-3", sku: "LF-3", displayName: "LF-3" },
+      { id: "lf-4", compound: "LF-4", sku: "LF-4", displayName: "LF-4" },
+      { id: "lf-5", compound: "LF-5", sku: "LF-5", displayName: "LF-5" }
+    ]
+  }),
+  catalogItem({
+    id: "ds-racing-finix-hf-friction-drift-tire",
+    category: "tires",
+    brand: "DS Racing",
+    productName: "FINIX HF Friction Drift Tire",
+    simplifiedName: "FINIX HF Friction Drift Tire",
+    modelNumber: "HF-1SE / HF-2SE / HF-3SE / HF-4SE / HF-5SE",
+    compatibleChassis: ["Universal"],
+    notes: "Standalone DS Racing FINIX HF friction drift tire family. HF-1 through HF-5 compounds cover tile, smooth/slippery surfaces, polished concrete, smooth asphalt, and terrazzo.",
+    tunableParameters: defaultTunableParametersByCategory.tires ?? [],
+    sourceUrl: "https://www.michaelsrchobbies.com/dsc-hf-5se-ds-racing-finix-friction-hf-treaded-dri.html",
+    verified: true,
+    variants: [
+      { id: "hf-1", compound: "HF-1", sku: "HF-1SE", displayName: "HF-1" },
+      { id: "hf-2", compound: "HF-2", sku: "HF-2SE", displayName: "HF-2" },
+      { id: "hf-3", compound: "HF-3", sku: "HF-3SE", displayName: "HF-3" },
+      { id: "hf-4", compound: "HF-4", sku: "HF-4SE", displayName: "HF-4" },
+      { id: "hf-5", compound: "HF-5", sku: "HF-5SE", displayName: "HF-5" }
+    ]
+  }),
+  catalogItem({
+    id: "reve-d-as-01-drift-tire",
+    category: "tires",
+    brand: "Reve D",
+    productName: "AS-01 Drift Tire",
+    simplifiedName: "AS-01 Drift Tire",
+    modelNumber: "AS-01",
+    compatibleChassis: ["Universal"],
+    notes: "Standalone Reve D AS-01 drift tire.",
+    tunableParameters: defaultTunableParametersByCategory.tires ?? [],
+    sourceUrl: "https://supergdrift.com/collections/tires/products/hg-drift-tire-as-01-4-pack-reve-d-dt-as-014",
+    verified: true
+  }),
+  catalogItem({
     id: "reve-d-ul12-drift-wheel",
     category: "frontWheels",
     brand: "Reve D",
@@ -1954,7 +2606,12 @@ const researchedCatalogItems: ProductCatalogItem[] = [
     notes: "Standalone lightweight high-traction drift wheel.",
     tunableParameters: defaultTunableParametersByCategory.frontWheels ?? [],
     sourceUrl: "https://www.vertexrc-usa.com/index.php/reve-d-drift-wheel-ul12-white-offset-6-2pcs-rw-ul12w6.html",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rw-ul12-wheel-offset-6",
+    canonicalVariantId: "offset-6mm-rw-ul12",
+    reasonHidden: "Collapsed into the RW-UL12 Competition Wheel offset-variant family."
   }),
   catalogItem({
     id: "reve-d-ul12-drift-wheel-rear",
@@ -1967,7 +2624,12 @@ const researchedCatalogItems: ProductCatalogItem[] = [
     notes: "Standalone lightweight high-traction drift wheel.",
     tunableParameters: defaultTunableParametersByCategory.rearWheels ?? [],
     sourceUrl: "https://www.vertexrc-usa.com/index.php/reve-d-drift-wheel-ul12-white-offset-6-2pcs-rw-ul12w6.html",
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rw-ul12-wheel-offset-6-rear",
+    canonicalVariantId: "offset-6mm-rw-ul12",
+    reasonHidden: "Collapsed into the RW-UL12 Competition Wheel offset-variant family."
   }),
   catalogItem({
     id: "yokomo-racing-performer-high-traction-drift-wheel",
@@ -2025,6 +2687,10 @@ const researchedCatalogItems: ProductCatalogItem[] = [
 
 export const productCatalogSeed: ProductCatalogItem[] = [
   ...electronicsCatalogItems,
+  ...researchedVerifiedCatalogItems,
+  ...catalogExpansion20260513Items,
+  ...sakuraCatalogItems,
+  ...shibataGrkCatalogItems,
   ...researchedCatalogItems,
   ...chassisCatalogItems,
   ...differentialCatalogItems,
