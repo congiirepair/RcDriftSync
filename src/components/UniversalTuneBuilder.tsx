@@ -17,6 +17,7 @@ import { downloadUniversalTunePdf, generateUniversalTunePdf } from "../utils/uni
 import { formatFormLabel } from "../utils/formLabels";
 import { PhotosTab } from "./PhotosTab";
 import { BrandBadge, BrandLogo } from "./BrandIdentity";
+import { D3GeometryHolePicker, type GeometryDiagramType } from "./D3GeometryHolePicker";
 import { PhotoLightbox } from "./PhotoLightbox";
 import { PartSelector, type PartSelectorValue } from "./PartSelector";
 import { BasicTuneSummary, FeelEditor, TuneTimeline, TuneVisualSummary } from "./TuneVisuals";
@@ -2690,21 +2691,21 @@ function BasicTuneForm({
         <TuneSubcategory title="Front shock and steering holes" helper="Record the actual holes and steering positions used on the car." defaultOpen={false}>
           {usesOverdoseIfs ? (
             <>
-              <GeometryPointPicker label="Overdose IFS damper / rocker position" value={String(tune.values.frontIfsDamperPosition ?? "")} options={ifsMountOptions} helper="Use this instead of a normal front shock tower hole for GALM / Overdose-style inboard front suspension." onChange={(value) => patchValues({ frontIfsDamperPosition: value })} />
+              <GeometryPointPicker label="Overdose IFS damper / rocker position" value={String(tune.values.frontIfsDamperPosition ?? "")} options={ifsMountOptions} diagram="ifs" helper="Use this instead of a normal front shock tower hole for GALM / Overdose-style inboard front suspension." onChange={(value) => patchValues({ frontIfsDamperPosition: value })} />
               <TextAreaField label="IFS mounting notes" value={String(tune.values.frontIfsMountingNotes ?? "")} placeholder="ex. Front rocker outer hole, damper side inner hole, 2mm spacer" rows={3} onChange={(event) => patchValues({ frontIfsMountingNotes: event.target.value })} />
             </>
           ) : (
             <>
-              <GeometryPointPicker label="Front shock tower upper hole" value={String(tune.values.frontShockTowerUpperHole ?? "")} options={shockTowerHoleOptions} helper="Choose the tower hole used by the top of the front damper." onChange={(value) => patchValues({ frontShockTowerUpperHole: value })} />
-              <GeometryPointPicker label="Front lower arm damper hole" value={String(tune.values.frontDamperLowerArmHole ?? "")} options={armDamperHoleOptions} helper="Choose the lower arm hole used by the bottom of the front damper." onChange={(value) => patchValues({ frontDamperLowerArmHole: value })} />
+              <GeometryPointPicker label="Front shock tower upper hole" value={String(tune.values.frontShockTowerUpperHole ?? "")} options={shockTowerHoleOptions} diagram="shockTower" helper="Choose the tower hole used by the top of the front damper." onChange={(value) => patchValues({ frontShockTowerUpperHole: value })} />
+              <GeometryPointPicker label="Front lower arm damper hole" value={String(tune.values.frontDamperLowerArmHole ?? "")} options={armDamperHoleOptions} diagram="damperArm" helper="Choose the lower arm hole used by the bottom of the front damper." onChange={(value) => patchValues({ frontDamperLowerArmHole: value })} />
               <TextAreaField label="Front damper mounting notes" value={String(tune.values.frontDamperMountingNotes ?? "")} placeholder="ex. Top hole 3, lower arm outer hole, 2mm spacer behind ball end" rows={3} onChange={(event) => patchValues({ frontDamperMountingNotes: event.target.value })} />
             </>
           )}
-          <GeometryPointPicker label="Knuckle steering link hole" value={String(tune.values.frontKnuckleSteeringLinkHole ?? "")} options={steeringMountHoleOptions} helper="Record the steering link position on the knuckle or knuckle plate." onChange={(value) => patchValues({ frontKnuckleSteeringLinkHole: value })} />
-          <GeometryPointPicker label="Knuckle upper link / kingpin hole" value={String(tune.values.frontKnuckleUpperLinkHole ?? "")} options={steeringMountHoleOptions} helper="Use for multi-hole knuckles or upper-link plates." onChange={(value) => patchValues({ frontKnuckleUpperLinkHole: value })} />
-          <GeometryPointPicker label="Bellcrank Ackerman hole" value={String(tune.values.bellcrankAckermanHole ?? "")} options={steeringMountHoleOptions} helper="Record the bellcrank hole used by the steering link." onChange={(value) => patchValues({ bellcrankAckermanHole: value })} />
-          <GeometryPointPicker label="Sliding rack position" value={String(tune.values.slideRackPosition ?? "")} options={slideRackPositionOptions} helper="For slide-rack cars, record the rack or link position." onChange={(value) => patchValues({ slideRackPosition: value })} />
-          <GeometryPointPicker label="DDSS hole" value={String(tune.values.ddssHole ?? "")} options={ddssHoleOptions} helper="For DDSS / direct steering systems, record the active steering hole." onChange={(value) => patchValues({ ddssHole: value })} />
+          <GeometryPointPicker label="Knuckle steering link hole" value={String(tune.values.frontKnuckleSteeringLinkHole ?? "")} options={steeringMountHoleOptions} diagram="steering" helper="Record the steering link position on the knuckle or knuckle plate." onChange={(value) => patchValues({ frontKnuckleSteeringLinkHole: value })} />
+          <GeometryPointPicker label="Knuckle upper link / kingpin hole" value={String(tune.values.frontKnuckleUpperLinkHole ?? "")} options={steeringMountHoleOptions} diagram="steering" helper="Use for multi-hole knuckles or upper-link plates." onChange={(value) => patchValues({ frontKnuckleUpperLinkHole: value })} />
+          <GeometryPointPicker label="Bellcrank Ackerman hole" value={String(tune.values.bellcrankAckermanHole ?? "")} options={steeringMountHoleOptions} diagram="steering" helper="Record the bellcrank hole used by the steering link." onChange={(value) => patchValues({ bellcrankAckermanHole: value })} />
+          <GeometryPointPicker label="Sliding rack position" value={String(tune.values.slideRackPosition ?? "")} options={slideRackPositionOptions} diagram="slideRack" helper="For slide-rack cars, record the rack or link position." onChange={(value) => patchValues({ slideRackPosition: value })} />
+          <GeometryPointPicker label="DDSS hole" value={String(tune.values.ddssHole ?? "")} options={ddssHoleOptions} diagram="ddss" helper="For DDSS / direct steering systems, record the active steering hole." onChange={(value) => patchValues({ ddssHole: value })} />
         </TuneSubcategory>
       </BasicTuneSection>
       <BasicTuneSection title="Rear geometry" helper="Rear alignment, suspension mount shims, shock holes, hub holes, and damper mounting notes.">
@@ -2714,10 +2715,10 @@ function BasicTuneForm({
           <TextField label="Rear pro-squat / anti-squat notes" value={String(tune.values.rearSquatNotes ?? "")} placeholder="What the RF/RR shim stack creates" onChange={(event) => patchValues({ rearSquatNotes: event.target.value })} />
         </TuneSubcategory>
         <TuneSubcategory title="Rear holes and hub positions" helper="Record the holes, hub positions, and damper mounting points used on the rear of the car." defaultOpen={false}>
-          <GeometryPointPicker label="Rear shock tower upper hole" value={String(tune.values.rearShockTowerUpperHole ?? "")} options={shockTowerHoleOptions} helper="Choose the tower hole used by the top of the rear damper." onChange={(value) => patchValues({ rearShockTowerUpperHole: value })} />
-          <GeometryPointPicker label="Rear lower arm damper hole" value={String(tune.values.rearDamperLowerArmHole ?? "")} options={armDamperHoleOptions} helper="Choose the lower arm hole used by the bottom of the rear damper." onChange={(value) => patchValues({ rearDamperLowerArmHole: value })} />
-          <GeometryPointPicker label="Rear hub upper link hole" value={String(tune.values.rearHubCarrierUpperLinkHole ?? "")} options={rearHubCarrierHoleOptions} helper="Record the rear hub carrier hole used by the upper turnbuckle." onChange={(value) => patchValues({ rearHubCarrierUpperLinkHole: value })} />
-          <GeometryPointPicker label="Rear hub lower link / axle height" value={String(tune.values.rearHubCarrierLowerLinkHole ?? "")} options={rearHubCarrierHoleOptions} helper="Use when the hub carrier has lower link or axle-height choices." onChange={(value) => patchValues({ rearHubCarrierLowerLinkHole: value })} />
+          <GeometryPointPicker label="Rear shock tower upper hole" value={String(tune.values.rearShockTowerUpperHole ?? "")} options={shockTowerHoleOptions} diagram="shockTower" helper="Choose the tower hole used by the top of the rear damper." onChange={(value) => patchValues({ rearShockTowerUpperHole: value })} />
+          <GeometryPointPicker label="Rear lower arm damper hole" value={String(tune.values.rearDamperLowerArmHole ?? "")} options={armDamperHoleOptions} diagram="damperArm" helper="Choose the lower arm hole used by the bottom of the rear damper." onChange={(value) => patchValues({ rearDamperLowerArmHole: value })} />
+          <GeometryPointPicker label="Rear hub upper link hole" value={String(tune.values.rearHubCarrierUpperLinkHole ?? "")} options={rearHubCarrierHoleOptions} diagram="rearHub" helper="Record the rear hub carrier hole used by the upper turnbuckle." onChange={(value) => patchValues({ rearHubCarrierUpperLinkHole: value })} />
+          <GeometryPointPicker label="Rear hub lower link / axle height" value={String(tune.values.rearHubCarrierLowerLinkHole ?? "")} options={rearHubCarrierHoleOptions} diagram="rearHub" helper="Use when the hub carrier has lower link or axle-height choices." onChange={(value) => patchValues({ rearHubCarrierLowerLinkHole: value })} />
           <TextAreaField label="Rear hub and damper geometry notes" value={String(tune.values.rearGeometryNotes ?? "")} placeholder="ex. Upper link outer middle hole, axle center position, 1mm spacer outside ball stud" rows={3} onChange={(event) => patchValues({ rearGeometryNotes: event.target.value })} />
         </TuneSubcategory>
       </BasicTuneSection>
@@ -3024,42 +3025,17 @@ function GeometryPointPicker({
   value,
   options,
   helper,
+  diagram,
   onChange
 }: {
   label: string;
   value: string;
   options: string[];
   helper?: string;
+  diagram: GeometryDiagramType;
   onChange: (value: string) => void;
 }) {
-  const selectedIndex = options.findIndex((option) => option === value);
-  return (
-    <fieldset className="geometryPointPicker fieldWide">
-      <legend>{label}</legend>
-      <div className="geometryPointRail" aria-hidden="true">
-        {options.slice(0, -1).map((option, index) => (
-          <span key={option} className={index === selectedIndex ? "selected" : ""}>
-            {index + 1}
-          </span>
-        ))}
-      </div>
-      <div className="geometryPointOptions" role="group" aria-label={label}>
-        {options.map((option) => (
-          <button
-            key={option}
-            type="button"
-            className={value === option ? "selected" : ""}
-            aria-pressed={value === option}
-            onClick={() => onChange(value === option ? "" : option)}
-          >
-            {option}
-          </button>
-        ))}
-      </div>
-      {value ? <strong className="geometryPointValue">Selected: {value}</strong> : null}
-      {helper ? <small className="fieldHelper">{helper}</small> : null}
-    </fieldset>
-  );
+  return <D3GeometryHolePicker label={label} value={value} options={options} helper={helper} diagram={diagram} onChange={onChange} />;
 }
 
 function BufferedTextField({

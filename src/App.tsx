@@ -136,6 +136,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!isFirebaseConfigured) return;
     const unsubscribe = listenToFirebaseAuth(async (user) => {
       setAccount(user);
       if (!user) {

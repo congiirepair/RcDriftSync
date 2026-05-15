@@ -27,7 +27,7 @@ test("release routes render current empty/authless states in e2e mode", async ({
 
   await page.goto("/settings");
   await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
-  await expect(page.getByText("Firebase is not configured.")).toBeVisible();
+  await expect(page.getByText("Firebase is not configured")).toBeVisible();
 
   await page.goto("/login");
   await expect(page.getByRole("region", { name: "Sign in" })).toBeVisible();
