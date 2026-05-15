@@ -66,7 +66,7 @@ export interface UniversalTuneBuilderProps {
 export type ProfiledElectronicsCategory = "esc" | "servo" | "gyro";
 export type BuilderTabId = "chassis" | "track" | "front" | "rear" | "geometry" | "drivetrain" | "tires" | "electronics" | "esc" | "servo" | "gyro" | "radio" | "feel" | "photos" | "notes" | "pdf";
 export type PitlaneProductTab = "all" | "motor" | "esc" | "gyro" | "servo" | "tires" | "frontWheels" | "rearWheels" | "other";
-export type PitlanePage = "menu" | "chassis" | "surface" | "geometry" | "electronics" | "tires";
+export type PitlanePage = "menu" | "chassis" | "surface" | "parts" | "geometry" | "electronics" | "tires";
 
 export interface UniversalField {
   id: string;

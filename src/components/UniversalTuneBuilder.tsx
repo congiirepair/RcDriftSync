@@ -710,6 +710,7 @@ export function UniversalTuneBuilder({
     const firstTabByPage: Record<Exclude<PitlanePage, "menu">, BuilderTabId> = {
       chassis: "chassis",
       surface: "track",
+      parts: "front",
       geometry: "geometry",
       electronics: "electronics",
       tires: "tires"
@@ -821,6 +822,7 @@ export function UniversalTuneBuilder({
       menu: builderMode === "basic" ? "Quick" : "Advanced",
       chassis: "Chassis",
       surface: "Surface",
+      parts: "Parts",
       geometry: "Geometry",
       electronics: "Electronics",
       tires: "Tires / Wheels"
@@ -828,11 +830,13 @@ export function UniversalTuneBuilder({
     const pitlaneSectionOptions: Record<Exclude<PitlanePage, "menu">, Array<{ id: BuilderTabId; label: string }>> = {
       chassis: [
         { id: "chassis", label: "Identity" },
-        { id: "front", label: "Front" },
-        { id: "rear", label: "Rear" },
-        { id: "drivetrain", label: "Drivetrain" },
         { id: "photos", label: "Photos" },
         { id: "notes", label: "Notes / Share" }
+      ],
+      parts: [
+        { id: "front", label: "Front" },
+        { id: "rear", label: "Rear" },
+        { id: "drivetrain", label: "Drivetrain" }
       ],
       surface: [{ id: "track", label: "Track" }],
       geometry: [{ id: "geometry", label: "Geometry" }],
@@ -972,6 +976,11 @@ export function UniversalTuneBuilder({
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("surface")}>
             <span className="pitlaneRowIcon pitlaneRowIconSurface"><MapPinned size={24} /></span>
             <span><small>Surface</small><strong>{surfaceSummary}</strong></span>
+            <ChevronDown size={25} />
+          </button>
+          <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("parts")}>
+            <span className="pitlaneRowIcon pitlaneRowIconParts"><Wrench size={24} /></span>
+            <span><small>Parts</small><strong>Arms, towers, drivetrain</strong></span>
             <ChevronDown size={25} />
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("geometry")}>
@@ -1158,6 +1167,12 @@ export function UniversalTuneBuilder({
             <span><MapPinned size={21} /></span>
             <em>Surface</em>
             <strong>{activeTune.surface || activeTune.track || "Track surface"}</strong>
+            <ChevronDown size={20} />
+          </button>
+          <button type="button" onClick={() => goToTab("front")}>
+            <span><Wrench size={21} /></span>
+            <em>Parts</em>
+            <strong>{String(activeTune.values.frontKnuckle || activeTune.values.rearHubCarrier || "Arms, towers, drivetrain")}</strong>
             <ChevronDown size={20} />
           </button>
           <button type="button" onClick={() => goToTab("geometry")}>
