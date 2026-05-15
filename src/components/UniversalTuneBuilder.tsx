@@ -814,10 +814,7 @@ export function UniversalTuneBuilder({
   const shouldRenderPitlane = Boolean(activeTune);
   if (shouldRenderPitlane) {
     const pitlaneTune = activeTune as Tune;
-    const pitlanePhotoSlots: Array<TunePhoto | null> = [
-      ...pitlaneTune.photos.slice(0, 2),
-      ...Array.from({ length: Math.max(0, 2 - pitlaneTune.photos.slice(0, 2).length) }, () => null)
-    ];
+    const pitlanePreviewPhotos = pitlaneTune.photos.slice(0, 10);
     const electronicsCount = [pitlaneTune.electronics?.motor?.model, pitlaneTune.electronics?.esc?.model, pitlaneTune.electronics?.servo?.model, pitlaneTune.electronics?.gyro?.model].filter(Boolean).length;
     const surfaceSummary = [pitlaneTune.track, pitlaneTune.surface].filter(Boolean).join(" / ") || "Set track and surface";
     const pitlanePageTitle: Record<PitlanePage, string> = {
@@ -1000,20 +997,18 @@ export function UniversalTuneBuilder({
             <span>{pitlaneTune.photos.length} / 10</span>
           </div>
           <div className="pitlanePhotoGrid">
-            {pitlanePhotoSlots.map((photo, index) => (
-              <div className="pitlanePhotoTile" key={photo?.id ?? `placeholder-${index}`}>
-                {photo ? <img src={displayPhotoUrl(photo)} alt={photo.label || "Tune photo"} /> : <img src="/icons/icon.svg" alt="" />}
-                {photo ? (
-                  <button type="button" aria-label="Remove photo" onClick={() => setPitlanePhotoToRemove(photo)}>
-                    <Trash2 size={16} />
-                  </button>
-                ) : null}
-              </div>
-            ))}
             <button className="pitlaneAddPhoto" type="button" onClick={() => setPitlanePhotoManagerOpen(true)}>
               <ImagePlus size={30} />
               Add Photo
             </button>
+            {pitlanePreviewPhotos.map((photo) => (
+              <div className="pitlanePhotoTile" key={photo.id}>
+                <img src={displayPhotoUrl(photo)} alt={photo.label || "Tune photo"} />
+                <button type="button" aria-label="Remove photo" onClick={() => setPitlanePhotoToRemove(photo)}>
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
           </div>
         </section>
 
