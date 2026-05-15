@@ -710,6 +710,7 @@ export function UniversalTuneBuilder({
     const firstTabByPage: Record<Exclude<PitlanePage, "menu">, BuilderTabId> = {
       chassis: "chassis",
       surface: "track",
+      geometry: "geometry",
       electronics: "electronics",
       tires: "tires"
     };
@@ -823,6 +824,7 @@ export function UniversalTuneBuilder({
       menu: builderMode === "basic" ? "Quick" : "Advanced",
       chassis: "Chassis",
       surface: "Surface",
+      geometry: "Geometry",
       electronics: "Electronics",
       tires: "Tires / Wheels"
     };
@@ -836,6 +838,7 @@ export function UniversalTuneBuilder({
         { id: "notes", label: "Notes / Share" }
       ],
       surface: [{ id: "track", label: "Track" }],
+      geometry: [{ id: "geometry", label: "Geometry" }],
       electronics: [
         { id: "electronics", label: "Motor" },
         { id: "esc", label: "ESC" },
@@ -898,7 +901,6 @@ export function UniversalTuneBuilder({
             tune={pitlaneTune}
             car={selectedCar}
             activeTabId={activeTabId}
-            builderMode={builderMode}
             electronicsProfiles={electronicsProfiles}
             onSaveElectronicsProfile={onSaveElectronicsProfile}
             onChange={(nextTune) => onUpdateTune(syncTuneSharedModel(nextTune, selectedCar))}
@@ -959,7 +961,7 @@ export function UniversalTuneBuilder({
 
         <div className="pitlanePageTitle" aria-live="polite">
           <h1>{pitlanePageTitle[pitlanePage]}</h1>
-          <span>{pitlanePage === "menu" ? "Pick a setup area" : "Tap back to return to the four-button menu"}</span>
+          <span>{pitlanePage === "menu" ? "Pick a setup area" : "Tap back to return to the setup area menu"}</span>
         </div>
 
         {pitlanePage === "menu" ? (
@@ -973,6 +975,11 @@ export function UniversalTuneBuilder({
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("surface")}>
             <span className="pitlaneRowIcon pitlaneRowIconSurface"><MapPinned size={24} /></span>
             <span><small>Surface</small><strong>{surfaceSummary}</strong></span>
+            <ChevronDown size={25} />
+          </button>
+          <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("geometry")}>
+            <span className="pitlaneRowIcon pitlaneRowIconGeometry"><SlidersHorizontal size={24} /></span>
+            <span><small>Geometry</small><strong>Alignment, holes, mounts</strong></span>
             <ChevronDown size={25} />
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("electronics")}>
@@ -1158,6 +1165,12 @@ export function UniversalTuneBuilder({
             <strong>{activeTune.surface || activeTune.track || "Track surface"}</strong>
             <ChevronDown size={20} />
           </button>
+          <button type="button" onClick={() => goToTab("geometry")}>
+            <span><SlidersHorizontal size={21} /></span>
+            <em>Geometry</em>
+            <strong>{String(activeTune.values.frontShockTowerUpperHole || activeTune.values.rearHubCarrierUpperLinkHole || "Alignment and holes")}</strong>
+            <ChevronDown size={20} />
+          </button>
           <button type="button" onClick={() => goToTab("electronics")}>
             <span><CircuitBoard size={21} /></span>
             <em>Electronics</em>
@@ -1297,7 +1310,6 @@ export function UniversalTuneBuilder({
               tune={activeTune}
               car={selectedCar}
               activeTabId={activeTabId}
-              builderMode={builderMode}
               electronicsProfiles={electronicsProfiles}
               onSaveElectronicsProfile={onSaveElectronicsProfile}
               onChange={(nextTune) => onUpdateTune(syncTuneSharedModel(nextTune, selectedCar))}
@@ -1783,7 +1795,6 @@ function BasicTuneForm({
   tune,
   car,
   activeTabId,
-  builderMode,
   electronicsProfiles,
   onSaveElectronicsProfile,
   onChange
@@ -1791,7 +1802,6 @@ function BasicTuneForm({
   tune: Tune;
   car?: Car;
   activeTabId: BuilderTabId;
-  builderMode: "basic" | "advanced";
   electronicsProfiles: ElectronicsProfile[];
   onSaveElectronicsProfile: (profile: ElectronicsProfile) => void;
   onChange: (tune: Tune) => void;
@@ -2341,85 +2351,6 @@ function BasicTuneForm({
           partBrand: String(tune.values.frToeBlockBrand ?? tune.values.frontToeBlockBrand ?? "")
         })}
         </TuneSubcategory>
-        <TuneSubcategory title="Front geometry / mounting points" helper="Record the actual holes and steering positions used on the car." defaultOpen={false}>
-          {usesOverdoseIfs ? (
-            <>
-              <GeometryPointPicker
-                label="Overdose IFS damper / rocker position"
-                value={String(tune.values.frontIfsDamperPosition ?? "")}
-                options={ifsMountOptions}
-                helper="Use this instead of a normal front shock tower hole for GALM / Overdose-style inboard front suspension."
-                onChange={(value) => patchValues({ frontIfsDamperPosition: value })}
-              />
-              <TextAreaField
-                label="IFS mounting notes"
-                value={String(tune.values.frontIfsMountingNotes ?? "")}
-                placeholder="ex. Front rocker outer hole, damper side inner hole, 2mm spacer"
-                rows={3}
-                onChange={(event) => patchValues({ frontIfsMountingNotes: event.target.value })}
-              />
-            </>
-          ) : (
-            <>
-              <GeometryPointPicker
-                label="Front shock tower upper hole"
-                value={String(tune.values.frontShockTowerUpperHole ?? "")}
-                options={shockTowerHoleOptions}
-                helper="Choose the tower hole used by the top of the front damper."
-                onChange={(value) => patchValues({ frontShockTowerUpperHole: value })}
-              />
-              <GeometryPointPicker
-                label="Front lower arm damper hole"
-                value={String(tune.values.frontDamperLowerArmHole ?? "")}
-                options={armDamperHoleOptions}
-                helper="Choose the lower arm hole used by the bottom of the front damper."
-                onChange={(value) => patchValues({ frontDamperLowerArmHole: value })}
-              />
-              <TextAreaField
-                label="Front damper mounting notes"
-                value={String(tune.values.frontDamperMountingNotes ?? "")}
-                placeholder="ex. Top hole 3, lower arm outer hole, 2mm spacer behind ball end"
-                rows={3}
-                onChange={(event) => patchValues({ frontDamperMountingNotes: event.target.value })}
-              />
-            </>
-          )}
-          <GeometryPointPicker
-            label="Knuckle steering link hole"
-            value={String(tune.values.frontKnuckleSteeringLinkHole ?? "")}
-            options={steeringMountHoleOptions}
-            helper="Record the steering link position on the knuckle or knuckle plate."
-            onChange={(value) => patchValues({ frontKnuckleSteeringLinkHole: value })}
-          />
-          <GeometryPointPicker
-            label="Knuckle upper link / kingpin hole"
-            value={String(tune.values.frontKnuckleUpperLinkHole ?? "")}
-            options={steeringMountHoleOptions}
-            helper="Use for multi-hole knuckles or upper-link plates."
-            onChange={(value) => patchValues({ frontKnuckleUpperLinkHole: value })}
-          />
-          <GeometryPointPicker
-            label="Bellcrank Ackerman hole"
-            value={String(tune.values.bellcrankAckermanHole ?? "")}
-            options={steeringMountHoleOptions}
-            helper="Record the bellcrank hole used by the steering link."
-            onChange={(value) => patchValues({ bellcrankAckermanHole: value })}
-          />
-          <GeometryPointPicker
-            label="Sliding rack position"
-            value={String(tune.values.slideRackPosition ?? "")}
-            options={slideRackPositionOptions}
-            helper="For slide-rack cars, record the rack or link position."
-            onChange={(value) => patchValues({ slideRackPosition: value })}
-          />
-          <GeometryPointPicker
-            label="DDSS hole"
-            value={String(tune.values.ddssHole ?? "")}
-            options={ddssHoleOptions}
-            helper="For DDSS / direct steering systems, record the active steering hole."
-            onChange={(value) => patchValues({ ddssHole: value })}
-          />
-        </TuneSubcategory>
         </>
         ) : (
         <>
@@ -2542,43 +2473,6 @@ function BasicTuneForm({
           partCategory: "rearToeBlocks",
           partBrand: String(tune.values.rrToeBlockBrand ?? tune.values.rearToeBlockBrand ?? "")
         })}
-        </TuneSubcategory>
-        <TuneSubcategory title="Rear geometry / mounting points" helper="Record the holes, hub positions, and damper mounting points used on the rear of the car." defaultOpen={false}>
-          <GeometryPointPicker
-            label="Rear shock tower upper hole"
-            value={String(tune.values.rearShockTowerUpperHole ?? "")}
-            options={shockTowerHoleOptions}
-            helper="Choose the tower hole used by the top of the rear damper."
-            onChange={(value) => patchValues({ rearShockTowerUpperHole: value })}
-          />
-          <GeometryPointPicker
-            label="Rear lower arm damper hole"
-            value={String(tune.values.rearDamperLowerArmHole ?? "")}
-            options={armDamperHoleOptions}
-            helper="Choose the lower arm hole used by the bottom of the rear damper."
-            onChange={(value) => patchValues({ rearDamperLowerArmHole: value })}
-          />
-          <GeometryPointPicker
-            label="Rear hub upper link hole"
-            value={String(tune.values.rearHubCarrierUpperLinkHole ?? "")}
-            options={rearHubCarrierHoleOptions}
-            helper="Record the rear hub carrier hole used by the upper turnbuckle."
-            onChange={(value) => patchValues({ rearHubCarrierUpperLinkHole: value })}
-          />
-          <GeometryPointPicker
-            label="Rear hub lower link / axle height"
-            value={String(tune.values.rearHubCarrierLowerLinkHole ?? "")}
-            options={rearHubCarrierHoleOptions}
-            helper="Use when the hub carrier has lower link or axle-height choices."
-            onChange={(value) => patchValues({ rearHubCarrierLowerLinkHole: value })}
-          />
-          <TextAreaField
-            label="Rear hub and damper geometry notes"
-            value={String(tune.values.rearGeometryNotes ?? "")}
-            placeholder="ex. Upper link outer middle hole, axle center position, 1mm spacer outside ball stud"
-            rows={3}
-            onChange={(event) => patchValues({ rearGeometryNotes: event.target.value })}
-          />
         </TuneSubcategory>
         <TuneSubcategory title="Miscellaneous" helper="Optional rear sway bar notes." defaultOpen={false}>
           <div className="formSplit">
@@ -2774,23 +2668,50 @@ function BasicTuneForm({
       </BasicTuneSection>
       ) : null}
 
-      {builderMode === "advanced" && (activeTabId === "front" || activeTabId === "rear") ? (
-      <BasicTuneSection title={activeTabId === "front" ? "Front alignment" : "Rear alignment"}>
-        {activeTabId === "front" ? (
-          <>
-            <div className="formSplit"><TextField label="Front camber (deg)" value={String(tune.values.frontCamber ?? "")} placeholder="ex. -6" onChange={(event) => patchValues({ frontCamber: event.target.value })} /><TextField label="Front toe (deg)" value={String(tune.values.frontToe ?? "")} placeholder="ex. out 1" onChange={(event) => patchValues({ frontToe: event.target.value })} /></div>
-            <TextField label="Trail" value={String(tune.values.trail ?? "")} placeholder="Trail / spacer notes" onChange={(event) => patchValues({ trail: event.target.value })} />
-            <div className="formSplit"><TextField label="FF toe block shim (mm)" value={String(tune.values.ffToeBlockShim ?? "")} placeholder="ex. 0.5" onChange={(event) => patchValues({ ffToeBlockShim: event.target.value })} /><TextField label="FR toe block shim (mm)" value={String(tune.values.frToeBlockShim ?? "")} placeholder="ex. 1.0" onChange={(event) => patchValues({ frToeBlockShim: event.target.value })} /></div>
-            <TextField label="Front anti-dive / kick-up notes" value={String(tune.values.frontAntiDiveNotes ?? "")} placeholder="What the FF/FR shim stack creates" onChange={(event) => patchValues({ frontAntiDiveNotes: event.target.value })} />
-          </>
-        ) : (
-          <>
-            <div className="formSplit"><TextField label="Rear camber (deg)" value={String(tune.values.rearCamber ?? "")} placeholder="ex. -3" onChange={(event) => patchValues({ rearCamber: event.target.value })} /><TextField label="Rear toe (deg)" value={String(tune.values.rearToe ?? "")} placeholder="ex. in 3" onChange={(event) => patchValues({ rearToe: event.target.value })} /></div>
-            <div className="formSplit"><TextField label="RF toe block shim (mm)" value={String(tune.values.rfToeBlockShim ?? "")} placeholder="ex. 1.0" onChange={(event) => patchValues({ rfToeBlockShim: event.target.value })} /><TextField label="RR toe block shim (mm)" value={String(tune.values.rrToeBlockShim ?? "")} placeholder="ex. 0.0" onChange={(event) => patchValues({ rrToeBlockShim: event.target.value })} /></div>
-            <TextField label="Rear pro-squat / anti-squat notes" value={String(tune.values.rearSquatNotes ?? "")} placeholder="What the RF/RR shim stack creates" onChange={(event) => patchValues({ rearSquatNotes: event.target.value })} />
-          </>
-        )}
+      {activeTabId === "geometry" ? (
+      <>
+      <BasicTuneSection title="Front geometry" helper="Alignment, shim stack notes, shock holes, steering holes, and front mounting points.">
+        <TuneSubcategory title="Front alignment" helper="Core front measurements and shim notes." defaultOpen>
+          <div className="formSplit"><TextField label="Front camber (deg)" value={String(tune.values.frontCamber ?? "")} placeholder="ex. -6" onChange={(event) => patchValues({ frontCamber: event.target.value })} /><TextField label="Front toe (deg)" value={String(tune.values.frontToe ?? "")} placeholder="ex. out 1" onChange={(event) => patchValues({ frontToe: event.target.value })} /></div>
+          <TextField label="Trail" value={String(tune.values.trail ?? "")} placeholder="Trail / spacer notes" onChange={(event) => patchValues({ trail: event.target.value })} />
+          <div className="formSplit"><TextField label="FF toe block shim (mm)" value={String(tune.values.ffToeBlockShim ?? "")} placeholder="ex. 0.5" onChange={(event) => patchValues({ ffToeBlockShim: event.target.value })} /><TextField label="FR toe block shim (mm)" value={String(tune.values.frToeBlockShim ?? "")} placeholder="ex. 1.0" onChange={(event) => patchValues({ frToeBlockShim: event.target.value })} /></div>
+          <TextField label="Front anti-dive / kick-up notes" value={String(tune.values.frontAntiDiveNotes ?? "")} placeholder="What the FF/FR shim stack creates" onChange={(event) => patchValues({ frontAntiDiveNotes: event.target.value })} />
+        </TuneSubcategory>
+        <TuneSubcategory title="Front shock and steering holes" helper="Record the actual holes and steering positions used on the car." defaultOpen={false}>
+          {usesOverdoseIfs ? (
+            <>
+              <GeometryPointPicker label="Overdose IFS damper / rocker position" value={String(tune.values.frontIfsDamperPosition ?? "")} options={ifsMountOptions} helper="Use this instead of a normal front shock tower hole for GALM / Overdose-style inboard front suspension." onChange={(value) => patchValues({ frontIfsDamperPosition: value })} />
+              <TextAreaField label="IFS mounting notes" value={String(tune.values.frontIfsMountingNotes ?? "")} placeholder="ex. Front rocker outer hole, damper side inner hole, 2mm spacer" rows={3} onChange={(event) => patchValues({ frontIfsMountingNotes: event.target.value })} />
+            </>
+          ) : (
+            <>
+              <GeometryPointPicker label="Front shock tower upper hole" value={String(tune.values.frontShockTowerUpperHole ?? "")} options={shockTowerHoleOptions} helper="Choose the tower hole used by the top of the front damper." onChange={(value) => patchValues({ frontShockTowerUpperHole: value })} />
+              <GeometryPointPicker label="Front lower arm damper hole" value={String(tune.values.frontDamperLowerArmHole ?? "")} options={armDamperHoleOptions} helper="Choose the lower arm hole used by the bottom of the front damper." onChange={(value) => patchValues({ frontDamperLowerArmHole: value })} />
+              <TextAreaField label="Front damper mounting notes" value={String(tune.values.frontDamperMountingNotes ?? "")} placeholder="ex. Top hole 3, lower arm outer hole, 2mm spacer behind ball end" rows={3} onChange={(event) => patchValues({ frontDamperMountingNotes: event.target.value })} />
+            </>
+          )}
+          <GeometryPointPicker label="Knuckle steering link hole" value={String(tune.values.frontKnuckleSteeringLinkHole ?? "")} options={steeringMountHoleOptions} helper="Record the steering link position on the knuckle or knuckle plate." onChange={(value) => patchValues({ frontKnuckleSteeringLinkHole: value })} />
+          <GeometryPointPicker label="Knuckle upper link / kingpin hole" value={String(tune.values.frontKnuckleUpperLinkHole ?? "")} options={steeringMountHoleOptions} helper="Use for multi-hole knuckles or upper-link plates." onChange={(value) => patchValues({ frontKnuckleUpperLinkHole: value })} />
+          <GeometryPointPicker label="Bellcrank Ackerman hole" value={String(tune.values.bellcrankAckermanHole ?? "")} options={steeringMountHoleOptions} helper="Record the bellcrank hole used by the steering link." onChange={(value) => patchValues({ bellcrankAckermanHole: value })} />
+          <GeometryPointPicker label="Sliding rack position" value={String(tune.values.slideRackPosition ?? "")} options={slideRackPositionOptions} helper="For slide-rack cars, record the rack or link position." onChange={(value) => patchValues({ slideRackPosition: value })} />
+          <GeometryPointPicker label="DDSS hole" value={String(tune.values.ddssHole ?? "")} options={ddssHoleOptions} helper="For DDSS / direct steering systems, record the active steering hole." onChange={(value) => patchValues({ ddssHole: value })} />
+        </TuneSubcategory>
       </BasicTuneSection>
+      <BasicTuneSection title="Rear geometry" helper="Rear alignment, suspension mount shims, shock holes, hub holes, and damper mounting notes.">
+        <TuneSubcategory title="Rear alignment" helper="Core rear measurements and shim notes." defaultOpen>
+          <div className="formSplit"><TextField label="Rear camber (deg)" value={String(tune.values.rearCamber ?? "")} placeholder="ex. -3" onChange={(event) => patchValues({ rearCamber: event.target.value })} /><TextField label="Rear toe (deg)" value={String(tune.values.rearToe ?? "")} placeholder="ex. in 3" onChange={(event) => patchValues({ rearToe: event.target.value })} /></div>
+          <div className="formSplit"><TextField label="RF toe block shim (mm)" value={String(tune.values.rfToeBlockShim ?? "")} placeholder="ex. 1.0" onChange={(event) => patchValues({ rfToeBlockShim: event.target.value })} /><TextField label="RR toe block shim (mm)" value={String(tune.values.rrToeBlockShim ?? "")} placeholder="ex. 0.0" onChange={(event) => patchValues({ rrToeBlockShim: event.target.value })} /></div>
+          <TextField label="Rear pro-squat / anti-squat notes" value={String(tune.values.rearSquatNotes ?? "")} placeholder="What the RF/RR shim stack creates" onChange={(event) => patchValues({ rearSquatNotes: event.target.value })} />
+        </TuneSubcategory>
+        <TuneSubcategory title="Rear holes and hub positions" helper="Record the holes, hub positions, and damper mounting points used on the rear of the car." defaultOpen={false}>
+          <GeometryPointPicker label="Rear shock tower upper hole" value={String(tune.values.rearShockTowerUpperHole ?? "")} options={shockTowerHoleOptions} helper="Choose the tower hole used by the top of the rear damper." onChange={(value) => patchValues({ rearShockTowerUpperHole: value })} />
+          <GeometryPointPicker label="Rear lower arm damper hole" value={String(tune.values.rearDamperLowerArmHole ?? "")} options={armDamperHoleOptions} helper="Choose the lower arm hole used by the bottom of the rear damper." onChange={(value) => patchValues({ rearDamperLowerArmHole: value })} />
+          <GeometryPointPicker label="Rear hub upper link hole" value={String(tune.values.rearHubCarrierUpperLinkHole ?? "")} options={rearHubCarrierHoleOptions} helper="Record the rear hub carrier hole used by the upper turnbuckle." onChange={(value) => patchValues({ rearHubCarrierUpperLinkHole: value })} />
+          <GeometryPointPicker label="Rear hub lower link / axle height" value={String(tune.values.rearHubCarrierLowerLinkHole ?? "")} options={rearHubCarrierHoleOptions} helper="Use when the hub carrier has lower link or axle-height choices." onChange={(value) => patchValues({ rearHubCarrierLowerLinkHole: value })} />
+          <TextAreaField label="Rear hub and damper geometry notes" value={String(tune.values.rearGeometryNotes ?? "")} placeholder="ex. Upper link outer middle hole, axle center position, 1mm spacer outside ball stud" rows={3} onChange={(event) => patchValues({ rearGeometryNotes: event.target.value })} />
+        </TuneSubcategory>
+      </BasicTuneSection>
+      </>
       ) : null}
 
       {activeTabId === "front" || activeTabId === "rear" ? (

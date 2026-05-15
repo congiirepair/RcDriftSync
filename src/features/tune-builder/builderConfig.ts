@@ -64,9 +64,9 @@ export interface UniversalTuneBuilderProps {
 }
 
 export type ProfiledElectronicsCategory = "esc" | "servo" | "gyro";
-export type BuilderTabId = "chassis" | "track" | "front" | "rear" | "drivetrain" | "tires" | "electronics" | "esc" | "servo" | "gyro" | "radio" | "feel" | "photos" | "notes" | "pdf";
+export type BuilderTabId = "chassis" | "track" | "front" | "rear" | "geometry" | "drivetrain" | "tires" | "electronics" | "esc" | "servo" | "gyro" | "radio" | "feel" | "photos" | "notes" | "pdf";
 export type PitlaneProductTab = "all" | "motor" | "esc" | "gyro" | "servo" | "tires" | "frontWheels" | "rearWheels" | "other";
-export type PitlanePage = "menu" | "chassis" | "surface" | "electronics" | "tires";
+export type PitlanePage = "menu" | "chassis" | "surface" | "geometry" | "electronics" | "tires";
 
 export interface UniversalField {
   id: string;
@@ -423,6 +423,12 @@ export const guidedSteps: GuidedStep[] = [
     sectionIds: ["front", "rear"]
   },
   {
+    id: "geometry",
+    label: "Geometry",
+    helper: "Record alignment, suspension mount inserts, shock holes, hub holes, steering holes, and shim stacks.",
+    sectionIds: ["front", "rear"]
+  },
+  {
     id: "drivetrain",
     label: "Drivetrain / Differential",
     helper: "Track motor position, diff behavior, gearing, belts, shafts, and drive notes.",
@@ -454,7 +460,7 @@ export const guidedSteps: GuidedStep[] = [
   }
 ];
 
-export const quickStepIds = new Set(["chassis", "electronics", "steering", "suspension", "drivetrain", "driver-feel", "notes-publish"]);
+export const quickStepIds = new Set(["chassis", "electronics", "steering", "suspension", "geometry", "drivetrain", "driver-feel", "notes-publish"]);
 
 export const basicFieldIds = new Set([
   "name",
@@ -541,6 +547,7 @@ export const builderTabs: Array<{ id: BuilderTabId; label: string; stepId: strin
   { id: "track", label: "Track", stepId: "chassis", sectionIds: ["basics"], helper: "Track name and surface for this setup." },
   { id: "front", label: "Front", stepId: "steering", sectionIds: ["front"], helper: "Front arms, knuckles, axle, spring, toe block, damper, and wheel setup." },
   { id: "rear", label: "Rear", stepId: "suspension", sectionIds: ["rear"], helper: "Rear arms, hub carrier, axle length, toe block, spring, damper, and wheel setup." },
+  { id: "geometry", label: "Geometry", stepId: "geometry", sectionIds: [], helper: "Alignment, suspension mount inserts, shock holes, hub holes, steering holes, and shim notes." },
   { id: "drivetrain", label: "Drivetrain", stepId: "drivetrain", sectionIds: ["drivetrain"], helper: "Motor, gearing, differential, shafts, belts, and drive notes." },
   { id: "tires", label: "Tires/Wheels", stepId: "tires-wheels", sectionIds: ["tires-wheels"], helper: "Front and rear tire, wheel, offset, and fitment setup." },
   { id: "electronics", label: "Electronics", stepId: "electronics", sectionIds: ["esc-tune", "servo-tune", "gyro-tune", "radio-tune"], helper: "ESC, servo, gyro, motor, and radio settings in one place." },
@@ -554,4 +561,4 @@ export const builderTabs: Array<{ id: BuilderTabId; label: string; stepId: strin
   { id: "pdf", label: "Preview/PDF", stepId: "notes-publish", sectionIds: [], helper: "Preview the setup summary and export the filled setup sheet PDF." }
 ];
 
-export const quickTuneTabIds = new Set<BuilderTabId>(["chassis", "track", "front", "rear", "drivetrain", "tires", "electronics", "esc", "servo", "gyro", "radio", "photos", "notes", "pdf"]);
+export const quickTuneTabIds = new Set<BuilderTabId>(["chassis", "track", "front", "rear", "geometry", "drivetrain", "tires", "electronics", "esc", "servo", "gyro", "radio", "photos", "notes", "pdf"]);

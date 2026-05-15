@@ -1221,6 +1221,7 @@ const wheelCategories = new Set<ProductCatalogCategory>(["frontWheels", "rearWhe
 const electronicsCanonicalCategories = new Set<ProductCatalogCategory>(["servos", "escs", "capacitors"]);
 const variantFamilyCategories = new Set<ProductCatalogCategory>([
   "chassis",
+  "decks",
   "frontUpperArms",
   "rearUpperArms",
   "frontLowerArms",
@@ -1240,7 +1241,29 @@ const variantFamilyCategories = new Set<ProductCatalogCategory>([
   "solidAxles",
   "frontAxles",
   "rearAxles",
+  "frontLowerArmShims",
+  "rearLowerArmShims",
+  "shockPistons",
+  "shockShafts",
+  "damperOils",
+  "motorRotors",
+  "motorStators",
+  "spurGears",
+  "pinionGears",
+  "tires",
+  "servos",
+  "gyros",
+  "motors",
+  "escs",
+  "capacitors",
+  "batteries",
   "motorMounts",
+  "escMounts",
+  "servoMounts",
+  "bodyMounts",
+  "batteryMounts",
+  "servoHorns",
+  "wheelHexes",
   "bellcranks",
   "slideRacks",
   "steeringRacks"
@@ -1303,6 +1326,87 @@ function tuningVariantSizeFromName(value: string) {
   return sizes.length === 1 ? sizes[0] : "";
 }
 
+const multiSizeVariantCategories = new Set<ProductCatalogCategory>([
+  "frontAxles",
+  "rearAxles",
+  "frontLowerArmShims",
+  "rearLowerArmShims",
+  "shockPistons",
+  "shockShafts",
+  "motorRotors",
+  "servoHorns",
+  "wheelHexes"
+]);
+
+function tuningVariantSizesFromName(value: string) {
+  return Array.from(new Set(Array.from(value.matchAll(/\b\d+(?:\.\d+)?\s*mm\b/gi)).map((match) => match[0].replace(/\s+/g, ""))));
+}
+
+function uniqueVariantMatches(value: string, pattern: RegExp, formatter: (match: RegExpMatchArray) => string) {
+  return Array.from(new Set(Array.from(value.matchAll(pattern)).map(formatter).filter(Boolean)));
+}
+
+function tuningVariantDescriptorsFromItem(item: ProductCatalogItem) {
+  const sourceText = `${item.productName} ${item.simplifiedName ?? ""} ${item.displayName ?? ""} ${item.partNumber ?? ""} ${item.modelNumber ?? ""}`;
+  const color = tuningVariantColorFromName(sourceText);
+  const size = tuningVariantSizeFromName(sourceText);
+  const descriptors: string[] = [];
+  let compound = "";
+
+  if (color) descriptors.push(titleCase(color));
+  if (size) descriptors.push(size);
+  if (!size && multiSizeVariantCategories.has(item.category)) {
+    descriptors.push(...tuningVariantSizesFromName(sourceText).slice(0, 3));
+  }
+
+  if (item.category === "motors" || item.category === "motorStators") {
+    descriptors.push(...uniqueVariantMatches(sourceText, /\b(\d+(?:\.\d+)?)\s*T\b/gi, (match) => `${match[1]}T`));
+  }
+
+  if (item.category === "spurGears" || item.category === "pinionGears") {
+    const pitch = uniqueVariantMatches(sourceText, /\b(48|64)\s*P(?:itch)?\b/gi, (match) => `${match[1]}P`);
+    const teeth = uniqueVariantMatches(sourceText, /\b(\d{2,3})\s*T\b/gi, (match) => `${match[1]}T`);
+    descriptors.push(...Array.from(new Set([...pitch, ...teeth])));
+  }
+
+  if (item.category === "damperOils") {
+    descriptors.push(...uniqueVariantMatches(sourceText, /\b#?\s*(\d{2,4})\s*(?:cst|wt)?\b/gi, (match) => {
+      const value = Number(match[1]);
+      return value >= 50 ? `#${match[1]}` : "";
+    }));
+  }
+
+  if (item.category === "servoHorns") {
+    descriptors.push(...uniqueVariantMatches(sourceText, /\b(23|24|25)\s*T\b/gi, (match) => `${match[1]}T Spline`));
+  }
+
+  if (item.category === "batteries") {
+    descriptors.push(...uniqueVariantMatches(sourceText, /\b(\d{3,5})\s*mAh\b/gi, (match) => `${match[1]}mAh`));
+    descriptors.push(...uniqueVariantMatches(sourceText, /\b([23])\s*S\b/gi, (match) => `${match[1]}S`));
+    descriptors.push(...uniqueVariantMatches(sourceText, /\b(\d+(?:\.\d+)?)\s*V\b/gi, (match) => `${match[1]}V`));
+  }
+
+  if (item.category === "tires" || item.category === "springs") {
+    const stiffness = uniqueVariantMatches(
+      sourceText,
+      /\b(super\s+soft|medium\s+soft|medium\s+hard|super\s+hard|soft|medium|hard)\b/gi,
+      (match) => titleCase(match[1])
+    );
+    if (stiffness.length) {
+      compound = stiffness.join(" / ");
+      descriptors.push(...stiffness);
+    }
+  }
+
+  const cleanedDescriptors = Array.from(new Set(descriptors.map((descriptor) => descriptor.replace(/\s+/g, " ").trim()).filter(Boolean)));
+  return {
+    color,
+    size,
+    compound,
+    displayName: cleanedDescriptors.join(" / ")
+  };
+}
+
 function bundledVariantColorsFromName(value: string) {
   const normalized = normalizeProductValue(value);
   if (/\bsilver\s+edge\b/.test(normalized)) return [];
@@ -1319,6 +1423,14 @@ function stripVariantFamilyTokens(value: string, brand: string) {
     .replace(/\(\s*(?:black|blue|red|purple|silver|gold|white|green|orange|pink|yellow|bronze|chrome|gunmetal|gun metal)(?:\s*[-/]\s*(?:black|blue|red|purple|silver|gold|white|green|orange|pink|yellow|bronze|chrome|gunmetal|gun metal))*\s*\)/gi, " ")
     .replace(/\b(?:red|purple|black|blue|silver|gold|white|green|orange|pink|yellow|bronze|chrome|gunmetal|gun metal)\b/gi, " ")
     .replace(/\b(?:red|purple|black|blue)\s+(?:purple|black|blue|red)(?:\s+(?:purple|black|blue|red))*\b/gi, " ")
+    .replace(/\b(?:super\s+soft|medium\s+soft|medium\s+hard|super\s+hard|soft|medium|hard)\b/gi, " ")
+    .replace(/\b(?:48|64)\s*P(?:itch)?\b/gi, " ")
+    .replace(/\b\d+(?:\.\d+)?\s*(?:mm|wt|cst|mah|v|t)\b/gi, " ")
+    .replace(/\b[23]\s*S\b/gi, " ")
+    .replace(/\b#\s*\d+\b/g, " ")
+    .replace(/\b(?:offset|off)\s*[+-]?\s*\d+(?:\.\d+)?(?:\s*mm)?\b/gi, " ")
+    .replace(/\b[+-]\s*\d+(?:\.\d+)?(?:\s*mm)?\b/gi, " ")
+    .replace(/\b(?:spline|teeth|tooth|compound)\b/gi, " ")
     .replace(/\b(?:set|kit)\b/gi, " ")
     .replace(/\bSilverEdge\b/g, "Silver Edge")
     .replace(/\s+\(\s*$/g, " ")
@@ -1337,15 +1449,16 @@ function stripVariantFamilyTokens(value: string, brand: string) {
 }
 
 function tuningVariantFromItem(item: ProductCatalogItem): ProductCatalogVariant {
-  const sourceText = `${item.productName} ${item.simplifiedName ?? ""} ${item.displayName ?? ""}`;
-  const color = tuningVariantColorFromName(sourceText);
-  const size = tuningVariantSizeFromName(sourceText);
+  const descriptors = tuningVariantDescriptorsFromItem(item);
+  const color = descriptors.color;
+  const size = descriptors.size;
   const sku = item.partNumber || item.modelNumber || undefined;
-  const displayName = [color && titleCase(color), size].filter(Boolean).join(" / ") || sku || "Standard";
+  const displayName = descriptors.displayName || sku || "Standard";
   return {
     id: slugPart([displayName, sku || item.id].filter(Boolean).join("-")),
     color: color ? titleCase(color) : undefined,
     size: size || undefined,
+    compound: descriptors.compound || undefined,
     sku,
     displayName,
     sourceProductName: item.productName,
@@ -1358,6 +1471,7 @@ function shouldCanonicalizeVariantFamily(item: ProductCatalogItem) {
   if (item.variants?.length) return true;
   const sourceText = `${item.productName} ${item.simplifiedName ?? ""} ${item.displayName ?? ""} ${item.partNumber ?? ""} ${item.modelNumber ?? ""}`;
   if (tuningVariantColorFromName(sourceText)) return true;
+  if (tuningVariantDescriptorsFromItem(item).displayName) return true;
   if (bundledVariantColorsFromName(sourceText).length > 1) return true;
   return false;
 }
@@ -1578,6 +1692,8 @@ function mergeVariants(existing: ProductCatalogVariant[] = [], next: ProductCata
     const key = [
       normalizeProductValue(variant.color ?? ""),
       normalizeProductValue(variant.offset ?? ""),
+      normalizeProductValue(variant.size ?? ""),
+      normalizeProductValue(variant.compound ?? ""),
       normalizeProductValue(variant.packCount ?? ""),
       normalizeProductValue(variant.sku ?? ""),
       normalizeProductValue(variant.displayName ?? "")

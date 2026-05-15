@@ -12214,9 +12214,9 @@ h4,
 
 .pitlaneTuneExperience .pitlaneSetupRow {
   grid-template-columns: 44px minmax(0, 1fr) 22px;
-  min-height: 66px;
+  min-height: 62px;
   gap: 10px;
-  padding: 9px 10px;
+  padding: 8px 10px;
 }
 
 .pitlaneTuneExperience .pitlaneRowIcon {
@@ -12347,6 +12347,12 @@ h4,
 .pitlaneTuneExperience .pitlaneRowIconSurface {
   color: #38d7ff;
   border-color: rgba(56, 215, 255, 0.44);
+}
+
+.pitlaneTuneExperience .pitlaneRowIconGeometry {
+  color: #7be7ff;
+  border-color: rgba(123, 231, 255, 0.42);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 0 18px rgba(0, 183, 255, 0.16);
 }
 
 .pitlaneTuneExperience .pitlaneRowIconElectronics {
