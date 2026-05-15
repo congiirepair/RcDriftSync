@@ -1,8 +1,7 @@
 import { Search, X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import type { ProductCatalogCategory, ProductCatalogItem, ProductCatalogVariant } from "../data/productCatalog";
-import { catalogBrandsByCategory, catalogOptionLabel, filterProductCatalog, getProductCatalog } from "../services/productCatalog";
+import { catalogBrandsByCategory, catalogOptionLabel, filterProductCatalog, getProductCatalog, type ProductCatalogCategory, type ProductCatalogItem, type ProductCatalogVariant } from "../features/catalog";
 import { formatFormLabel } from "../utils/formLabels";
 
 export interface PartSelectorValue {

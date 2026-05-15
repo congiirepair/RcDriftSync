@@ -14,6 +14,20 @@ dist-ssr
 .firebase
 test-results
 playwright-report
+qa-artifacts/scratch/
+local-preview/
+
+# Generated QA screenshots/reports should live under qa-artifacts.
+.qa-*.png
+qa-*.png
+artifacts-*.png
+tmp-*.png
+playwright-*.png
+catalog-*.csv
+catalog-*.md
+catalog-*.json
+design-*.png
+debug-shell.png
 
 # Editor directories and files
 .vscode/*

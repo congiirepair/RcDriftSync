@@ -3,7 +3,13 @@ import type { Page } from "@playwright/test";
 const now = "2026-05-05T12:00:00.000Z";
 
 export async function resetDb(page: Page) {
-  await page.goto("/");
+  await page.goto("/manifest.webmanifest");
+  await page.evaluate(() => new Promise<void>((resolve) => {
+    const request = indexedDB.deleteDatabase("rc-tune-pwa");
+    request.onsuccess = () => resolve();
+    request.onerror = () => resolve();
+    request.onblocked = () => resolve();
+  }));
   await seedDb(page, emptyData);
 }
 
@@ -20,8 +26,14 @@ export async function seedDb(page: Page, data: Record<string, unknown>) {
         const db = request.result;
         const tx = db.transaction("app", "readwrite");
         tx.objectStore("app").put(seed, "state");
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
+        tx.oncomplete = () => {
+          db.close();
+          resolve();
+        };
+        tx.onerror = () => {
+          db.close();
+          reject(tx.error);
+        };
       };
     });
   }, data);
@@ -78,8 +90,44 @@ const baseValues = {
 export const exampleData = {
   ...emptyData,
   cars: [
-    { id: "car-fixture-rdx", name: "RDX test car", chassis: "Reve D RDX", sheetId: "rdx-template", createdAt: now },
-    { id: "car-fixture-mc3", name: "MC-3 test car", chassis: "MC-3", sheetId: "mc3-template", createdAt: now }
+    {
+      id: "car-fixture-rdx",
+      name: "RDX test car",
+      brand: "Reve D",
+      chassisBrand: "Reve D",
+      chassisBrandSlug: "reve-d",
+      chassis: "Reve D RDX",
+      chassisModel: "RDX",
+      chassisModelSlug: "rdx",
+      chassisType: "RWD drift",
+      drivetrainType: "RWD",
+      scale: "1/10",
+      sheetId: "rdx-template",
+      templateMode: "official",
+      officialTemplateEligible: true,
+      photos: [],
+      createdAt: now,
+      updatedAt: now
+    },
+    {
+      id: "car-fixture-mc3",
+      name: "MC-3 test car",
+      brand: "Reve D",
+      chassisBrand: "Reve D",
+      chassisBrandSlug: "reve-d",
+      chassis: "Reve D MC-3",
+      chassisModel: "MC-3",
+      chassisModelSlug: "mc-3",
+      chassisType: "RWD drift",
+      drivetrainType: "RWD",
+      scale: "1/10",
+      sheetId: "mc3-template",
+      templateMode: "official",
+      officialTemplateEligible: true,
+      photos: [],
+      createdAt: now,
+      updatedAt: now
+    }
   ],
   tunes: [
     {
