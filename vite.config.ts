@@ -9,15 +9,10 @@ export default defineConfig({
       output: {
         codeSplitting: {
           minSize: 20000,
-          maxSize: 450000,
           groups: [
             {
               name: 'vendor-react',
               test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/
-            },
-            {
-              name: 'vendor-firebase',
-              test: /node_modules[\\/](@firebase|firebase)[\\/]/
             },
             {
               name: 'vendor-ui',
