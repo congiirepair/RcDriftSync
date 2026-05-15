@@ -15502,6 +15502,350 @@ body {
   }
 }
 
+/* Targeted release polish: quieter nested frames, clearer part/settings hierarchy, and a slimmer mobile save action. */
+.pageHeader,
+.heroPanel,
+.authHeroPanel,
+.authPanel,
+.appCard,
+.homeActionCard,
+.dashboardSection,
+.builderStart,
+.builderSectionCard,
+.basicTuneCard,
+.activeTuneBanner,
+.visualTuneCard,
+.communityTuneCard,
+.myTuneCard,
+.brandCard,
+.brandHeader,
+.publicHero,
+.publicSection,
+.sharePanel,
+.profileSummary,
+.carDetailPanel,
+.partSelectorCard,
+.emptyState,
+.loadingState,
+.errorState,
+.garageBrandBox,
+.garageBrandPanel,
+.garageCarCompact,
+.garageCarTuneTray,
+.photoCard,
+.pitlaneSetupCard,
+.pitlanePhotoSection,
+.pitlaneNotesSection,
+.pitlaneSubPageBody,
+.tuneSubcategory,
+.basicTuneSummary,
+.readonlyTuneSection {
+  border-color: rgba(91, 203, 248, 0.3);
+  background:
+    linear-gradient(145deg, rgba(27, 61, 78, 0.2), transparent 38%),
+    radial-gradient(circle at 92% 94%, rgba(0, 118, 255, 0.14), transparent 7rem),
+    linear-gradient(145deg, rgba(11, 23, 32, 0.92), rgba(4, 8, 13, 0.94) 56%, rgba(2, 5, 9, 0.97));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.34),
+    0 14px 34px rgba(0, 0, 0, 0.34),
+    0 0 18px rgba(0, 166, 255, 0.1);
+}
+
+.pageHeader::after,
+.heroPanel::after,
+.authHeroPanel::after,
+.authPanel::after,
+.appCard::after,
+.homeActionCard::after,
+.dashboardSection::after,
+.builderStart::after,
+.activeTuneBanner::after,
+.visualTuneCard::after,
+.communityTuneCard::after,
+.myTuneCard::after,
+.brandCard::after,
+.brandHeader::after,
+.publicHero::after,
+.publicSection::after,
+.sharePanel::after,
+.profileSummary::after,
+.carDetailPanel::after,
+.emptyState::after,
+.loadingState::after,
+.errorState::after,
+.garageBrandBox::after,
+.garageBrandPanel::after,
+.garageCarCompact::after,
+.garageCarTuneTray::after,
+.photoCard::after,
+.pitlaneSetupCard::after,
+.pitlanePhotoSection::after,
+.pitlaneNotesSection::after,
+.basicTuneSummary::after,
+.readonlyTuneSection::after {
+  inset: 9px;
+  border-color: rgba(91, 203, 248, 0.2);
+  background:
+    linear-gradient(135deg, rgba(70, 218, 255, 0.55) 0 2px, transparent 2px 22px) top left / 72px 72px no-repeat,
+    linear-gradient(315deg, rgba(70, 218, 255, 0.42) 0 2px, transparent 2px 22px) bottom right / 72px 72px no-repeat;
+  opacity: 0.42;
+}
+
+.builderSectionCard::after,
+.basicTuneCard::after,
+.partSelectorCard::after,
+.pitlaneSubPageBody::after,
+.tuneSubcategory::after {
+  display: none;
+}
+
+.pitlaneTuneExperience .pitlaneSubPageBody {
+  gap: 12px;
+  border-color: rgba(91, 203, 248, 0.24);
+  background:
+    linear-gradient(140deg, rgba(0, 165, 255, 0.09), transparent 34%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.025) 0 1px, transparent 1px 18px),
+    rgba(3, 9, 15, 0.72);
+}
+
+.pitlaneTuneExperience .builderSectionCard,
+.pitlaneTuneExperience .basicTuneCard,
+.pitlaneTuneExperience .tuneSubcategory {
+  border-color: rgba(113, 202, 236, 0.18);
+  border-radius: 14px;
+  background:
+    linear-gradient(145deg, rgba(31, 53, 64, 0.38), rgba(7, 13, 19, 0.9)),
+    radial-gradient(circle at 100% 0%, rgba(50, 197, 255, 0.08), transparent 8rem);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 10px 24px rgba(0, 0, 0, 0.28);
+}
+
+.pitlaneTuneExperience .basicTuneCard {
+  padding: 14px;
+}
+
+.pitlaneTuneExperience .tuneSubcategory {
+  border-left: 2px solid rgba(0, 188, 255, 0.42);
+  padding: 0;
+}
+
+.pitlaneTuneExperience .tuneSubcategoryHeader {
+  min-height: 48px;
+  padding: 11px 13px;
+  background: linear-gradient(90deg, rgba(0, 177, 255, 0.08), rgba(255, 255, 255, 0.018));
+}
+
+.pitlaneTuneExperience .basicTuneSectionToggle strong,
+.pitlaneTuneExperience .basicTuneCard > header strong,
+.pitlaneTuneExperience .tuneSubcategoryHeader strong {
+  font-size: 0.95rem;
+  line-height: 1.1;
+  letter-spacing: 0;
+}
+
+.pitlaneTuneExperience .tuneSubcategoryHeader em {
+  display: block;
+  color: rgba(194, 212, 225, 0.64);
+  font-size: 0.72rem;
+  letter-spacing: 0;
+}
+
+.pitlaneTuneExperience .formField {
+  gap: 7px;
+}
+
+.pitlaneTuneExperience .formField > span,
+.pitlaneTuneExperience .basicChoice .formField > span,
+.pitlaneTuneExperience .schemaField > span {
+  color: rgba(111, 208, 255, 0.95);
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 850;
+  letter-spacing: 0;
+  line-height: 1.18;
+  text-transform: none;
+}
+
+.pitlaneTuneExperience .builderFieldGrid .formField > span::before,
+.pitlaneTuneExperience .basicChoice .formField > span::before,
+.pitlaneTuneExperience .schemaField > span::before {
+  width: 2px;
+  height: 14px;
+  opacity: 0.78;
+}
+
+.pitlaneTuneExperience .formField input,
+.pitlaneTuneExperience .formField select,
+.pitlaneTuneExperience .formField textarea {
+  border-color: rgba(138, 174, 194, 0.2);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
+    rgba(2, 6, 10, 0.62);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.pitlaneTuneExperience .formField input:focus,
+.pitlaneTuneExperience .formField select:focus,
+.pitlaneTuneExperience .formField textarea:focus {
+  border-color: rgba(84, 210, 255, 0.72);
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(0, 164, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.pitlaneTuneExperience .partSelector {
+  gap: 8px;
+  border-left: 2px solid rgba(0, 188, 255, 0.28);
+  padding-left: 10px;
+}
+
+.pitlaneTuneExperience .partSelectorHeader {
+  align-items: center;
+}
+
+.pitlaneTuneExperience .partSelectorHeader h4 {
+  color: #ffffff;
+  font-size: 0.9rem;
+  letter-spacing: 0;
+}
+
+.pitlaneTuneExperience .partSelectorHeader p {
+  color: rgba(192, 209, 221, 0.62);
+  font-size: 0.78rem;
+}
+
+.pitlaneTuneExperience .partSelectorCard {
+  min-height: 76px;
+  border-color: rgba(82, 188, 230, 0.26);
+  border-radius: 13px;
+  padding: 12px;
+  background:
+    linear-gradient(120deg, rgba(0, 175, 255, 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(16, 29, 38, 0.92), rgba(4, 9, 14, 0.95));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 9px 22px rgba(0, 0, 0, 0.24);
+}
+
+.pitlaneTuneExperience .partSelectorCard.selected {
+  border-color: rgba(84, 210, 255, 0.62);
+  background:
+    linear-gradient(120deg, rgba(0, 182, 255, 0.18), transparent 38%),
+    linear-gradient(145deg, rgba(17, 36, 48, 0.95), rgba(4, 9, 14, 0.97));
+}
+
+.pitlaneTuneExperience .partSelectorCard strong {
+  font-size: 0.96rem;
+  line-height: 1.14;
+}
+
+.pitlaneTuneExperience .partSelectorCard .partBrand,
+.pitlaneTuneExperience .partSelectorMeta em {
+  letter-spacing: 0;
+}
+
+.pitlaneTuneExperience .partSelectorPreviewMark {
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.14), transparent 2rem),
+    rgba(0, 0, 0, 0.28);
+}
+
+.pitlaneTuneExperience .pitlaneSetupCard {
+  border-color: rgba(91, 203, 248, 0.24);
+  border-radius: 16px;
+  background:
+    linear-gradient(110deg, rgba(0, 181, 255, 0.11), transparent 34%),
+    linear-gradient(145deg, rgba(16, 30, 39, 0.92), rgba(4, 9, 14, 0.96));
+  box-shadow:
+    inset 3px 0 0 rgba(0, 188, 255, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 16px 34px rgba(0, 0, 0, 0.34);
+}
+
+.pitlaneTuneExperience .pitlaneSetupRow {
+  min-height: 64px;
+  border-bottom-color: rgba(255, 255, 255, 0.075);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.022), transparent);
+}
+
+.pitlaneTuneExperience .pitlaneSetupRow small {
+  color: rgba(116, 219, 255, 0.9);
+  letter-spacing: 0;
+}
+
+.pitlaneTuneExperience .pitlaneSetupRow strong {
+  letter-spacing: 0;
+}
+
+.pitlaneSaveBar {
+  min-height: 48px;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  border-color: rgba(158, 225, 255, 0.46);
+  border-radius: 10px;
+  background:
+    linear-gradient(180deg, rgba(91, 220, 255, 0.35), transparent 45%),
+    linear-gradient(135deg, #149ef3, #0067dc);
+  box-shadow:
+    0 10px 26px rgba(0, 117, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.24);
+}
+
+.pitlaneSaveBar strong {
+  font-size: 1.06rem;
+  letter-spacing: 0;
+}
+
+.pitlaneSaveBar em {
+  font-size: 0.62rem;
+}
+
+@media (max-width: 760px) {
+  .pitlaneTuneExperience {
+    padding-bottom: calc(var(--bottomNavHeight) + 54px);
+  }
+
+  .pitlaneTuneExperience .basicTuneCard {
+    padding: 12px;
+  }
+
+  .pitlaneTuneExperience .tuneSubcategoryBody {
+    padding: 10px;
+  }
+
+  .pitlaneTuneExperience .partSelector {
+    padding-left: 8px;
+  }
+
+  .pitlaneSaveBar {
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(var(--bottomNavHeight) + 7px);
+    min-height: 44px;
+    grid-template-columns: 40px minmax(0, 1fr) 40px;
+  }
+
+  .pitlaneSaveBar span svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .pitlaneSaveBar strong {
+    font-size: 0.94rem;
+  }
+
+  .pitlaneSaveBar em {
+    font-size: 0.56rem;
+  }
+}
+
 /* App-like sticky shell: keep headers/nav pinned while content scrolls. */
 @media (max-width: 1023px) {
   html,
