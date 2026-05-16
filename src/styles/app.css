@@ -13539,6 +13539,25 @@ body:has(.partSelectorOverlay) .pitlaneSaveBar {
   padding-bottom: 8px;
 }
 
+.partSelectorResultsVirtual {
+  display: block;
+  position: relative;
+}
+
+.partSelectorVirtualSizer {
+  position: relative;
+  width: 100%;
+}
+
+.partSelectorVirtualRow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 4px 10px;
+  will-change: transform;
+}
+
 .partSelectorCustom {
   max-height: 42svh;
   max-height: 42dvh;
@@ -15543,6 +15562,279 @@ body {
   font-size: 0.62rem;
 }
 
+/* Premium trackside interaction pass: sharper hierarchy, tactile controls, and app-like page changes. */
+:root {
+  --rcds-surface-deep: #02070d;
+  --rcds-surface-1: rgba(7, 15, 23, 0.96);
+  --rcds-surface-2: rgba(13, 28, 39, 0.94);
+  --rcds-accent-cyan: #42d8ff;
+  --rcds-accent-blue: #0a7cff;
+  --rcds-accent-lime: #c5ff55;
+  --rcds-line: rgba(115, 219, 255, 0.24);
+  --rcds-line-strong: rgba(115, 219, 255, 0.54);
+  --rcds-shadow-high: 0 24px 56px rgba(0, 0, 0, 0.44), 0 10px 28px rgba(0, 117, 255, 0.16);
+  --rcds-shadow-low: 0 10px 24px rgba(0, 0, 0, 0.34);
+}
+
+.desktopMain,
+.mobileShell {
+  background:
+    linear-gradient(180deg, rgba(4, 13, 21, 0.98), rgba(1, 4, 8, 0.98)),
+    repeating-linear-gradient(135deg, rgba(86, 205, 255, 0.035) 0 1px, transparent 1px 22px);
+}
+
+.desktopTopBar,
+.desktopSideRail,
+.bottomNav {
+  border-color: var(--rcds-line);
+  background:
+    linear-gradient(180deg, rgba(20, 39, 53, 0.82), rgba(5, 11, 18, 0.92)),
+    rgba(2, 7, 13, 0.84);
+  box-shadow: var(--rcds-shadow-low), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px);
+}
+
+.desktopSideRail button,
+.desktopCreate,
+.desktopUser,
+.bottomNav button {
+  transition: transform 150ms ease, color 150ms ease, border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.desktopSideRail button:hover,
+.desktopCreate:hover,
+.desktopUser:hover,
+.bottomNav button:hover {
+  transform: translateY(-2px);
+}
+
+.desktopSideRail button:active,
+.desktopCreate:active,
+.desktopUser:active,
+.bottomNav button:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+.desktopSideRail button.active,
+.bottomNav button.active {
+  color: #ffffff;
+  background:
+    linear-gradient(135deg, rgba(66, 216, 255, 0.18), rgba(10, 124, 255, 0.12)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow: inset 3px 0 0 var(--rcds-accent-cyan), 0 0 24px rgba(66, 216, 255, 0.12);
+}
+
+.pitlaneTuneExperience {
+  width: min(100%, 470px);
+  gap: 18px;
+}
+
+.pitlaneTuneExperience::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(115deg, rgba(66, 216, 255, 0.09), transparent 34%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.026) 0 1px, transparent 1px 22px),
+    linear-gradient(180deg, #07121c, #02060b 70%);
+  pointer-events: none;
+}
+
+.pitlaneTuneExperience.isNavigating {
+  cursor: progress;
+}
+
+.pitlaneMotionPane {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+  will-change: transform, opacity;
+}
+
+.pitlaneTuneModeSwitch {
+  border-radius: 14px;
+  border-color: rgba(111, 217, 255, 0.28);
+  padding: 4px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.018)),
+    rgba(3, 8, 14, 0.9);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), var(--rcds-shadow-low);
+}
+
+.pitlaneTuneModeSwitch button {
+  border-radius: 10px;
+  text-shadow: none;
+}
+
+.pitlaneTuneModeSwitch button.active {
+  background: linear-gradient(135deg, rgba(66, 216, 255, 0.98), rgba(10, 124, 255, 0.9));
+  color: #ffffff;
+  box-shadow: 0 12px 28px rgba(0, 123, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.pitlanePageTitle {
+  justify-items: start;
+  text-align: left;
+}
+
+.pitlanePageTitle h1,
+.pitlanePageTitle span {
+  text-align: left;
+}
+
+.pitlanePageTitle h1 {
+  text-shadow: 2px 2px 0 rgba(0, 124, 255, 0.42), 0 0 30px rgba(66, 216, 255, 0.16);
+}
+
+.pitlaneSetupCard,
+.pitlaneTuneExperience .pitlaneSubPageBody,
+.pitlaneTuneExperience .builderSectionCard,
+.pitlaneTuneExperience .basicTuneCard,
+.pitlanePhotoSection,
+.pitlaneNotesSection {
+  border-radius: 18px;
+  border-color: var(--rcds-line);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.018) 38%, rgba(0, 0, 0, 0.16)),
+    linear-gradient(120deg, rgba(66, 216, 255, 0.11), transparent 34%),
+    linear-gradient(180deg, var(--rcds-surface-2), var(--rcds-surface-1));
+  box-shadow: var(--rcds-shadow-high), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.pitlaneTuneExperience .pitlaneSubPageBody {
+  padding: 12px;
+}
+
+.pitlaneTuneExperience .builderFieldGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pitlaneTuneExperience .tuneSubcategoryBody {
+  grid-template-columns: 1fr;
+}
+
+.pitlaneTuneExperience .builderFieldGrid > .fieldWide,
+.pitlaneTuneExperience .builderFieldGrid > textarea,
+.pitlaneTuneExperience .builderFieldGrid > .formField:has(textarea),
+.pitlaneTuneExperience .builderFieldGrid > .rdxSheetField:has(textarea) {
+  grid-column: 1 / -1;
+}
+
+.pitlaneTuneExperience .pitlaneSetupRow {
+  min-height: 72px;
+  border-bottom-color: rgba(121, 218, 255, 0.11);
+  background:
+    linear-gradient(90deg, rgba(66, 216, 255, 0.09), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.038), rgba(255, 255, 255, 0.008));
+}
+
+.pitlaneTuneExperience .pitlaneSetupRow:hover,
+.pitlaneTuneExperience .pitlaneSetupRow:focus-visible {
+  border-color: var(--rcds-line-strong);
+  background:
+    linear-gradient(90deg, rgba(66, 216, 255, 0.16), transparent 48%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018));
+  box-shadow: inset 0 0 0 1px rgba(66, 216, 255, 0.22);
+}
+
+.pitlaneTuneExperience .pitlaneRowIcon {
+  border-radius: 13px;
+  border-color: rgba(66, 216, 255, 0.42);
+  background:
+    linear-gradient(180deg, rgba(36, 74, 92, 0.92), rgba(3, 10, 16, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 10px 22px rgba(0, 0, 0, 0.28);
+}
+
+.pitlaneTuneExperience .pitlaneSetupRow strong,
+.pitlaneTuneExperience .builderSectionCard header strong,
+.pitlaneTuneExperience .basicTuneCard > header strong {
+  color: #ffffff;
+}
+
+.pitlaneTuneExperience .formField input,
+.pitlaneTuneExperience .formField select,
+.pitlaneTuneExperience .formField textarea,
+.partSelectorSearch input {
+  transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.pitlaneTuneExperience .formField input:focus,
+.pitlaneTuneExperience .formField select:focus,
+.pitlaneTuneExperience .formField textarea:focus,
+.partSelectorSearch input:focus {
+  transform: translateY(-1px);
+  border-color: rgba(66, 216, 255, 0.88);
+  box-shadow: 0 0 0 3px rgba(66, 216, 255, 0.16), 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.pitlaneTuneExperience .formField input[data-signed-number="true"] {
+  border-color: rgba(197, 255, 85, 0.28);
+}
+
+.pitlaneTuneExperience .formField input[data-signed-number="true"]:focus {
+  border-color: rgba(197, 255, 85, 0.78);
+  box-shadow: 0 0 0 3px rgba(197, 255, 85, 0.14), 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.partSelectorResults.partSelectorResultsVirtual {
+  display: block;
+}
+
+.partSelectorResults.partSelectorResultsVirtual .partSelectorBrandGroup {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.partSelectorResults.partSelectorResultsVirtual .partSelectorBrandHeading {
+  position: relative;
+}
+
+.builderStickyActions.basicStickyActions,
+.pitlaneSaveBar {
+  border-color: rgba(158, 229, 255, 0.58);
+  background:
+    linear-gradient(180deg, rgba(118, 228, 255, 0.24), transparent 42%),
+    linear-gradient(135deg, #0fb9ff, #075de8);
+  box-shadow: 0 18px 42px rgba(0, 103, 255, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.26);
+}
+
+.builderStickyActions .primaryAction:disabled,
+.builderStickyActions .smallPill:disabled {
+  opacity: 0.58;
+  filter: saturate(0.72);
+}
+
+@media (max-width: 520px) {
+  .pitlaneTuneExperience {
+    width: 100%;
+    padding-inline: 12px;
+  }
+
+  .pitlanePageTitle h1 {
+    font-size: clamp(2rem, 12vw, 3rem);
+  }
+
+  .pitlaneTuneExperience .pitlaneSetupRow {
+    grid-template-columns: 44px minmax(0, 1fr) 22px;
+    gap: 10px;
+  }
+
+  .pitlaneTuneExperience .builderFieldGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .partSelectorResults.partSelectorResultsVirtual .partSelectorBrandGroup {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pitlaneMotionPane {
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
 @media (max-width: 760px) {
   .pitlaneTuneExperience {
     padding-bottom: calc(var(--bottomNavHeight) + 54px);
@@ -15851,5 +16143,20 @@ body {
       linear-gradient(135deg, rgba(23, 35, 48, 0.92), rgba(4, 8, 14, 0.86)),
       rgba(3, 7, 12, 0.88);
     backdrop-filter: blur(18px);
+  }
+}
+
+/* Desktop builder framing: keep the trackside workflow readable instead of phone-sized on wide screens. */
+@media (min-width: 1024px) {
+  .pitlaneTuneExperience {
+    width: min(720px, calc(100vw - var(--desktopRailWidth, 0px) - 64px));
+    max-width: 720px;
+    margin-inline: auto;
+  }
+
+  .pitlaneTuneExperience .pitlaneSaveBar {
+    left: calc(var(--desktopRailWidth, 0px) + ((100vw - var(--desktopRailWidth, 0px)) / 2));
+    width: min(520px, calc(100vw - var(--desktopRailWidth, 0px) - 64px));
+    bottom: 24px;
   }
 }

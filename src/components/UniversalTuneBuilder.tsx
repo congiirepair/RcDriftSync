@@ -1,6 +1,7 @@
 import { CarFront, Check, ChevronDown, CircleDot, CircuitBoard, ClipboardCheck, CopyPlus, Download, Eye, FileText, ImagePlus, Lightbulb, MapPinned, MoreHorizontal, Plus, Save, Share2, SlidersHorizontal, Trash2, Wrench } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 import { BASIC_CUSTOM_OPTION, basicTuneOptions } from "../data/basicTuneOptions";
 import { chassisBrands, chassisInfoFromTune, findChassisBrand, modelsForBrand, slugifyChassis } from "../data/chassisBrands";
@@ -52,6 +53,19 @@ const assistantResults: Array<{ id: NonNullable<SetupAssistantEntry["result"]>; 
   { id: "worse", label: "Felt worse" },
   { id: "no-change", label: "No change" }
 ];
+
+const signedSetupValueKeys = new Set([
+  "frontCamber",
+  "frontToe",
+  "rearCamber",
+  "rearToe",
+  "rearSkidAngle",
+  "skidAngle",
+  "frontWeightNotes",
+  "rearWeightNotes",
+  "leftWeightNotes",
+  "rightWeightNotes"
+]);
 
 const assistantSuggestions: Record<string, { label: string; areas: string[]; explanation: string; starterChange: string }> = {
   spinsOut: {
@@ -446,6 +460,7 @@ export function UniversalTuneBuilder({
   const [pitlanePage, setPitlanePage] = useState<PitlanePage>("menu");
   const [pitlanePhotoManagerOpen, setPitlanePhotoManagerOpen] = useState(false);
   const [pitlanePhotoToRemove, setPitlanePhotoToRemove] = useState<TunePhoto | null>(null);
+  const [navigationPending, startNavigationTransition] = useTransition();
   const carTunes = tunes.filter((tune) => tune.carId === carId);
   const modeFields = builderMode === "advanced" ? allBuilderFields : allBuilderFields.filter((field) => basicFieldIds.has(field.id));
   const completion = activeTune ? Math.round((completedFieldCount(activeTune, modeFields) / Math.max(1, modeFields.length)) * 100) : 0;
@@ -687,22 +702,24 @@ export function UniversalTuneBuilder({
 
   function goToTab(tabId: BuilderTabId) {
     const tab = builderTabs.find((item) => item.id === tabId) ?? builderTabs[0];
-    setActiveTabId(tab.id);
-    setActiveStepId(tab.stepId);
-    setOpenSection(tab.sectionIds[0] ?? tab.id);
-    if (tab.id === "pdf") setPreviewOpen(true);
+    startNavigationTransition(() => {
+      setActiveTabId(tab.id);
+      setActiveStepId(tab.stepId);
+      setOpenSection(tab.sectionIds[0] ?? tab.id);
+      if (tab.id === "pdf") setPreviewOpen(true);
+    });
   }
 
   function switchBuilderMode(mode: "basic" | "advanced") {
-    setBuilderMode(mode);
-    if (mode === "basic" && !quickTuneTabIds.has(activeTabId)) {
-      goToTab(activeTabId === "electronics" || activeTabId === "tires" || activeTabId === "track" || activeTabId === "feel" ? "chassis" : "notes");
-    }
+    startNavigationTransition(() => {
+      setBuilderMode(mode);
+      if (mode === "basic" && !quickTuneTabIds.has(activeTabId)) {
+        goToTab(activeTabId === "electronics" || activeTabId === "tires" || activeTabId === "track" || activeTabId === "feel" ? "chassis" : "notes");
+      }
+    });
   }
 
   function openPitlanePage(page: Exclude<PitlanePage, "menu">) {
-    setPitlanePage(page);
-    setPitlanePhotoManagerOpen(false);
     const firstTabByPage: Record<Exclude<PitlanePage, "menu">, BuilderTabId> = {
       chassis: "chassis",
       surface: "track",
@@ -712,7 +729,11 @@ export function UniversalTuneBuilder({
       electronics: "electronics",
       tires: "tires"
     };
-    goToTab(firstTabByPage[page]);
+    startNavigationTransition(() => {
+      setPitlanePage(page);
+      setPitlanePhotoManagerOpen(false);
+      goToTab(firstTabByPage[page]);
+    });
   }
 
   function removePitlanePhoto(photoId: string) {
@@ -950,7 +971,7 @@ export function UniversalTuneBuilder({
       );
     }
     return (
-      <main className={`pitlaneTuneExperience pitlanePage-${pitlanePage}`}>
+      <main className={`pitlaneTuneExperience pitlanePage-${pitlanePage} ${navigationPending ? "isNavigating" : ""}`}>
         <header className="pitlaneTuneTopbar" aria-label="Tune Builder mode">
           <button className="pitlaneBackButton" type="button" onClick={() => pitlanePage === "menu" ? window.history.back() : setPitlanePage("menu")} aria-label={pitlanePage === "menu" ? "Back" : "Back to Tune Builder menu"}>
             <ChevronDown size={23} />
@@ -973,6 +994,15 @@ export function UniversalTuneBuilder({
           <span>{pitlanePage === "menu" ? "Pick a setup area" : "Tap back to return to the setup area menu"}</span>
         </div>
 
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pitlanePage}
+            className="pitlaneMotionPane"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
         {pitlanePage === "menu" ? (
           <>
         <section className="pitlaneSetupCard" aria-label="Tune setup">
@@ -1046,6 +1076,8 @@ export function UniversalTuneBuilder({
         </section>
           </>
         ) : renderPitlaneSubPage()}
+          </motion.div>
+        </AnimatePresence>
 
         <button className="pitlaneSaveBar" type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
           <span><Save size={30} /></span>
@@ -1949,13 +1981,16 @@ function BasicTuneForm({
   }
 
   function renderSetupTextField(label: string, valueKey: string, placeholder = "", inputMode?: "text" | "decimal" | "numeric", quickValues: string[] = []) {
+    const allowsSignedValue = signedSetupValueKeys.has(valueKey);
     return (
       <div className="rdxSheetField">
         <TextField
           label={label}
           value={valueForSetup(valueKey)}
           placeholder={placeholder}
-          inputMode={inputMode}
+          inputMode={allowsSignedValue ? "text" : inputMode}
+          data-signed-number={allowsSignedValue ? "true" : undefined}
+          autoComplete="off"
           onChange={(event) => patchValues({ [valueKey]: event.target.value })}
         />
         {quickValues.length ? (
@@ -4028,7 +4063,9 @@ function BuilderField({
         <div className="inputWithUnit">
           <input
             type="text"
-            inputMode={field.type === "number" ? "decimal" : "text"}
+            inputMode={field.type === "number" && !signedSetupValueKeys.has(field.id) ? "decimal" : "text"}
+            data-signed-number={signedSetupValueKeys.has(field.id) ? "true" : undefined}
+            autoComplete="off"
             value={String(value)}
             disabled={isNotApplicable}
             placeholder={field.placeholder || "Skip for now"}

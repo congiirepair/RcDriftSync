@@ -1,5 +1,6 @@
 import { Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { catalogBrandsByCategory, catalogOptionLabel, filterProductCatalog, getProductCatalog, type ProductCatalogCategory, type ProductCatalogItem, type ProductCatalogVariant } from "../features/catalog";
 import { formatFormLabel } from "../utils/formLabels";
@@ -160,6 +161,7 @@ export function PartSelector({
   const [brandFilter, setBrandFilter] = useState("");
   const [showSupportParts, setShowSupportParts] = useState(false);
   const [customOpen, setCustomOpen] = useState(false);
+  const resultsParentRef = useRef<HTMLDivElement | null>(null);
   const [customDraft, setCustomDraft] = useState({
     brand: value.brand || "",
     name: value.customName || value.model || "",
@@ -192,6 +194,13 @@ export function PartSelector({
     catalogItems.forEach((item) => groups.set(item.brand, [...(groups.get(item.brand) ?? []), item]));
     return Array.from(groups.entries()).sort(([brandA], [brandB]) => brandA.localeCompare(brandB));
   }, [catalogItems]);
+  const shouldVirtualizeResults = catalogItems.length > 80;
+  const groupVirtualizer = useVirtualizer({
+    count: catalogGroups.length,
+    getScrollElement: () => resultsParentRef.current,
+    estimateSize: (index) => 48 + Math.ceil((catalogGroups[index]?.[1].length ?? 1) / 2) * 128,
+    overscan: 3
+  });
 
   function chooseItem(item: ProductCatalogItem, variant?: ProductCatalogVariant) {
     const next = partValueFromItem(item, variant);
@@ -232,6 +241,63 @@ export function PartSelector({
     saveRecentPart(category, next);
     onChange(next);
     setOpen(false);
+  }
+
+  function renderCatalogGroup(brand: string, items: ProductCatalogItem[]) {
+    return (
+      <div className="partSelectorBrandGroup" key={brand}>
+        <div className="partSelectorBrandHeading">{brand}</div>
+        {items.map((item) => (
+          item.variants && item.variants.length > 1 ? (
+            <div className="partSelectorVariantGroup" key={item.id}>
+              <div className="part-option part-option-heading">
+                <span className="part-option-media">
+                  {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
+                </span>
+                <div className="part-option-copy">
+                  <div className="part-meta-row">
+                    <span className="part-brand">{item.brand}</span>
+                    {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
+                  </div>
+                  <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
+                </div>
+                {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
+              </div>
+              {item.variants.map((variant) => (
+                <button key={`${item.id}-${variant.id}`} type="button" onClick={() => chooseItem(item, variant)}>
+                  <div className="part-option">
+                    <span className="part-option-media part-option-variant">Option</span>
+                    <div className="part-option-copy">
+                      <div className="part-meta-row">
+                        <span className="part-brand">Variant</span>
+                        {variant.sku ? <span className="part-number">{variant.sku}</span> : null}
+                      </div>
+                      <div className="part-name">{variant.displayName}</div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <button key={item.id} type="button" onClick={() => chooseItem(item, item.variants?.[0])}>
+              <div className="part-option">
+                <span className="part-option-media">
+                  {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
+                </span>
+                <div className="part-option-copy">
+                  <div className="part-meta-row">
+                    <span className="part-brand">{item.brand}</span>
+                    {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
+                  </div>
+                  <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
+                </div>
+                {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
+              </div>
+            </button>
+          )
+        ))}
+      </div>
+    );
   }
 
   const selectorDialog = open ? (
@@ -299,61 +365,25 @@ export function PartSelector({
           </div>
         ) : null}
 
-        <div className="partSelectorResults">
-          {catalogGroups.map(([brand, items]) => (
-            <div className="partSelectorBrandGroup" key={brand}>
-              <div className="partSelectorBrandHeading">{brand}</div>
-              {items.map((item) => (
-                item.variants && item.variants.length > 1 ? (
-                  <div className="partSelectorVariantGroup" key={item.id}>
-                    <div className="part-option part-option-heading">
-                      <span className="part-option-media">
-                        {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
-                      </span>
-                      <div className="part-option-copy">
-                        <div className="part-meta-row">
-                          <span className="part-brand">{item.brand}</span>
-                          {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
-                        </div>
-                        <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
-                      </div>
-                      {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
-                    </div>
-                    {item.variants.map((variant) => (
-                      <button key={`${item.id}-${variant.id}`} type="button" onClick={() => chooseItem(item, variant)}>
-                        <div className="part-option">
-                          <span className="part-option-media part-option-variant">Option</span>
-                          <div className="part-option-copy">
-                            <div className="part-meta-row">
-                              <span className="part-brand">Variant</span>
-                              {variant.sku ? <span className="part-number">{variant.sku}</span> : null}
-                            </div>
-                            <div className="part-name">{variant.displayName}</div>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
+        <div className={`partSelectorResults ${shouldVirtualizeResults ? "partSelectorResultsVirtual" : ""}`} ref={resultsParentRef}>
+          {shouldVirtualizeResults ? (
+            <div className="partSelectorVirtualSizer" style={{ height: `${groupVirtualizer.getTotalSize()}px` }}>
+              {groupVirtualizer.getVirtualItems().map((virtualRow) => {
+                const [brand, items] = catalogGroups[virtualRow.index];
+                return (
+                  <div
+                    key={brand}
+                    className="partSelectorVirtualRow"
+                    data-index={virtualRow.index}
+                    ref={groupVirtualizer.measureElement}
+                    style={{ transform: `translateY(${virtualRow.start}px)` }}
+                  >
+                    {renderCatalogGroup(brand, items)}
                   </div>
-                ) : (
-                  <button key={item.id} type="button" onClick={() => chooseItem(item, item.variants?.[0])}>
-                    <div className="part-option">
-                      <span className="part-option-media">
-                        {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
-                      </span>
-                      <div className="part-option-copy">
-                        <div className="part-meta-row">
-                          <span className="part-brand">{item.brand}</span>
-                          {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
-                        </div>
-                        <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
-                      </div>
-                      {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
-                    </div>
-                  </button>
-                )
-              ))}
+                );
+              })}
             </div>
-          ))}
+          ) : catalogGroups.map(([brand, items]) => renderCatalogGroup(brand, items))}
           {!catalogItems.length ? (
             <div className="partSelectorEmpty">
               <strong>No matching catalog parts yet.</strong>

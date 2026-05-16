@@ -78,6 +78,8 @@ test("Quick tuning menu separates geometry, tires, and body weight fields withou
   await page.getByLabel("Caster").fill("8 deg");
   await page.getByLabel("KPI").fill("8 deg");
   await page.getByLabel("Front track width (mm)").fill("198");
+  await expect(page.getByLabel("Front camber (deg)")).toHaveAttribute("inputmode", "text");
+  await page.getByLabel("Front camber (deg)").fill("-8");
   await page.getByLabel("Front upper arm outer spacer (mm)").fill("3");
   await page.getByLabel("Front upper arm inner front spacer (mm)").fill("1");
   await page.getByLabel("Front droop").fill("1mm gap");
@@ -90,6 +92,8 @@ test("Quick tuning menu separates geometry, tires, and body weight fields withou
   await page.getByLabel("RR sus mount bushing").selectOption("E");
   await page.getByLabel("RR bushing position").selectOption("Out");
   await page.getByLabel("Rear roll center").fill("Low");
+  await expect(page.getByLabel("Rear camber (deg)")).toHaveAttribute("inputmode", "text");
+  await page.getByLabel("Rear camber (deg)").fill("-5");
   await page.getByLabel("Rear axle height / hole notes").fill("Lower axle hole");
   await page.getByLabel("Rear anti-squat / skid notes").fill("RF 6mm shim, RR 6.5mm shim");
   await page.getByLabel("Rear rebound").fill("5mm");
@@ -124,6 +128,7 @@ test("Quick tuning menu separates geometry, tires, and body weight fields withou
   await page.getByRole("button", { name: /Geometry/ }).first().click();
   await expect(page.getByLabel("Bell crank position")).toHaveValue("Outer");
   await expect(page.getByLabel("Caster")).toHaveValue("8 deg");
+  await expect(page.getByLabel("Front camber (deg)")).toHaveValue("-8");
   await expect(page.getByLabel("Front upper arm outer spacer (mm)")).toHaveValue("3");
   await expect(page.getByLabel("RF sus mount bushing")).toHaveValue("A");
   await expect(page.getByLabel("RF sus mount part / number")).toHaveValue("#7");
@@ -131,6 +136,7 @@ test("Quick tuning menu separates geometry, tires, and body weight fields withou
   await expect(page.getByLabel("RR sus mount bushing")).toHaveValue("E");
   await expect(page.getByLabel("RR bushing position")).toHaveValue("Out");
   await expect(page.getByLabel("Rear axle height / hole notes")).toHaveValue("Lower axle hole");
+  await expect(page.getByLabel("Rear camber (deg)")).toHaveValue("-5");
   await expect(page.getByLabel("Rear anti-squat / skid notes")).toHaveValue("RF 6mm shim, RR 6.5mm shim");
   await expect(page.locator(".setupDiagramMap, .setupDiagramKonvaLayer, .rdxCalloutDiagram")).toHaveCount(0);
 
