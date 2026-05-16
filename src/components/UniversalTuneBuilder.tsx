@@ -463,7 +463,7 @@ export function UniversalTuneBuilder({
   });
   const countActiveTuneValues = (keys: string[]) => keys.filter((key) => String(activeTune?.values[key] ?? "").trim()).length;
   const activePartsCount = countActiveTuneValues(["frontShockTower", "frontDamper", "frontLowerArm", "frontUpperArm", "frontKnuckle", "frontAxle", "rearShockTower", "rearDamper", "rearLowerArm", "rearUpperArm", "rearHubCarrier", "rearAxleLength", "ffToeBlock", "frToeBlock", "rfToeBlock", "rrToeBlock", "diffType"]);
-  const activeGeometryCount = countActiveTuneValues(["frontRideHeight", "frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "frontTrackWidth", "frontDroop", "frontPreload", "frontRebound", "frontUpperArmSpacer", "frontLowerArmSpacer", "frontShockPosition", "frontDamperMountingNotes", "rearRideHeight", "rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearDroop", "rearPreload", "rearRebound", "rearGeometryNotes", "rearAntiSquatNotes", "rearAxleHeightNotes"]);
+  const activeGeometryCount = countActiveTuneValues(["frontRideHeight", "frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "frontTrackWidth", "frontDroop", "frontPreload", "frontRebound", "frontUpperArmSpacer", "frontLowerArmSpacer", "frontShockPosition", "frontDamperMountingNotes", "rearRideHeight", "rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearDroop", "rearPreload", "rearRebound", "rfSusMountType", "rrSusMountType", "rfSusMountPosition", "rrSusMountPosition", "rearGeometryNotes", "rearAntiSquatNotes", "rearAxleHeightNotes"]);
   const activeTireSummary = String(activeTune?.values.frontTire || activeTune?.values.rearTire || activeTune?.values.tires || activeTune?.values.frontWheel || "Select tires and wheels");
   const activeBodyWeightSummary = [activeTune?.values.bodyShell || activeTune?.values.body, activeTune?.values.addedWeight, activeTune?.values.batteryPosition].filter(Boolean).join(" / ") || "Body, wing, weight";
 
@@ -817,7 +817,7 @@ export function UniversalTuneBuilder({
     const surfaceSummary = [pitlaneTune.track, pitlaneTune.surface].filter(Boolean).join(" / ") || "Set track and surface";
     const countFilledValues = (keys: string[]) => keys.filter((key) => String(pitlaneTune.values[key] ?? "").trim()).length;
     const partsCount = countFilledValues(["frontShockTower", "frontDamper", "frontLowerArm", "frontUpperArm", "frontKnuckle", "frontAxle", "rearShockTower", "rearDamper", "rearLowerArm", "rearUpperArm", "rearHubCarrier", "rearAxleLength", "ffToeBlock", "frToeBlock", "rfToeBlock", "rrToeBlock", "diffType"]);
-    const geometryCount = countFilledValues(["frontRideHeight", "frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "frontTrackWidth", "frontDroop", "frontPreload", "frontRebound", "frontUpperArmSpacer", "frontLowerArmSpacer", "frontShockPosition", "frontDamperMountingNotes", "rearRideHeight", "rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearDroop", "rearPreload", "rearRebound", "rearGeometryNotes", "rearAntiSquatNotes", "rearAxleHeightNotes"]);
+    const geometryCount = countFilledValues(["frontRideHeight", "frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "frontTrackWidth", "frontDroop", "frontPreload", "frontRebound", "frontUpperArmSpacer", "frontLowerArmSpacer", "frontShockPosition", "frontDamperMountingNotes", "rearRideHeight", "rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearDroop", "rearPreload", "rearRebound", "rfSusMountType", "rrSusMountType", "rfSusMountPosition", "rrSusMountPosition", "rearGeometryNotes", "rearAntiSquatNotes", "rearAxleHeightNotes"]);
     const tireSummary = String(pitlaneTune.values.frontTire || pitlaneTune.values.rearTire || pitlaneTune.values.tires || pitlaneTune.values.frontWheel || "Select tires / wheels");
     const bodyWeightSummary = [pitlaneTune.values.bodyShell || pitlaneTune.values.body, pitlaneTune.values.addedWeight, pitlaneTune.values.batteryPosition].filter(Boolean).join(" / ") || "Body, wing, weight";
     const pitlanePageTitle: Record<PitlanePage, string> = {
@@ -1840,6 +1840,10 @@ function BasicTuneForm({
   const brandSlug = selectedBrand?.slug ?? "other";
   const models = modelsForBrand(brandSlug);
   const selectedModel = tune.chassisModel || (models.includes(chassisInfo.model) ? chassisInfo.model : models[0] ?? "Custom");
+  const rearSusMountBushingOptions =
+    brandSlug === "reve-d" ? ["A", "B", "C", "D", "E"] :
+    brandSlug === "yokomo" ? ["1", "2", "3", "4", "5"] :
+    ["A", "B", "C", "D", "E", "1", "2", "3", "4", "5"];
   const isReveDMultiKnuckleChassis = brandSlug === "reve-d" && /rdx|mc-?iii|mc-?3/i.test(`${selectedModel} ${chassisInfo.model}`);
   const rearLowerArmBrandText = String(tune.values.rearLowerArmBrand ?? tune.chassisSetup?.rear?.lowerArm?.brand ?? "");
   const isReveDRearLowerArm = /\breve\s*d\b|\breved\b/i.test(rearLowerArmBrandText);
@@ -2812,19 +2816,19 @@ function BasicTuneForm({
       <BasicTuneSection title="Rear geometry" helper="Rear suspension mounts, arm, hub, shock, and spacer descriptions." defaultOpen>
         <TuneSubcategory title="Rear callouts" helper="Rear suspension mount, arm, hub, and alignment values." defaultOpen>
           <div className="formSplit">
-            {renderSetupSelectField("RF sus mount type", "rfSusMountType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
-            {renderSetupTextField("RF sus mount number", "rearSusMountNumber", "ex. #7")}
+            {renderSetupSelectField("RF sus mount bushing", "rfSusMountType", rearSusMountBushingOptions)}
+            {renderSetupTextField("RF sus mount part / number", "rearSusMountNumber", "ex. #7 / aluminum mount")}
           </div>
           <div className="formSplit">
             {renderSetupSelectField("RF sus mount flipped", "rearSusMountFlipped", ["No", "Yes", "Flipped"])}
-            {renderSetupSelectField("RR sus mount type", "rrSusMountType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+            {renderSetupSelectField("RR sus mount bushing", "rrSusMountType", rearSusMountBushingOptions)}
           </div>
           <div className="formSplit">
-            {renderSetupTextField("RR sus mount number", "rrSusMountNumber", "ex. #7")}
-            {renderSetupSelectField("RF insert / dot position", "rfSusMountPosition", ["D", "E", "Custom / Other"])}
+            {renderSetupTextField("RR sus mount part / number", "rrSusMountNumber", "ex. #7 / aluminum mount")}
+            {renderSetupSelectField("RF bushing position", "rfSusMountPosition", ["In", "Out"])}
           </div>
           <div className="formSplit">
-            {renderSetupSelectField("RR insert / dot position", "rrSusMountPosition", ["D", "E", "Custom / Other"])}
+            {renderSetupSelectField("RR bushing position", "rrSusMountPosition", ["In", "Out"])}
             {renderSetupTextField("Rear roll center", "rearRollCenter", "ex. low / middle / high")}
           </div>
           <div className="setupZoneTitle">Rear suspension mount spacer zone</div>
