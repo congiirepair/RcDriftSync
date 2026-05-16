@@ -110,7 +110,7 @@ export default function App() {
   const [account, setAccount] = useState<UserAccount | null>(null);
   const [authChecked, setAuthChecked] = useState(!isFirebaseConfigured);
   const [accountDataReady, setAccountDataReady] = useState(!isFirebaseConfigured);
-  const [syncStatus, setSyncStatus] = useState(isFirebaseConfigured ? "Firebase account storage ready" : "Firebase is not configured");
+  const [syncStatus, setSyncStatus] = useState(isFirebaseConfigured ? "Account garage storage ready" : "Account storage is not connected");
   const [onboardingOpen, setOnboardingOpen] = useState(() => localStorage.getItem("rc-onboarding-complete") !== "yes");
   const [online, setOnline] = useState(() => navigator.onLine);
   const [remoteSharedTune, setRemoteSharedTune] = useState<Tune | null>(null);
@@ -142,7 +142,7 @@ export default function App() {
       if (!user) {
         setAuthChecked(true);
         setAccountDataReady(true);
-        setSyncStatus(isFirebaseConfigured ? "Sign in to load your cars and tunes." : "Firebase is not configured.");
+        setSyncStatus(isFirebaseConfigured ? "Sign in to load your cars and tunes." : "Account storage is not connected.");
         const empty = syncAppDataSharedModel(emptyAppData);
         setData(empty);
         setCommunityData(empty);
@@ -152,7 +152,7 @@ export default function App() {
         return;
       }
       setAccountDataReady(false);
-      setSyncStatus("Loading your Firebase garage...");
+      setSyncStatus("Loading your saved garage...");
       try {
         const [cloud, publicData] = await Promise.all([loadFirebaseAppData(user.uid), loadFirebasePublicData()]);
         const syncedPublicData = syncAppDataSharedModel(publicData as AppData);
@@ -164,9 +164,9 @@ export default function App() {
           const withGarage = hasCloud ? mergeAppData(base, syncedCloud) : base;
           return withGarage;
         });
-        setSyncStatus("Firebase sync ready");
+        setSyncStatus("Account sync ready");
       } catch {
-        setSyncStatus("Could not load your Firebase garage. Refresh or check your connection.");
+        setSyncStatus("Could not load your saved garage. Refresh or check your connection.");
       } finally {
         setAuthChecked(true);
         setAccountDataReady(true);
@@ -316,16 +316,16 @@ export default function App() {
         await withTimeout(
           saveFirebaseAppData(account.uid, syncedData),
           FIREBASE_SAVE_TIMEOUT_MS,
-          "Firebase save timed out. Your account storage did not confirm the write."
+          "Account save timed out. Your account storage did not confirm the write."
         );
         setData(syncedData);
         void deleteOrphanedCloudinaryPhotos(appData, syncedData);
-        setSyncStatus("Synced to Firebase");
+        setSyncStatus("Synced to your account");
         return true;
       } catch (error) {
         const detail = error instanceof Error ? error.message : "Check your connection or account permissions.";
         console.error("Firebase save failed", error);
-        setSyncStatus(`Firebase save failed. ${detail}`);
+        setSyncStatus(`Account save failed. ${detail}`);
         return false;
       }
     } else if (!isFirebaseConfigured) {
@@ -333,7 +333,7 @@ export default function App() {
         await saveAppData(syncedData);
         setData(syncedData);
         void deleteOrphanedCloudinaryPhotos(appData, syncedData);
-        setSyncStatus("Saved in this browser because Firebase is not configured.");
+        setSyncStatus("Saved in this browser because account storage is not connected.");
         return true;
       } catch (error) {
         const detail = error instanceof Error ? error.message : "Local storage failed.";
@@ -441,7 +441,7 @@ export default function App() {
       try {
         await removeFirebaseTune(tuneToDelete);
       } catch {
-        setSyncStatus("Delete failed in Firebase. The tune was left in place.");
+        setSyncStatus("Delete failed in account storage. The tune was left in place.");
         return false;
       }
     }
@@ -450,7 +450,7 @@ export default function App() {
     if (account) {
       setData(nextData);
       void deleteOrphanedCloudinaryPhotos(appData, nextData);
-      setSyncStatus("Tune deleted from Firebase");
+      setSyncStatus("Tune deleted from your account");
     } else {
       const savedToAccount = await commit(nextData);
       if (!savedToAccount) return false;
@@ -499,7 +499,7 @@ export default function App() {
         await Promise.all(connectedTunes.map((tune) => removeFirebaseTune(tune)));
         await removeFirebaseCar(carToDelete);
       } catch {
-        setSyncStatus("Delete failed in Firebase. The car and connected tunes were left in place.");
+        setSyncStatus("Delete failed in account storage. The car and connected tunes were left in place.");
         return;
       }
     }
@@ -1213,7 +1213,7 @@ function HomePage({
       </header>
 
       <section className="pitlaneHeroPanel">
-        <h1>Tune, Share, Grow.</h1>
+        <h1>Trackside setup, saved fast.</h1>
         <button className="pitlaneQuickTuneCard exactQuickTuneButton" type="button" onClick={data.cars.length ? onAddTune : onAddCar} aria-label="Quick Tune. Create and save a tune fast.">
           <img src="/images/quick-tune-button.png" alt="" aria-hidden="true" />
         </button>
@@ -1246,8 +1246,8 @@ function HomePage({
       <section className="pitlaneSyncCard" aria-label="Trackside sync">
         <BadgeCheck size={28} />
         <span>
-          <strong>Trackside Sync</strong>
-          <em>{activeCar ? `${activeCar.name} ready` : "All changes saved"}</em>
+          <strong>Garage Sync</strong>
+          <em>{activeCar ? `${activeCar.name} ready for notes` : "Setup notes ready"}</em>
         </span>
         <b>Online</b>
       </section>
@@ -1282,7 +1282,7 @@ function HomePage({
         </button>
         <button className="homeActionCard" type="button" onClick={() => navigate("/community")}>
           <UsersRound size={24} />
-          <strong>Find a Setup</strong>
+          <strong>Find a Tune</strong>
           <span>Browse public RC drift tunes by chassis and parts.</span>
         </button>
         <button className="homeActionCard" type="button" onClick={onLogSession}>
@@ -1322,7 +1322,7 @@ function HomePage({
           setShareInputOpen(true);
         }}>
           <QrCode size={24} />
-          <strong>Open Shared Tune</strong>
+          <strong>Open Shared Setup</strong>
           <span>Paste a RC Drift Sync share link from another driver.</span>
         </AppCard>
         <AppCard onClick={() => navigate("/tips")}>
@@ -1404,7 +1404,7 @@ function HomePage({
       <section className="placeholderGrid">
         <AppCard>
           <Trophy size={22} />
-          <strong>Public tune library</strong>
+          <strong>Shared tune library</strong>
           <span>{publicTunes.length ? `${publicTunes.length} public tunes available.` : "Public tunes will appear once drivers share them."}</span>
         </AppCard>
         <AppCard>
@@ -2222,14 +2222,18 @@ function TuneDetailPhotoGallery({ tune, onOpen }: { tune: Tune; onOpen: (photo: 
         <span>{photos.length} saved photo{photos.length === 1 ? "" : "s"}. Tap any photo to enlarge.</span>
       </header>
       <div className="photoGrid detailPhotoGrid">
-        {photos.map((photo) => (
-          <figure className="photoCard" key={photo.id}>
-            <button className="publicPhotoButton" type="button" onClick={() => onOpen(photo)}>
-              <img src={displayPhotoUrl(photo)} alt={photo.label} />
-              <span>{photo.label}</span>
-            </button>
-          </figure>
-        ))}
+        {photos.map((photo) => {
+          const photoUrl = displayPhotoUrl(photo);
+          if (!photoUrl) return null;
+          return (
+            <figure className="photoCard" key={photo.id}>
+              <button className="publicPhotoButton" type="button" onClick={() => onOpen(photo)}>
+                <img src={photoUrl} alt={photo.label} />
+                <span>{photo.label}</span>
+              </button>
+            </figure>
+          );
+        })}
       </div>
     </section>
   );
@@ -2724,9 +2728,9 @@ function AccountPage({
       } else {
         await onSignup({ email, password, displayName, username });
       }
-      setMessage("Signed in. Firebase sync is ready.");
+      setMessage("Signed in. Account sync is ready.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Firebase sign-in failed.");
+      setMessage(error instanceof Error ? error.message : "Account sign-in failed.");
     }
   }
 
@@ -2734,7 +2738,7 @@ function AccountPage({
     try {
       setMessage("Opening Google sign-in...");
       await onGoogleLogin();
-      setMessage("Signed in with Google. Firebase sync is ready.");
+      setMessage("Signed in with Google. Account sync is ready.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Google sign-in failed.");
     }
@@ -2762,7 +2766,7 @@ function AccountPage({
     <main className="appPage">
       <PageHeader eyebrow={APP_NAME} title={account ? "Account" : mode === "login" ? "Login" : "Create account"} />
       {!isFirebaseConfigured ? (
-        <EmptyState title="Firebase not configured yet" body="Add your Firebase Web App values to .env.local, then restart the dev server. Account-based saving needs Firebase." />
+        <EmptyState title="Account storage not connected" body="Connect account storage before using synced car and tune saving." />
       ) : null}
       {account ? (
         <DashboardSection title="Signed in">
@@ -2778,7 +2782,7 @@ function AccountPage({
           </AppCard>
         </DashboardSection>
       ) : (
-        <DashboardSection title={mode === "login" ? "Firebase login" : "Firebase sign up"}>
+        <DashboardSection title={mode === "login" ? "Account sign in" : "Create account"}>
           <TextField label="Email" placeholder="driver@example.com" type="email" value={email} onChange={(event) => setEmail(event.target.value)} />
           <TextField label="Password" placeholder="Password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
           {mode === "signup" ? (
@@ -2807,8 +2811,8 @@ function AccountPage({
       {isFirebaseConfigured ? null : (
         <DashboardSection title="Sync setup">
           <AppCard>
-            <strong>Sync is not connected on this device</strong>
-            <span>Configure Firebase before using account-based car and tune saving.</span>
+            <strong>Account storage is not connected on this device</strong>
+            <span>Connect account storage before using synced car and tune saving.</span>
           </AppCard>
         </DashboardSection>
       )}
@@ -2928,7 +2932,7 @@ function LandingAuthPage({
         </div>
 
         {!isFirebaseConfigured ? (
-          <p className="authMessage">Firebase is not configured, so account sign-in is unavailable.</p>
+          <p className="authMessage">Account storage is not connected, so sign-in is unavailable.</p>
         ) : null}
 
         <TextField label="Email" placeholder="driver@example.com" type="email" value={email} onChange={(event) => setEmail(event.target.value)} />

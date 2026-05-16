@@ -334,7 +334,7 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     id: "capacitors-futaba-receiver-capacitor-glitch-buster-plug-and-play-1800-f-capacitor-futaba-ubr0002",
     category: "capacitors",
     brand: "Futaba",
-    productName: "RECEIVER CAPACITOR - Glitch Buster - Plug and Play 1800�F Capacitor [FUTABA] UBR0002",
+    productName: "RECEIVER CAPACITOR - Glitch Buster - Plug and Play 1800uF Capacitor [FUTABA] UBR0002",
     modelNumber: "UBR0002",
     compatibleChassis: ["Universal"],
     notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",

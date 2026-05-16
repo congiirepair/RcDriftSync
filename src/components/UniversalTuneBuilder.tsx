@@ -1066,14 +1066,18 @@ export function UniversalTuneBuilder({
               <ImagePlus size={30} />
               Add Photo
             </button>
-            {pitlanePreviewPhotos.map((photo) => (
-              <div className="pitlanePhotoTile" key={photo.id}>
-                <img src={displayPhotoUrl(photo)} alt={photo.label || "Tune photo"} />
-                <button type="button" aria-label="Remove photo" onClick={() => setPitlanePhotoToRemove(photo)}>
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            ))}
+            {pitlanePreviewPhotos.map((photo) => {
+              const photoUrl = displayPhotoUrl(photo);
+              if (!photoUrl) return null;
+              return (
+                <div className="pitlanePhotoTile" key={photo.id}>
+                  <img src={photoUrl} alt={photo.label || "Tune photo"} />
+                  <button type="button" aria-label="Remove photo" onClick={() => setPitlanePhotoToRemove(photo)}>
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -3464,19 +3468,23 @@ function ElectronicsTuneEntryChoice({
           </label>
           {photos.length ? (
             <div className="electronicsTunePhotoGrid">
-              {photos.map((photo) => (
-                <figure key={photo.id}>
-                  <button className="photoPreviewButton" type="button" onClick={() => setViewerPhoto(photo)} aria-label={`Open ${photo.label}`}>
-                    <img src={displayPhotoUrl(photo)} alt={photo.label} />
-                  </button>
-                  <button className="photoDeleteX" type="button" aria-label={`Remove ${photo.label}`} title="Remove photo" onClick={() => setDeletePhotoTarget(photo)}>
-                    <Trash2 size={15} />
-                  </button>
-                  <figcaption>
-                    <input value={photo.label} onChange={(event) => onPhotosChange(category, photos.map((itemPhoto) => (itemPhoto.id === photo.id ? { ...itemPhoto, label: event.target.value } : itemPhoto)))} />
-                  </figcaption>
-                </figure>
-              ))}
+              {photos.map((photo) => {
+                const photoUrl = displayPhotoUrl(photo);
+                if (!photoUrl) return null;
+                return (
+                  <figure key={photo.id}>
+                    <button className="photoPreviewButton" type="button" onClick={() => setViewerPhoto(photo)} aria-label={`Open ${photo.label}`}>
+                      <img src={photoUrl} alt={photo.label} />
+                    </button>
+                    <button className="photoDeleteX" type="button" aria-label={`Remove ${photo.label}`} title="Remove photo" onClick={() => setDeletePhotoTarget(photo)}>
+                      <Trash2 size={15} />
+                    </button>
+                    <figcaption>
+                      <input value={photo.label} onChange={(event) => onPhotosChange(category, photos.map((itemPhoto) => (itemPhoto.id === photo.id ? { ...itemPhoto, label: event.target.value } : itemPhoto)))} />
+                    </figcaption>
+                  </figure>
+                );
+              })}
             </div>
           ) : (
             <p className="mutedText">No {label.toLowerCase()} tune photos yet.</p>

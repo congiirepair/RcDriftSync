@@ -343,7 +343,7 @@ function cleanSideAgnosticName(value: string) {
     .replace(/\b(?:lh|rh|l\/h|r\/h)\b/gi, " ")
     .replace(/\b(?:left|right)\b/gi, " ")
     .replace(/\b(?:l\/r|r\/l)\b/gi, " ")
-    .replace(/\s*[-â€“â€”]\s*$/g, "")
+    .replace(/\s*[-–—]\s*$/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -361,7 +361,7 @@ function cleanTuneSelectorName(value: string) {
     .replace(/\[\s*\]/g, " ")
     .replace(/\(\s*\)/g, " ")
     .replace(/^\s*[:/-]\s*/g, "")
-    .replace(/\s*[-â€“â€”]\s*$/g, "")
+    .replace(/\s*[-–—]\s*$/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -725,7 +725,7 @@ function cleanElectronicsDisplayName(value: string, category?: ProductCatalogCat
     .replace(/\b\d+(?:\.\d+)?\s*@\s*\d+(?:\.\d+)?\s*kg\b/gi, " ")
     .replace(/\b\d+(?:\.\d+)?\s*kg\b/gi, " ")
     .replace(/\bservo\s*[-–—]\s*/gi, " ")
-    .replace(/\s*[-â€“â€”]\s*$/g, "")
+    .replace(/\s*[-–—]\s*$/g, "")
     .replace(/\s+/g, " ")
     .trim();
 

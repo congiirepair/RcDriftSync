@@ -196,6 +196,8 @@ export function PartSelector({
     return Array.from(groups.entries()).sort(([brandA], [brandB]) => brandA.localeCompare(brandB));
   }, [catalogItems]);
   const shouldVirtualizeResults = catalogItems.length > 80;
+  // TanStack Virtual intentionally returns imperative helpers for this scroll container.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const groupVirtualizer = useVirtualizer({
     count: catalogGroups.length,
     getScrollElement: () => resultsParentRef.current,

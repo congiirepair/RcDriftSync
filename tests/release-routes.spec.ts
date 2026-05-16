@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { resetDb } from "./helpers";
+import { resetDb, seedDb } from "./helpers";
 
 test("release routes render current empty/authless states in e2e mode", async ({ page }) => {
   await resetDb(page);
@@ -27,7 +27,7 @@ test("release routes render current empty/authless states in e2e mode", async ({
 
   await page.goto("/settings");
   await expect(page.getByRole("heading", { name: "Settings" })).toBeVisible();
-  await expect(page.getByText("Firebase is not configured")).toBeVisible();
+  await expect(page.getByText("Account storage is not connected")).toBeVisible();
 
   await page.goto("/login");
   await expect(page.getByRole("region", { name: "Sign in" })).toBeVisible();
@@ -70,4 +70,68 @@ test("pwa manifest and service worker match the current release assets", async (
   expect(sw).toContain("clearRcDriftSyncCaches");
   expect(sw).toContain("cache: \"no-store\"");
   expect(sw).toContain("registration.unregister");
+});
+
+test("home route tolerates legacy missing photo entries", async ({ page }) => {
+  const now = "2026-05-16T12:00:00.000Z";
+
+  await resetDb(page);
+  await seedDb(page, {
+    cars: [{
+      id: "car-legacy-photo",
+      name: "Legacy photo car",
+      brand: "Reve D",
+      chassisBrand: "Reve D",
+      chassisBrandSlug: "reve-d",
+      chassis: "Reve D RDX",
+      chassisModel: "RDX",
+      chassisModelSlug: "rdx",
+      chassisType: "RWD drift",
+      drivetrainType: "RWD",
+      scale: "1/10",
+      photos: [null],
+      sheetId: "rdx-template",
+      createdAt: now,
+      updatedAt: now
+    }],
+    tunes: [{
+      id: "tune-legacy-photo",
+      name: "Legacy photo tune",
+      carId: "car-legacy-photo",
+      sheetId: "rdx-template",
+      date: "2026-05-16",
+      track: "Local P-tile",
+      surface: "P-tile",
+      grip: "Medium",
+      rating: 4,
+      tags: [],
+      values: { tires: "DS LF-5" },
+      selections: {},
+      notes: "",
+      photos: [null],
+      history: [],
+      ownerId: "local-user",
+      visibility: "private",
+      createdAt: now,
+      updatedAt: now
+    }],
+    electronicsProfiles: [],
+    profiles: [],
+    comments: [],
+    favorites: [],
+    follows: [],
+    trackSessions: [],
+    notificationSettings: {
+      tuneCloned: false,
+      tuneLiked: false,
+      tuneCommented: false,
+      followedDriverSharedTune: false,
+      weeklyTrendingTunes: false,
+      backupReminder: true
+    }
+  });
+
+  await page.goto("/home");
+  await expect(page.getByRole("heading", { name: "Trackside setup, saved fast." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Refresh RC Drift Sync" })).toHaveCount(0);
 });

@@ -1,5 +1,45 @@
 # RC Drift Sync Agent Instructions
 
+# RC Drift Sync project instructions
+
+This app is an RC drift tuning web app. Treat it as a serious mobile-first tuning tool, not a generic SaaS app.
+
+Default priorities:
+1. Preserve existing functionality.
+2. Do not add new features unless explicitly asked.
+3. Improve accuracy, usability, polish, QA, accessibility, and mobile experience.
+4. Use RC drift terminology carefully.
+5. Favor mobile-first layouts.
+6. Keep desktop usable but do not build a separate desktop experience.
+7. Avoid generic UI language.
+8. Keep animations subtle, useful, performant, and respectful of reduced-motion.
+9. Run available lint, typecheck, tests, and build before finalizing.
+10. Summarize changes, QA performed, and remaining risks.
+
+Allowed:
+- Reorganizing existing UI
+- Relabeling
+- Improving copy
+- Improving theme
+- Improving animations
+- Fixing bugs
+- Improving responsiveness
+- Improving accessibility
+- Refactoring existing components
+- Improving existing calculations or explanations when supported by credible RC drift references
+
+Not allowed unless explicitly requested:
+- New major features
+- New app sections
+- New calculators
+- New databases
+- New auth/payment flows
+- New AI features
+- New telemetry
+- New desktop-specific app
+- Fake tuning claims
+- Generic template redesigns
+
 ## Product Identity
 
 RC Drift Sync is a mobile-first RC drift tuning platform.

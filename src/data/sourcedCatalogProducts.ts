@@ -3897,7 +3897,7 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     id: "servos-rhino-racing-ddss-shark-bulkhead-steering-kit-direct-drive-servo-steering-v2-yd2-blue-black-red-purple-rhino-raci",
     category: "servos",
     brand: "Rhino Racing",
-    productName: "DDSS � SHARK Bulkhead - Steering Kit � Direct Drive Servo Steering (V2) YD2 BLUE BLACK RED PURPLE [Rhino Racing] RR-750R RR-750P RR-750B",
+    productName: "DDSS - SHARK Bulkhead - Steering Kit - Direct Drive Servo Steering (V2) YD2 BLUE BLACK RED PURPLE [Rhino Racing] RR-750R RR-750P RR-750B",
     modelNumber: "RR-750R RR-750P RR-750B",
     compatibleChassis: ["Universal"],
     notes: "Sourced catalog product. Verify exact fitment before ordering.",

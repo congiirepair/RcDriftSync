@@ -317,8 +317,8 @@ export function LibraryPage({ data, compact = false, onClone, onLike, onFavorite
       {!compact ? (
         <header className="publicHero">
           <p>RC Drift Sync Community</p>
-          <h1>Public tune library</h1>
-          <span>Find setups by chassis, electronics, track, surface, tire, rating, and driver.</span>
+          <h1>Shared tune library</h1>
+          <span>Find driver-shared setups by chassis, electronics, track, surface, tire, rating, and driver.</span>
         </header>
       ) : null}
 
