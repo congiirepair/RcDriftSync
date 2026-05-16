@@ -9445,6 +9445,19 @@ summary:focus-visible {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .myTuneMore,
+  .communityMore {
+    grid-column: 1 / -1;
+  }
+
+  .myTuneMoreMenu,
+  .communityMoreMenu {
+    right: 0;
+    left: auto;
+    width: min(250px, 100%);
+    max-width: 100%;
+  }
+
   .myTuneActions button {
     min-height: 46px;
     padding-inline: 6px;
