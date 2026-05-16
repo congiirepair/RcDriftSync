@@ -461,6 +461,11 @@ export function UniversalTuneBuilder({
       return basicFieldIds.has(field.id) || (existing !== undefined && String(existing).trim() !== "");
     });
   });
+  const countActiveTuneValues = (keys: string[]) => keys.filter((key) => String(activeTune?.values[key] ?? "").trim()).length;
+  const activePartsCount = countActiveTuneValues(["frontShockTower", "frontDamper", "frontLowerArm", "frontUpperArm", "frontKnuckle", "frontAxle", "rearShockTower", "rearDamper", "rearLowerArm", "rearUpperArm", "rearHubCarrier", "rearAxleLength", "ffToeBlock", "frToeBlock", "rfToeBlock", "rrToeBlock", "diffType"]);
+  const activeGeometryCount = countActiveTuneValues(["frontRideHeight", "frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "frontTrackWidth", "frontDroop", "frontPreload", "frontRebound", "frontUpperArmSpacer", "frontLowerArmSpacer", "frontShockPosition", "frontDamperMountingNotes", "rearRideHeight", "rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearDroop", "rearPreload", "rearRebound", "rearGeometryNotes", "rearAntiSquatNotes", "rearAxleHeightNotes"]);
+  const activeTireSummary = String(activeTune?.values.frontTire || activeTune?.values.rearTire || activeTune?.values.tires || activeTune?.values.frontWheel || "Select tires and wheels");
+  const activeBodyWeightSummary = [activeTune?.values.bodyShell || activeTune?.values.body, activeTune?.values.addedWeight, activeTune?.values.batteryPosition].filter(Boolean).join(" / ") || "Body, wing, weight";
 
   useEffect(() => {
     if (!selectedCar) return;
@@ -703,6 +708,7 @@ export function UniversalTuneBuilder({
       surface: "track",
       parts: "front",
       geometry: "geometry",
+      body: "body",
       electronics: "electronics",
       tires: "tires"
     };
@@ -809,12 +815,18 @@ export function UniversalTuneBuilder({
     const pitlanePreviewPhotos = pitlaneTune.photos.slice(0, 10);
     const electronicsCount = [pitlaneTune.electronics?.motor?.model, pitlaneTune.electronics?.esc?.model, pitlaneTune.electronics?.servo?.model, pitlaneTune.electronics?.gyro?.model].filter(Boolean).length;
     const surfaceSummary = [pitlaneTune.track, pitlaneTune.surface].filter(Boolean).join(" / ") || "Set track and surface";
+    const countFilledValues = (keys: string[]) => keys.filter((key) => String(pitlaneTune.values[key] ?? "").trim()).length;
+    const partsCount = countFilledValues(["frontShockTower", "frontDamper", "frontLowerArm", "frontUpperArm", "frontKnuckle", "frontAxle", "rearShockTower", "rearDamper", "rearLowerArm", "rearUpperArm", "rearHubCarrier", "rearAxleLength", "ffToeBlock", "frToeBlock", "rfToeBlock", "rrToeBlock", "diffType"]);
+    const geometryCount = countFilledValues(["frontRideHeight", "frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "frontTrackWidth", "frontDroop", "frontPreload", "frontRebound", "frontUpperArmSpacer", "frontLowerArmSpacer", "frontShockPosition", "frontDamperMountingNotes", "rearRideHeight", "rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearDroop", "rearPreload", "rearRebound", "rearGeometryNotes", "rearAntiSquatNotes", "rearAxleHeightNotes"]);
+    const tireSummary = String(pitlaneTune.values.frontTire || pitlaneTune.values.rearTire || pitlaneTune.values.tires || pitlaneTune.values.frontWheel || "Select tires / wheels");
+    const bodyWeightSummary = [pitlaneTune.values.bodyShell || pitlaneTune.values.body, pitlaneTune.values.addedWeight, pitlaneTune.values.batteryPosition].filter(Boolean).join(" / ") || "Body, wing, weight";
     const pitlanePageTitle: Record<PitlanePage, string> = {
       menu: builderMode === "basic" ? "Quick" : "Advanced",
       chassis: "Chassis",
       surface: "Surface",
       parts: "Parts",
       geometry: "Geometry",
+      body: "Body / Weight",
       electronics: "Electronics",
       tires: "Tires / Wheels"
     };
@@ -831,6 +843,7 @@ export function UniversalTuneBuilder({
       ],
       surface: [{ id: "track", label: "Track" }],
       geometry: [{ id: "geometry", label: "Geometry" }],
+      body: [{ id: "body", label: "Body / Weight" }],
       electronics: [
         { id: "electronics", label: "Motor" },
         { id: "esc", label: "ESC" },
@@ -859,6 +872,10 @@ export function UniversalTuneBuilder({
               </SelectField>
               <SelectField label="Track condition" value={pitlaneTune.trackConditionPreset ?? ""} onChange={(event) => onUpdateTune({ ...pitlaneTune, trackConditionPreset: event.target.value, values: { ...pitlaneTune.values, trackConditionPreset: event.target.value }, updatedAt: new Date().toISOString() })}>
                 {surfaceConditionOptions.map((condition) => <option key={condition} value={condition}>{condition || "Skip for now"}</option>)}
+              </SelectField>
+              <TextField label="Track temperature" value={String(pitlaneTune.values.trackTemperature ?? "")} placeholder="ex. 72F / 22C" onChange={(event) => onUpdateTune({ ...pitlaneTune, values: { ...pitlaneTune.values, trackTemperature: event.target.value }, updatedAt: new Date().toISOString() })} />
+              <SelectField label="Layout speed" value={String(pitlaneTune.values.layoutSpeed ?? "")} onChange={(event) => onUpdateTune({ ...pitlaneTune, values: { ...pitlaneTune.values, layoutSpeed: event.target.value }, updatedAt: new Date().toISOString() })}>
+                {["", "Not sure", "Slow / technical", "Medium", "Fast", "Mixed"].map((speed) => <option key={speed} value={speed}>{speed || "Skip for now"}</option>)}
               </SelectField>
               <TextField
                 label="Best-for tags"
@@ -971,12 +988,17 @@ export function UniversalTuneBuilder({
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("parts")}>
             <span className="pitlaneRowIcon pitlaneRowIconParts"><Wrench size={24} /></span>
-            <span><small>Parts</small><strong>Arms, towers, drivetrain</strong></span>
+            <span><small>Parts</small><strong>{partsCount ? `${partsCount} parts selected` : "Arms, towers, drivetrain"}</strong></span>
             <ChevronDown size={25} />
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("geometry")}>
             <span className="pitlaneRowIcon pitlaneRowIconGeometry"><SlidersHorizontal size={24} /></span>
-            <span><small>Geometry</small><strong>Spacer and alignment descriptions</strong></span>
+            <span><small>Geometry</small><strong>{geometryCount ? `${geometryCount} values filled` : "Spacer and alignment descriptions"}</strong></span>
+            <ChevronDown size={25} />
+          </button>
+          <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("body")}>
+            <span className="pitlaneRowIcon pitlaneRowIconBody"><ClipboardCheck size={24} /></span>
+            <span><small>Body / Weight</small><strong>{bodyWeightSummary}</strong></span>
             <ChevronDown size={25} />
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("electronics")}>
@@ -986,7 +1008,7 @@ export function UniversalTuneBuilder({
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("tires")}>
             <span className="pitlaneRowIcon pitlaneRowIconTires"><CircleDot size={24} /></span>
-            <span><small>Tires / Wheels</small><strong>{String(pitlaneTune.values.tires || pitlaneTune.values.frontWheel || "Select tires / wheels")}</strong></span>
+            <span><small>Tires / Wheels</small><strong>{tireSummary}</strong></span>
             <ChevronDown size={25} />
           </button>
         </section>
@@ -1163,13 +1185,19 @@ export function UniversalTuneBuilder({
           <button type="button" onClick={() => goToTab("front")}>
             <span><Wrench size={21} /></span>
             <em>Parts</em>
-            <strong>{String(activeTune.values.frontKnuckle || activeTune.values.rearHubCarrier || "Arms, towers, drivetrain")}</strong>
+            <strong>{activePartsCount ? `${activePartsCount} parts selected` : "Arms, towers, drivetrain"}</strong>
             <ChevronDown size={20} />
           </button>
           <button type="button" onClick={() => goToTab("geometry")}>
             <span><SlidersHorizontal size={21} /></span>
             <em>Geometry</em>
-            <strong>{String(activeTune.values.frontRideHeight || activeTune.values.rearRideHeight || "Spacers and alignment")}</strong>
+            <strong>{activeGeometryCount ? `${activeGeometryCount} values filled` : "Spacers and alignment"}</strong>
+            <ChevronDown size={20} />
+          </button>
+          <button type="button" onClick={() => goToTab("body")}>
+            <span><ClipboardCheck size={21} /></span>
+            <em>Body / Weight</em>
+            <strong>{activeBodyWeightSummary}</strong>
             <ChevronDown size={20} />
           </button>
           <button type="button" onClick={() => goToTab("electronics")}>
@@ -1181,7 +1209,7 @@ export function UniversalTuneBuilder({
           <button type="button" onClick={() => goToTab("tires")}>
             <span><CircleDot size={21} /></span>
             <em>Tires / Wheels</em>
-            <strong>{String(activeTune.values.tires || activeTune.values.frontWheel || "Select tires and wheels")}</strong>
+            <strong>{activeTireSummary}</strong>
             <ChevronDown size={20} />
           </button>
         </section>
@@ -1817,7 +1845,6 @@ function BasicTuneForm({
   const isReveDRearLowerArm = /\breve\s*d\b|\breved\b/i.test(rearLowerArmBrandText);
   const rearLowerArmSideValue = String(tune.values.rearLowerArmSide ?? tune.chassisSetup?.rear?.lowerArm?.side ?? "");
   const rearLowerArmOrientation = /down|curved/i.test(rearLowerArmSideValue) ? "Down position" : rearLowerArmSideValue ? "Straight position" : "";
-  const isRdxSetup = /rdx/i.test(`${selectedModel} ${chassisInfo.model} ${tune.chassisModel ?? ""} ${car?.chassis ?? ""}`);
   const internalRatioPreset = suggestedInternalRatio(brandSlug);
   const internalDriveRatioValue = String(tune.values.internalDriveRatio ?? internalRatioPreset?.internalRatio ?? "");
   const autoFdrValue = calculateFinalDriveRatio(tune.values.spurGear, tune.values.pinionGear, internalDriveRatioValue);
@@ -1917,7 +1944,7 @@ function BasicTuneForm({
           onChange={(event) => patchValues({ [valueKey]: event.target.value })}
         />
         {quickValues.length ? (
-          <div className="rdxQuickValues" aria-label={`${label} quick values`}>
+          <div className="setupQuickValues" aria-label={`${label} quick values`}>
             {quickValues.map((quickValue) => (
               <button key={quickValue} className="smallPill" type="button" onClick={() => patchValues({ [valueKey]: quickValue })}>
                 {quickValue}
@@ -1951,108 +1978,6 @@ function BasicTuneForm({
       />
     );
   }
-
-  function applyChuckRdxBaseline() {
-    patchValues(
-      {
-        driver: "Charles Ong",
-        body: "",
-        wing: "",
-        tires: "",
-        bellcrankAckermanHole: "Outer",
-        frontBallCaps: "M",
-        frontUpperArmSpacer: "3",
-        frontUpperArmInnerFrontSpacer: "1",
-        frontUpperArmInnerRearSpacer: "0",
-        frontLowerArmSpacer: "2",
-        frontLowerArmInnerFrontSpacer: "2",
-        frontLowerArmInnerRearSpacer: "1",
-        frontShockTowerSpacer: "2",
-        frontLowerShockSpacer: "1",
-        frontUpperBallStud: "Stock",
-        frontLowerBallStud: "Stock",
-        frontKnuckleTopSpacer: "4",
-        frontKnuckleSteeringLinkSpacer: "2",
-        frontKnuckleBottomSpacer: "0",
-        frontLowerSusMountSide: "Positive side",
-        frontWheelHubType: "Aluminum",
-        frontWheelHubSpacer: "2",
-        frontKnuckleStopper: "3.0mm",
-        frontRideHeight: "8",
-        frontCamber: "-8",
-        frontToe: "0.3d",
-        frontDamper: "Overdose HG4",
-        frontShockShaft: "Full extension stroke",
-        frontSpring: "Yokomo Hard",
-        frontPistonHoles: "6",
-        frontPistonDiameter: "0.8",
-        frontShockOil: "#100",
-        frontRetainer: "Normal",
-        motorPosition: "Low Mount",
-        rfSusMountType: "Aluminum",
-        rearSusMountNumber: "#7",
-        rearSusMountFlipped: "Flipped",
-        rrSusMountType: "Aluminum",
-        rrSusMountNumber: "",
-        rfSusMountPosition: "D",
-        rrSusMountPosition: "E",
-        spacerUnderSusMountRF: "6",
-        spacerUnderSusMountRR: "6.5",
-        rearSusArm: "42mm 0.0d",
-        rearHubCarrierType: "Aluminum",
-        rearWheelHubType: "Aluminum",
-        rearWheelHubSpacer: "5",
-        lowerSusHolePosition: "Lower Hole",
-        diffType: "Gear Diff",
-        rearHubCarrierUpperLinkHole: "RD-012 marked upper holes",
-        rearHubCarrierLowerLinkHole: "RD-012 lower hole",
-        rearHubCarrierUpperLinkSpacer: "4",
-        rearHubCarrierLowerLinkSpacer: "0",
-        rearRideHeight: "5",
-        rearCamber: "-5",
-        rearShockShaft: "5mm rebound",
-        rearSpring: "Barrel V2",
-        rearPistonHoles: "6",
-        rearPistonDiameter: "0.8",
-        rearShockOil: "#300",
-        rearRetainer: "Aluminum",
-        frontWheel: "Hayate SHT",
-        frontWheelOffset: "8",
-        rearWheel: "Shibata SHT",
-        rearWheelOffset: "7",
-        servoModel: "RSST Pro",
-        servoHornLength: "21.5",
-        servoPosition: "Front",
-        gyroModel: "Revox",
-        gyroGain: "50",
-        gyroCurve: "2",
-        motorModel: "Maclan MDP",
-        motor: "Maclan MDP",
-        motorTiming: "30",
-        battery: "Maclan MDP",
-        escModel: "Maclan MDP",
-        pinionGear: "30",
-        spurGear: "80",
-        boostTiming: "30",
-        turboTiming: "30"
-      },
-      {
-        date: "2026-03-22",
-        track: "Prodigy RC",
-        surface: "P-tile"
-      }
-    );
-  }
-
-  const rdxSummaryItems = [
-    ["Front", [valueForSetup("frontRideHeight") && `${valueForSetup("frontRideHeight")}mm`, valueForSetup("frontCamber") && `${valueForSetup("frontCamber")}deg`, valueForSetup("frontToe")].filter(Boolean).join(" / ")],
-    ["Rear", [valueForSetup("rearRideHeight") && `${valueForSetup("rearRideHeight")}mm`, valueForSetup("rearCamber") && `${valueForSetup("rearCamber")}deg`].filter(Boolean).join(" / ")],
-    ["RF mount", [valueForSetup("rearSusMountNumber"), valueForSetup("rearSusMountFlipped")].filter(Boolean).join(" ")],
-    ["Rear arm", valueForSetup("rearSusArm")],
-    ["Diff", valueForSetup("diffType")],
-    ["Shocks", [valueForSetup("frontShockOil"), valueForSetup("rearShockOil")].filter(Boolean).join(" / ")],
-    ["Electronics", [valueForSetup("motorModel") || valueForSetup("motor"), valueForSetup("escModel"), valueForSetup("gyroModel")].filter(Boolean).join(" / ")]
-  ].filter(([, value]) => value);
 
   function patchElectronics(category: "servo" | "gyro" | "motor" | "esc", values: Record<string, BuilderValue>, patch: Partial<Tune> = {}) {
     const current = tune.electronics?.[category] ?? { brand: "", model: "", settings: {} };
@@ -2284,14 +2209,29 @@ function BasicTuneForm({
       <BasicTuneSection title="Track" helper="Save where this setup is meant to run. You can leave either field blank and finish it later.">
         <TextField label="Track name" value={tune.track} placeholder="Track or location name" onChange={(event) => onChange({ ...tune, track: event.target.value, values: { ...tune.values, track: event.target.value }, updatedAt: new Date().toISOString() })} />
         <SelectField label="Surface" value={tune.surface} onChange={(event) => onChange({ ...tune, surface: event.target.value, values: { ...tune.values, surface: event.target.value }, updatedAt: new Date().toISOString() })}>
-          {["", BEGINNER_NOT_SURE_OPTION, "P-tile", "Carpet", "Asphalt", "Polished concrete", "Epoxy", "Painted concrete", "Other / Custom"].map((surface) => <option key={surface} value={surface}>{surface || "Skip for now"}</option>)}
+          {["", BEGINNER_NOT_SURE_OPTION, "P-tile", "Carpet", "Asphalt", "Polished concrete", "Epoxy", "Painted concrete", "Smooth concrete", "Other / Custom"].map((surface) => <option key={surface} value={surface}>{surface || "Skip for now"}</option>)}
         </SelectField>
+        <div className="formSplit">
+          <SelectField label="Grip level" value={tune.grip} onChange={(event) => onChange({ ...tune, grip: event.target.value, values: { ...tune.values, grip: event.target.value }, updatedAt: new Date().toISOString() })}>
+            {["", "Not sure", "Low", "Low-medium", "Medium", "High", "Very high"].map((grip) => <option key={grip} value={grip}>{grip || "Skip for now"}</option>)}
+          </SelectField>
+          <SelectField label="Track condition" value={tune.trackConditionPreset ?? ""} onChange={(event) => onChange({ ...tune, trackConditionPreset: event.target.value, values: { ...tune.values, trackConditionPreset: event.target.value }, updatedAt: new Date().toISOString() })}>
+            {["", "Not sure", "Dusty", "Clean", "Cold", "Warm", "Fresh layout", "Grooved-in", "Competition day", "Practice day"].map((condition) => <option key={condition} value={condition}>{condition || "Skip for now"}</option>)}
+          </SelectField>
+        </div>
+        <div className="formSplit">
+          <TextField label="Track temperature" value={String(tune.values.trackTemperature ?? "")} placeholder="ex. 72F / 22C" onChange={(event) => patchValues({ trackTemperature: event.target.value })} />
+          <SelectField label="Layout speed" value={String(tune.values.layoutSpeed ?? "")} onChange={(event) => patchValues({ layoutSpeed: event.target.value })}>
+            {["", "Not sure", "Slow / technical", "Medium", "Fast", "Mixed"].map((speed) => <option key={speed} value={speed}>{speed || "Skip for now"}</option>)}
+          </SelectField>
+        </div>
+        <TextAreaField label="Track notes" value={String(tune.values.trackNotes ?? "")} placeholder="Dust, temp change, layout speed, surface prep, and traffic notes..." onChange={(event) => patchValues({ trackNotes: event.target.value })} />
       </BasicTuneSection>
       ) : null}
 
       {activeTabId === "tires" ? (
       <>
-      <BasicTuneSection title="Tires">
+      <BasicTuneSection title="Tires" defaultOpen>
         <PartSelector
           label="Front tire"
           category="tires"
@@ -2299,7 +2239,10 @@ function BasicTuneForm({
           emptyLabel="Select front tire"
           onChange={(part) => patchPartSelector("frontTire", "frontTireBrand", "tires", part)}
         />
-        <TextField label="Front Tire Compound" value={String(tune.values.frontTireCompound ?? "")} placeholder="ex. LF-4, LF-5, hard, soft" onChange={(event) => patchValues({ frontTireCompound: event.target.value })} />
+        <div className="formSplit">
+          <TextField label="Front tire compound" value={String(tune.values.frontTireCompound ?? "")} placeholder="ex. LF-4, LF-5, hard, soft" onChange={(event) => patchValues({ frontTireCompound: event.target.value })} />
+          <TextField label="Front tire diameter" value={String(tune.values.frontTireDiameter ?? "")} placeholder="ex. 62.5mm" inputMode="decimal" onChange={(event) => patchValues({ frontTireDiameter: event.target.value })} />
+        </div>
         <PartSelector
           label="Rear tire"
           category="tires"
@@ -2307,9 +2250,14 @@ function BasicTuneForm({
           emptyLabel="Select rear tire"
           onChange={(part) => patchPartSelector("rearTire", "rearTireBrand", "tires", part)}
         />
-        <TextField label="Rear Tire Compound" value={String(tune.values.rearTireCompound ?? "")} placeholder="ex. LF-4, LF-5, hard, soft" onChange={(event) => patchValues({ rearTireCompound: event.target.value })} />
+        <div className="formSplit">
+          <TextField label="Rear tire compound" value={String(tune.values.rearTireCompound ?? "")} placeholder="ex. LF-4, LF-5, hard, soft" onChange={(event) => patchValues({ rearTireCompound: event.target.value })} />
+          <TextField label="Rear tire diameter" value={String(tune.values.rearTireDiameter ?? "")} placeholder="ex. 63mm" inputMode="decimal" onChange={(event) => patchValues({ rearTireDiameter: event.target.value })} />
+        </div>
+        <TextAreaField label="Tire prep notes" value={String(tune.values.tirePrepNotes ?? "")} placeholder="Cleaner, sauce, sanding, break-in laps..." onChange={(event) => patchValues({ tirePrepNotes: event.target.value })} />
+        <TextAreaField label="Tire wear notes" value={String(tune.values.tireWearNotes ?? "")} placeholder="Fresh, worn edge, coned, heat cycle notes..." onChange={(event) => patchValues({ tireWearNotes: event.target.value })} />
       </BasicTuneSection>
-      <BasicTuneSection title="Wheels">
+      <BasicTuneSection title="Wheels" defaultOpen>
         <PartSelector
           label="Front wheel"
           category="frontWheels"
@@ -2319,7 +2267,7 @@ function BasicTuneForm({
         />
         <div className="formSplit">
           <BasicChoice fieldId="frontWheelOffset" ownerId={tune.ownerId} label="Front wheel offset" value={String(tune.values.frontWheelOffset ?? tune.chassisSetup?.front?.wheel?.offset ?? "")} options={basicTuneOptions.wheelOffset} onChange={(value) => patchValues({ frontWheelOffset: value })} />
-          <TextField label="Front Wheel Width" value={String(tune.values.frontWheelWidth ?? tune.chassisSetup?.front?.wheel?.width ?? "")} placeholder="ex. 26mm" onChange={(event) => patchValues({ frontWheelWidth: event.target.value })} />
+          <TextField label="Front wheel width" value={String(tune.values.frontWheelWidth ?? tune.chassisSetup?.front?.wheel?.width ?? "")} placeholder="ex. 26mm" onChange={(event) => patchValues({ frontWheelWidth: event.target.value })} />
         </div>
         <PartSelector
           label="Rear wheel"
@@ -2330,8 +2278,43 @@ function BasicTuneForm({
         />
         <div className="formSplit">
           <BasicChoice fieldId="rearWheelOffset" ownerId={tune.ownerId} label="Rear wheel offset" value={String(tune.values.rearWheelOffset ?? tune.chassisSetup?.rear?.wheel?.offset ?? "")} options={basicTuneOptions.wheelOffset} onChange={(value) => patchValues({ rearWheelOffset: value })} />
-          <TextField label="Rear Wheel Width" value={String(tune.values.rearWheelWidth ?? tune.chassisSetup?.rear?.wheel?.width ?? "")} placeholder="ex. 26mm" onChange={(event) => patchValues({ rearWheelWidth: event.target.value })} />
+          <TextField label="Rear wheel width" value={String(tune.values.rearWheelWidth ?? tune.chassisSetup?.rear?.wheel?.width ?? "")} placeholder="ex. 26mm" onChange={(event) => patchValues({ rearWheelWidth: event.target.value })} />
         </div>
+      </BasicTuneSection>
+      </>
+      ) : null}
+
+      {activeTabId === "body" ? (
+      <>
+      <BasicTuneSection title="Body / Weight" helper="Body shell, wing, battery position, and weight balance notes." defaultOpen>
+        <TuneSubcategory title="Body fitment" helper="Shell, wing, mount, and ride fitment details.">
+          <TextField label="Body shell" value={String(tune.values.bodyShell ?? tune.values.body ?? "")} placeholder="ex. GR86, S15, Mark II" onChange={(event) => patchValues({ bodyShell: event.target.value, body: event.target.value })} />
+          <div className="formSplit">
+            <TextField label="Body mount position" value={String(tune.values.bodyMountPosition ?? "")} placeholder="ex. front +2, rear stock" onChange={(event) => patchValues({ bodyMountPosition: event.target.value })} />
+            <TextField label="Body height" value={String(tune.values.bodyHeight ?? "")} placeholder="ex. 6mm gap / low" onChange={(event) => patchValues({ bodyHeight: event.target.value })} />
+          </div>
+          <div className="formSplit">
+            <TextField label="Wing" value={String(tune.values.aeroWing ?? tune.values.wing ?? "")} placeholder="ex. stock, high mount, none" onChange={(event) => patchValues({ aeroWing: event.target.value, wing: event.target.value })} />
+            <TextField label="Wing position" value={String(tune.values.wingPosition ?? "")} placeholder="ex. high / rearward / 10 deg" onChange={(event) => patchValues({ wingPosition: event.target.value })} />
+          </div>
+          <TextAreaField label="Aero notes" value={String(tune.values.aeroNotes ?? "")} placeholder="Body rubbing, wing angle, diffuser, bumper clearance..." onChange={(event) => patchValues({ aeroNotes: event.target.value })} />
+        </TuneSubcategory>
+        <TuneSubcategory title="Weight balance" helper="Battery location, added weight, and corner balance notes.">
+          <SelectField label="Battery position" value={String(tune.values.batteryPosition ?? "")} onChange={(event) => patchValues({ batteryPosition: event.target.value })}>
+            {["", "Not sure", "Front", "Middle", "Rear", "Left side", "Right side", "Transverse", "Longitudinal", "Stock"].map((option) => <option key={option} value={option}>{option || "Skip for now"}</option>)}
+          </SelectField>
+          <div className="formSplit">
+            <TextField label="Added weight" value={String(tune.values.addedWeight ?? "")} placeholder="ex. 20g" onChange={(event) => patchValues({ addedWeight: event.target.value })} />
+            <TextField label="Weight location" value={String(tune.values.weightLocation ?? "")} placeholder="ex. behind servo / rear left" onChange={(event) => patchValues({ weightLocation: event.target.value })} />
+          </div>
+          <TextField label="Body weight" value={String(tune.values.bodyWeight ?? "")} placeholder="ex. 145g painted" onChange={(event) => patchValues({ bodyWeight: event.target.value })} />
+          <div className="formSplit">
+            <TextField label="Front weight notes" value={String(tune.values.frontWeight ?? "")} placeholder="ex. 38%" onChange={(event) => patchValues({ frontWeight: event.target.value })} />
+            <TextField label="Rear weight notes" value={String(tune.values.rearWeight ?? "")} placeholder="ex. 62%" onChange={(event) => patchValues({ rearWeight: event.target.value })} />
+          </div>
+          <TextField label="Side weight notes" value={String(tune.values.sideWeight ?? "")} placeholder="ex. left 51% / right 49%" onChange={(event) => patchValues({ sideWeight: event.target.value })} />
+          <TextAreaField label="Weight balance notes" value={String(tune.values.weightBalanceNotes ?? "")} placeholder="Battery tray holes, brass location, scale readings, balance feel..." onChange={(event) => patchValues({ weightBalanceNotes: event.target.value })} />
+        </TuneSubcategory>
       </BasicTuneSection>
       </>
       ) : null}
@@ -2638,7 +2621,11 @@ function BasicTuneForm({
           <TextField label="Diff oil" value={String(tune.values.diffOil ?? tune.values.gearDiffOil ?? "")} placeholder="ex. 5000, 10000" onChange={(event) => patchValues({ diffOil: event.target.value, gearDiffOil: event.target.value })} />
           <TextField label="Diff grease" value={String(tune.values.diffGrease ?? "")} placeholder="Grease / lube notes" onChange={(event) => patchValues({ diffGrease: event.target.value })} />
         </div>
-        <TextAreaField label="Differential notes" value={String(tune.values.diffShimSetup ?? tune.values.lsdSetting ?? "")} placeholder="Shim setup, tightness, LSD plates, spool notes..." onChange={(event) => patchValues({ diffShimSetup: event.target.value, lsdSetting: event.target.value })} />
+        <div className="formSplit">
+          <TextField label="Ball diff setting" value={String(tune.values.ballDiffSetting ?? "")} placeholder="ex. loose / 1/8 turn tight" onChange={(event) => patchValues({ ballDiffSetting: event.target.value })} />
+          <TextField label="LSD setting" value={String(tune.values.lsdSetting ?? "")} placeholder="Plate, cam, spring, or oil notes" onChange={(event) => patchValues({ lsdSetting: event.target.value })} />
+        </div>
+        <TextAreaField label="Differential notes" value={String(tune.values.diffShimSetup ?? "")} placeholder="Shim setup, tightness, plates, spool notes..." onChange={(event) => patchValues({ diffShimSetup: event.target.value })} />
       </BasicTuneSection>
       ) : null}
 
@@ -2732,42 +2719,25 @@ function BasicTuneForm({
 
       {activeTabId === "geometry" ? (
       <>
-      <section className="rdxSheetSummary" aria-label="RDX setup sheet summary">
-        <div>
-          <strong>{isRdxSetup ? "RDX geometry snapshot" : "Geometry snapshot"}</strong>
-          <span>{rdxSummaryItems.length ? "Quick scan of the important geometry values." : "Apply a baseline or start filling fields to build the geometry summary."}</span>
-        </div>
-        <div className="rdxSheetSummaryChips">
-          {rdxSummaryItems.map(([label, value]) => (
-            <span key={label}><em>{label}</em>{value}</span>
-          ))}
-        </div>
-        {isRdxSetup ? <button className="smallPill" type="button" onClick={applyChuckRdxBaseline}>Apply Chuck RDX P-tile baseline</button> : null}
-      </section>
-      <BasicTuneSection title={isRdxSetup ? "RDX geometry details" : "Mounting details"} helper={isRdxSetup ? "Trackside geometry fields for spacer stacks, shock positions, hubs, alignment, and mounting notes." : "Sheet-style mounting details and position notes."} defaultOpen>
-        <TuneSubcategory title="Header and surface" helper="The identity fields tuners scan first on a setup sheet." defaultOpen>
-          <div className="formSplit">
-            <TextField label="Date" value={String(tune.date ?? "")} onChange={(event) => patchValues({}, { date: event.target.value })} />
-            {renderSetupTextField("Driver", "driver", "ex. Charles Ong")}
-          </div>
-          <div className="formSplit">
-            <TextField label="Driving place" value={String(tune.track ?? "")} placeholder="ex. Prodigy RC" onChange={(event) => patchValues({}, { track: event.target.value })} />
-            <SelectField label="Surface" value={String(tune.surface ?? "")} onChange={(event) => patchValues({}, { surface: event.target.value })}>
-              {["", "P-tile", "Plastic Tile", "Carpet", "Asphalt", "Colored Concrete", "Concrete", "Other / Custom"].map((option) => <option key={option} value={option}>{option || "Select surface"}</option>)}
-            </SelectField>
-          </div>
-          <div className="formSplit">
-            {renderSetupTextField("Body", "body", "Body shell")}
-            {renderSetupTextField("Wing", "wing", "Wing")}
-          </div>
-          {renderSetupTextField("Tires", "tires", "Tire set or compound")}
-        </TuneSubcategory>
+      <BasicTuneSection title="Geometry details" helper="Spacer stacks, alignment, link positions, shock positions, and mounting notes." defaultOpen>
         <TuneSubcategory title="Front callouts" helper="Front alignment, bellcrank, ball caps, spacers, hubs, and stopper settings.">
           <div className="formSplit">
             {renderSetupSelectField("Bell crank position", "bellcrankAckermanHole", ["Inner", "Outer"])}
             {renderSetupSelectField("Front ball caps", "frontBallCaps", ["S", "M", "L"])}
           </div>
-          <div className="rdxZoneTitle">Front upper arm spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Caster", "caster", "ex. 8 deg")}
+            {renderSetupTextField("KPI", "kpi", "ex. stock / 8 deg")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Ackerman", "ackerman", "ex. inner / outer / 0 Ackerman")}
+            {renderSetupTextField("Steering angle", "steeringAngle", "ex. 65 deg")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front track width (mm)", "frontTrackWidth", "ex. 198", "decimal")}
+            {renderSetupTextField("Trail / steering notes", "trail", "Spacer or trail notes")}
+          </div>
+          <div className="setupZoneTitle">Front upper arm spacer zone</div>
           <div className="formSplit">
             {renderSetupTextField("Front upper arm outer spacer (mm)", "frontUpperArmSpacer", "ex. 3", "decimal")}
             {renderSetupTextField("Front upper arm inner front spacer (mm)", "frontUpperArmInnerFrontSpacer", "ex. 1", "decimal")}
@@ -2776,7 +2746,7 @@ function BasicTuneForm({
             {renderSetupTextField("Front upper arm inner rear spacer (mm)", "frontUpperArmInnerRearSpacer", "ex. 0", "decimal")}
             {renderSetupTextField("Front upper ball stud", "frontUpperBallStud", "Stock", "text", ["Stock", "Custom"])}
           </div>
-          <div className="rdxZoneTitle">Front lower arm spacer zone</div>
+          <div className="setupZoneTitle">Front lower arm spacer zone</div>
           <div className="formSplit">
             {renderSetupTextField("Front lower arm outer spacer (mm)", "frontLowerArmSpacer", "ex. 2", "decimal")}
             {renderSetupTextField("Front lower arm inner front spacer (mm)", "frontLowerArmInnerFrontSpacer", "ex. 2", "decimal")}
@@ -2785,12 +2755,12 @@ function BasicTuneForm({
             {renderSetupTextField("Front lower arm inner rear spacer (mm)", "frontLowerArmInnerRearSpacer", "ex. 1", "decimal")}
             {renderSetupTextField("Front lower ball stud", "frontLowerBallStud", "Stock", "text", ["Stock", "Custom"])}
           </div>
-          <div className="rdxZoneTitle">Front shock spacer zone</div>
+          <div className="setupZoneTitle">Front shock spacer zone</div>
           <div className="formSplit">
             {renderSetupTextField("Front shock upper spacer (mm)", "frontShockTowerSpacer", "ex. 2", "decimal")}
             {renderSetupTextField("Front shock lower spacer (mm)", "frontLowerShockSpacer", "ex. 1", "decimal")}
           </div>
-          <div className="rdxZoneTitle">Front knuckle spacer zone</div>
+          <div className="setupZoneTitle">Front knuckle spacer zone</div>
           <div className="formSplit">
             {renderSetupTextField("Front knuckle upper spacer (mm)", "frontKnuckleTopSpacer", "ex. 4", "decimal")}
             {renderSetupTextField("Front knuckle steering spacer (mm)", "frontKnuckleSteeringLinkSpacer", "ex. 2", "decimal")}
@@ -2810,20 +2780,28 @@ function BasicTuneForm({
           </div>
           <div className="formSplit">
             {renderSetupTextField("Front toe", "frontToe", "ex. 0.3d")}
-            {renderSetupTextField("Trail / steering notes", "trail", "Spacer or trail notes")}
+            {renderSetupTextField("Front upper arm / link position", "frontUpperLink", "ex. inner high / outer low")}
           </div>
+          {renderSetupTextField("Front lower arm position", "frontLowerArm", "ex. stock / outer shimmed")}
+          {renderSetupTextarea("Bump steer notes", "bumpSteerNotes", "Tie-rod angle, link spacer, and bump steer behavior")}
           {renderSetupTextarea("Front mounting notes", "frontDamperMountingNotes", "Shock hole, steering link, spacer stack, or IFS notes")}
         </TuneSubcategory>
-        <TuneSubcategory title="Front shock" helper="Shock package details from the right side of the RDX sheet.">
+        <TuneSubcategory title="Front shock" helper="Shock package, position, spring, piston, oil, droop, preload, and rebound.">
           <PartSelector label="Front shock" category="dampers" value={selectorValueFromFields("frontDamper", "frontDamperBrand", "dampers")} emptyLabel="Select front shock" onChange={(part) => patchPartSelector("frontDamper", "frontDamperBrand", "dampers", part)} />
           <div className="formSplit">
             {renderSetupTextField("Front shock / shaft", "frontShockShaft", "ex. Overdose HG4 full extension stroke")}
             {renderSetupTextField("Front spring", "frontSpring", "ex. Yokomo Hard")}
           </div>
+          {renderSetupTextField("Front shock position upper / lower", "frontShockPosition", "ex. tower 3 / arm outer")}
           <div className="formSplit">
             {renderSetupTextField("Front piston holes", "frontPistonHoles", "ex. 6", "numeric")}
             {renderSetupTextField("Front piston diameter (mm)", "frontPistonDiameter", "ex. 0.8", "decimal")}
           </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front droop", "frontDroop", "ex. 1mm gap")}
+            {renderSetupTextField("Front preload", "frontPreload", "ex. 0 turns")}
+          </div>
+          {renderSetupTextField("Front rebound", "frontRebound", "ex. 0mm / full extension")}
           <div className="formSplit">
             {renderSetupTextField("Front oil", "frontShockOil", "ex. #100")}
             {renderSetupTextField("Front O-ring", "frontOring", "O-ring notes")}
@@ -2831,25 +2809,25 @@ function BasicTuneForm({
           {renderSetupSelectField("Front retainer", "frontRetainer", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
         </TuneSubcategory>
       </BasicTuneSection>
-      <BasicTuneSection title={isRdxSetup ? "RDX rear geometry" : "Rear mounting details"} helper="Rear sus mounts, arm, hub, diff, shock, and spacer descriptions." defaultOpen>
-        <TuneSubcategory title="Rear callouts" helper="Rear drivetrain, suspension mount, arm, hub, and alignment values." defaultOpen>
+      <BasicTuneSection title="Rear geometry" helper="Rear suspension mounts, arm, hub, shock, and spacer descriptions." defaultOpen>
+        <TuneSubcategory title="Rear callouts" helper="Rear suspension mount, arm, hub, and alignment values." defaultOpen>
           <div className="formSplit">
-            {renderSetupSelectField("Motor position", "motorPosition", ["High Mount", "Low Mount", "High", "Low", "Mid", "Rear", "Stock"])}
             {renderSetupSelectField("RF sus mount type", "rfSusMountType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
-          </div>
-          <div className="formSplit">
             {renderSetupTextField("RF sus mount number", "rearSusMountNumber", "ex. #7")}
+          </div>
+          <div className="formSplit">
             {renderSetupSelectField("RF sus mount flipped", "rearSusMountFlipped", ["No", "Yes", "Flipped"])}
-          </div>
-          <div className="formSplit">
             {renderSetupSelectField("RR sus mount type", "rrSusMountType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
-            {renderSetupTextField("RR sus mount number", "rrSusMountNumber", "ex. #7")}
           </div>
           <div className="formSplit">
+            {renderSetupTextField("RR sus mount number", "rrSusMountNumber", "ex. #7")}
             {renderSetupSelectField("RF insert / dot position", "rfSusMountPosition", ["D", "E", "Custom / Other"])}
-            {renderSetupSelectField("RR insert / dot position", "rrSusMountPosition", ["D", "E", "Custom / Other"])}
           </div>
-          <div className="rdxZoneTitle">Rear suspension mount spacer zone</div>
+          <div className="formSplit">
+            {renderSetupSelectField("RR insert / dot position", "rrSusMountPosition", ["D", "E", "Custom / Other"])}
+            {renderSetupTextField("Rear roll center", "rearRollCenter", "ex. low / middle / high")}
+          </div>
+          <div className="setupZoneTitle">Rear suspension mount spacer zone</div>
           <div className="formSplit">
             {renderSetupTextField("RF spacer under sus mount (mm)", "spacerUnderSusMountRF", "ex. 6", "decimal")}
             {renderSetupTextField("RR spacer under sus mount (mm)", "spacerUnderSusMountRR", "ex. 6.5", "decimal")}
@@ -2858,18 +2836,18 @@ function BasicTuneForm({
             {renderSetupSelectField("Rear lower arm", "rearSusArm", ["Straight", "Gull Arm", "42mm 0.0d", "42mm 2.6d", "45mm", "48mm", "51mm", "Custom / Other"])}
             {renderSetupSelectField("Rear hub carrier", "rearHubCarrierType", ["Normal", "Aluminum", "RD-012", "A-Arm", "Custom / Other"])}
           </div>
-          <div className="rdxZoneTitle">Rear hub spacer zone</div>
+          <div className="setupZoneTitle">Rear hub spacer zone</div>
           <div className="formSplit">
             {renderSetupSelectField("Rear wheel hubs", "rearWheelHubType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
             {renderSetupTextField("Rear wheel hub spacer (mm)", "rearWheelHubSpacer", "ex. 5", "decimal")}
           </div>
           <div className="formSplit">
             {renderSetupSelectField("Lower sus hole position", "lowerSusHolePosition", ["Upper Hole", "Lower Hole"])}
-            {renderSetupSelectField("Diff", "diffType", ["Gear Diff", "Ball Diff", "Spool", "LSD", "Stock", "Custom / Other"])}
+            {renderSetupTextField("Rear axle height / hole notes", "rearAxleHeightNotes", "ex. lower axle hole / high axle")}
           </div>
           <div className="formSplit">
-            {renderSetupTextField("RD-012 upper link hole", "rearHubCarrierUpperLinkHole", "ex. upper outer / row 3")}
-            {renderSetupTextField("RD-012 lower / axle hole", "rearHubCarrierLowerLinkHole", "ex. lower tab / axle low")}
+            {renderSetupTextField("Rear hub upper link hole", "rearHubCarrierUpperLinkHole", "ex. upper outer / row 3")}
+            {renderSetupTextField("Rear hub lower / axle hole", "rearHubCarrierLowerLinkHole", "ex. lower tab / axle low")}
           </div>
           <div className="formSplit">
             {renderSetupTextField("Rear hub upper link spacer (mm)", "rearHubCarrierUpperLinkSpacer", "ex. 4", "decimal")}
@@ -2883,18 +2861,25 @@ function BasicTuneForm({
             {renderSetupTextField("Rear skid / camber angle", "rearSkidAngle", "ex. -5")}
             {renderSetupTextField("Rear toe", "rearToe", "ex. 0")}
           </div>
+          {renderSetupTextarea("Rear anti-squat / skid notes", "rearAntiSquatNotes", "Skid angle, inserts, shims, or anti-squat notes")}
           {renderSetupTextarea("Rear hub and damper notes", "rearGeometryNotes", "RD-012 hole marks, upper/lower link spacers, axle height, damper notes")}
         </TuneSubcategory>
-        <TuneSubcategory title="Rear shock" helper="Rear shock package details from the RDX sheet.">
+        <TuneSubcategory title="Rear shock" helper="Shock package, position, spring, piston, oil, droop, preload, and rebound.">
           <PartSelector label="Rear shock" category="dampers" value={selectorValueFromFields("rearDamper", "rearDamperBrand", "dampers")} emptyLabel="Select rear shock" onChange={(part) => patchPartSelector("rearDamper", "rearDamperBrand", "dampers", part)} />
           <div className="formSplit">
             {renderSetupTextField("Rear shock / shaft", "rearShockShaft", "ex. Overdose HG4 5mm rebound")}
             {renderSetupTextField("Rear spring", "rearSpring", "ex. Barrel V2")}
           </div>
+          {renderSetupTextField("Rear shock position upper / lower", "rearShockPosition", "ex. tower 2 / arm inner")}
           <div className="formSplit">
             {renderSetupTextField("Rear piston holes", "rearPistonHoles", "ex. 6", "numeric")}
             {renderSetupTextField("Rear piston diameter (mm)", "rearPistonDiameter", "ex. 0.8", "decimal")}
           </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear droop", "rearDroop", "ex. 2mm gap")}
+            {renderSetupTextField("Rear preload", "rearPreload", "ex. 1 turn")}
+          </div>
+          {renderSetupTextField("Rear rebound", "rearRebound", "ex. 5mm")}
           <div className="formSplit">
             {renderSetupTextField("Rear oil", "rearShockOil", "ex. #300")}
             {renderSetupTextField("Rear O-ring", "rearOring", "O-ring notes")}

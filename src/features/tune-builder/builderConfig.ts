@@ -64,9 +64,9 @@ export interface UniversalTuneBuilderProps {
 }
 
 export type ProfiledElectronicsCategory = "esc" | "servo" | "gyro";
-export type BuilderTabId = "chassis" | "track" | "front" | "rear" | "geometry" | "drivetrain" | "tires" | "electronics" | "esc" | "servo" | "gyro" | "radio" | "feel" | "photos" | "notes" | "pdf";
+export type BuilderTabId = "chassis" | "track" | "front" | "rear" | "geometry" | "drivetrain" | "tires" | "body" | "electronics" | "esc" | "servo" | "gyro" | "radio" | "feel" | "photos" | "notes" | "pdf";
 export type PitlaneProductTab = "all" | "motor" | "esc" | "gyro" | "servo" | "tires" | "frontWheels" | "rearWheels" | "other";
-export type PitlanePage = "menu" | "chassis" | "surface" | "parts" | "geometry" | "electronics" | "tires";
+export type PitlanePage = "menu" | "chassis" | "surface" | "parts" | "geometry" | "body" | "electronics" | "tires";
 
 export interface UniversalField {
   id: string;
@@ -125,6 +125,8 @@ export const universalSections: UniversalSection[] = [
       { id: "rating", label: "Rating", type: "rating", meta: "rating" },
       { id: "confidenceRating", label: "Confidence rating", type: "rating", meta: "confidenceRating" },
       { id: "trackConditionPreset", label: "Track condition", type: "select", meta: "trackConditionPreset", options: ["Not sure", "Dusty", "Clean", "Cold", "Warm", "Fresh layout", "Grooved-in", "Competition day", "Practice day"], notSure: true },
+      { id: "trackTemperature", label: "Track temperature", type: "text", placeholder: "ex. 72F / 22C" },
+      { id: "layoutSpeed", label: "Layout speed", type: "select", options: ["Not sure", "Slow / technical", "Medium", "Fast", "Mixed"], notSure: true },
       { id: "bestForTags", label: "Best for", type: "tags", meta: "bestForTags", placeholder: "P-tile, comp, low grip" },
       { id: "tags", label: "Tags", type: "tags", meta: "tags", placeholder: "baseline, carpet, high grip" },
       { id: "notes", label: "Notes", type: "textarea", meta: "notes" }
@@ -136,8 +138,10 @@ export const universalSections: UniversalSection[] = [
     fields: [
       { id: "frontTire", label: "Front tire", type: "part", partCategory: "tire", placeholder: "Search front tire..." },
       { id: "frontTireCompound", label: "Front tire compound", type: "text" },
+      { id: "frontTireDiameter", label: "Front tire diameter", type: "text" },
       { id: "rearTire", label: "Rear tire", type: "part", partCategory: "tire", placeholder: "Search rear tire..." },
       { id: "rearTireCompound", label: "Rear tire compound", type: "text" },
+      { id: "rearTireDiameter", label: "Rear tire diameter", type: "text" },
       { id: "tireDiameter", label: "Tire diameter", type: "text" },
       { id: "wheelModel", label: "Wheel brand / model", type: "part", partCategory: "wheel", placeholder: "Search wheel..." },
       { id: "frontWheelOffset", label: "Front wheel offset", type: "text" },
@@ -172,6 +176,7 @@ export const universalSections: UniversalSection[] = [
       { id: "frontShockPosition", label: "Front shock position upper / lower", type: "text" },
       { id: "frontDroop", label: "Front droop", type: "text" },
       { id: "frontPreload", label: "Front preload", type: "text" },
+      { id: "frontRebound", label: "Front rebound", type: "text" },
       { id: "frontSwayBar", label: "Front sway bar", type: "text" },
       { id: "frontShockStyle", label: "Front shock style", type: "text" },
       { id: "frontUpperLink", label: "Front upper arm / link position", type: "text" },
@@ -208,11 +213,14 @@ export const universalSections: UniversalSection[] = [
       { id: "rearShockMountingNotes", label: "Rear shock mounting location", type: "textarea" },
       { id: "rearDroop", label: "Rear droop", type: "text" },
       { id: "rearPreload", label: "Rear preload", type: "text" },
+      { id: "rearRebound", label: "Rear rebound", type: "text" },
       { id: "rearSwayBar", label: "Rear sway bar", type: "text" },
       { id: "rearSwayBarThickness", label: "Rear sway bar thickness", type: "text" },
       { id: "rearShockStyle", label: "Rear shock style", type: "text" },
       { id: "rearUpperLink", label: "Rear upper arm / link position", type: "text" },
       { id: "rearLowerArm", label: "Rear lower arm position", type: "text" },
+      { id: "rearAntiSquatNotes", label: "Anti-squat / skid notes", type: "textarea" },
+      { id: "rearAxleHeightNotes", label: "Axle height / hole notes", type: "textarea" },
       { id: "rearLowerArmSide", label: "Reve D lower arm side", type: "text" },
       { id: "rearHubCarrier", label: "Rear hub carrier", type: "text" },
       { id: "rearOffsetSpacer", label: "Rear offset spacer", type: "text", helper: "Spacer added at the rear wheel hub/hex to fine-tune track width or wheel clearance." },
@@ -256,6 +264,7 @@ export const universalSections: UniversalSection[] = [
       { id: "chassisBrace", label: "Chassis brace", type: "text" },
       { id: "battery", label: "Battery", type: "part", partCategory: "battery", electronicsKey: "battery", modelFieldId: "battery", placeholder: "Search battery..." },
       { id: "bodyShell", label: "Body shell", type: "text" },
+      { id: "bodyHeight", label: "Body height", type: "text" },
       { id: "bodyWeight", label: "Body weight", type: "text" },
       { id: "aeroWing", label: "Wing", type: "text" },
       { id: "wingPosition", label: "Wing position", type: "text" },
@@ -460,7 +469,7 @@ export const guidedSteps: GuidedStep[] = [
   }
 ];
 
-export const quickStepIds = new Set(["chassis", "electronics", "steering", "suspension", "geometry", "drivetrain", "driver-feel", "notes-publish"]);
+export const quickStepIds = new Set(["chassis", "electronics", "steering", "suspension", "geometry", "drivetrain", "tires-wheels", "body-weight", "driver-feel", "notes-publish"]);
 
 export const basicFieldIds = new Set([
   "name",
@@ -468,10 +477,18 @@ export const basicFieldIds = new Set([
   "surface",
   "grip",
   "trackConditionPreset",
+  "trackTemperature",
+  "layoutSpeed",
   "setupIntent",
   "tires",
   "frontTire",
+  "frontTireCompound",
+  "frontTireDiameter",
   "rearTire",
+  "rearTireCompound",
+  "rearTireDiameter",
+  "tirePrepNotes",
+  "tireWearNotes",
   "rating",
   "bestForTags",
   "tags",
@@ -524,12 +541,49 @@ export const basicFieldIds = new Set([
   "rearToeBlock",
   "basicCustomNotes",
   "rearSpring",
+  "frontRideHeight",
+  "frontCamber",
+  "frontToe",
+  "caster",
+  "kpi",
+  "ackerman",
+  "steeringAngle",
+  "frontTrackWidth",
+  "frontDroop",
+  "frontPreload",
+  "frontRebound",
+  "rearRideHeight",
+  "rearCamber",
+  "rearToe",
+  "skidAngle",
+  "rearRollCenter",
+  "rearTrackWidth",
+  "rearDroop",
+  "rearPreload",
+  "rearRebound",
   "diffType",
   "spurGear",
   "pinionGear",
   "internalDriveRatio",
   "finalDriveRatio",
+  "gearPitch",
+  "gearDiffOil",
+  "diffGrease",
+  "ballDiffSetting",
+  "lsdSetting",
   "batteryPosition",
+  "addedWeight",
+  "weightLocation",
+  "bodyShell",
+  "bodyHeight",
+  "bodyWeight",
+  "aeroWing",
+  "wingPosition",
+  "bodyMountPosition",
+  "frontWeight",
+  "rearWeight",
+  "sideWeight",
+  "weightBalanceNotes",
   "servoPosition",
   "battery",
   "gyroGain",
@@ -550,6 +604,7 @@ export const builderTabs: Array<{ id: BuilderTabId; label: string; stepId: strin
   { id: "geometry", label: "Geometry", stepId: "geometry", sectionIds: [], helper: "Spacer descriptions, mounting positions, hub choices, alignment, and geometry notes." },
   { id: "drivetrain", label: "Drivetrain", stepId: "drivetrain", sectionIds: ["drivetrain"], helper: "Motor, gearing, differential, shafts, belts, and drive notes." },
   { id: "tires", label: "Tires/Wheels", stepId: "tires-wheels", sectionIds: ["tires-wheels"], helper: "Front and rear tire, wheel, offset, and fitment setup." },
+  { id: "body", label: "Body/Weight", stepId: "body-weight", sectionIds: ["weight-body"], helper: "Body, wing, battery position, and weight balance setup." },
   { id: "electronics", label: "Electronics", stepId: "electronics", sectionIds: ["esc-tune", "servo-tune", "gyro-tune", "radio-tune"], helper: "ESC, servo, gyro, motor, and radio settings in one place." },
   { id: "esc", label: "ESC", stepId: "electronics", sectionIds: ["esc-tune"], helper: "ESC product, profile, throttle, brake, boost, turbo, and capacitor." },
   { id: "servo", label: "Servo", stepId: "electronics", sectionIds: ["servo-tune"], helper: "Servo product, horn, profile, endpoints, speed, torque, and notes." },
@@ -561,4 +616,4 @@ export const builderTabs: Array<{ id: BuilderTabId; label: string; stepId: strin
   { id: "pdf", label: "Preview/PDF", stepId: "notes-publish", sectionIds: [], helper: "Preview the setup summary and export the filled setup sheet PDF." }
 ];
 
-export const quickTuneTabIds = new Set<BuilderTabId>(["chassis", "track", "front", "rear", "geometry", "drivetrain", "tires", "electronics", "esc", "servo", "gyro", "radio", "photos", "notes", "pdf"]);
+export const quickTuneTabIds = new Set<BuilderTabId>(["chassis", "track", "front", "rear", "geometry", "drivetrain", "tires", "body", "electronics", "esc", "servo", "gyro", "radio", "photos", "notes", "pdf"]);
