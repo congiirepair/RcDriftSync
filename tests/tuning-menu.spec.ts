@@ -79,6 +79,11 @@ test("Quick tuning menu separates geometry, tires, and body weight fields withou
   await page.getByLabel("KPI").fill("8 deg");
   await page.getByLabel("Front track width (mm)").fill("198");
   await expect(page.getByLabel("Front camber (deg)")).toHaveAttribute("inputmode", "text");
+  await page.getByLabel("Front camber (deg)").tap();
+  await expect(page.getByLabel("Front camber (deg)")).toBeFocused();
+  await page.getByLabel("Front camber (deg)").fill("-7");
+  await page.getByLabel("Front camber (deg)").tap();
+  await expect(page.getByLabel("Front camber (deg)")).toBeFocused();
   await page.getByLabel("Front camber (deg)").fill("-8");
   await page.getByLabel("Front upper arm outer spacer (mm)").fill("3");
   await page.getByLabel("Front upper arm inner front spacer (mm)").fill("1");
@@ -93,6 +98,11 @@ test("Quick tuning menu separates geometry, tires, and body weight fields withou
   await page.getByLabel("RR bushing position").selectOption("Out");
   await page.getByLabel("Rear roll center").fill("Low");
   await expect(page.getByLabel("Rear camber (deg)")).toHaveAttribute("inputmode", "text");
+  await page.getByLabel("Rear camber (deg)").tap();
+  await expect(page.getByLabel("Rear camber (deg)")).toBeFocused();
+  await page.getByLabel("Rear camber (deg)").fill("-4");
+  await page.getByLabel("Rear camber (deg)").tap();
+  await expect(page.getByLabel("Rear camber (deg)")).toBeFocused();
   await page.getByLabel("Rear camber (deg)").fill("-5");
   await page.getByLabel("Rear axle height / hole notes").fill("Lower axle hole");
   await page.getByLabel("Rear anti-squat / skid notes").fill("RF 6mm shim, RR 6.5mm shim");

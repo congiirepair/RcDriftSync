@@ -1,5 +1,6 @@
 import { Search, X } from "lucide-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { catalogBrandsByCategory, catalogOptionLabel, filterProductCatalog, getProductCatalog, type ProductCatalogCategory, type ProductCatalogItem, type ProductCatalogVariant } from "../features/catalog";
@@ -300,19 +301,37 @@ export function PartSelector({
     );
   }
 
-  const selectorDialog = open ? (
-    <div className="partSelectorOverlay" role="presentation">
-      <section className="partSelectorSheet" role="dialog" aria-modal="true" aria-label={`${formatFormLabel(label)} selector`}>
-        <div className="partSelectorSheetHeader">
-          <div>
-            <span>Product Browser</span>
-            <h3>{formatFormLabel(label)}</h3>
-          </div>
-          <button className="partSelectorCloseButton" type="button" aria-label="Back to tune" onClick={() => setOpen(false)}>
-            <span className="partSelectorCloseText">Back</span>
-            <X size={20} />
-          </button>
-        </div>
+  const selectorDialog = (
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          className="partSelectorOverlay"
+          role="presentation"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+        >
+          <motion.section
+            className="partSelectorSheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${formatFormLabel(label)} selector`}
+            initial={{ y: 34, opacity: 0, scale: 0.985 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 24, opacity: 0, scale: 0.99 }}
+            transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            <div className="partSelectorSheetHeader">
+              <div>
+                <span>Product Browser</span>
+                <h3>{formatFormLabel(label)}</h3>
+              </div>
+              <button className="partSelectorCloseButton" type="button" aria-label="Back to tune" onClick={() => setOpen(false)}>
+                <span className="partSelectorCloseText">Back</span>
+                <X size={20} />
+              </button>
+            </div>
 
         <label className="partSelectorSearch">
           <Search size={18} />
@@ -421,9 +440,11 @@ export function PartSelector({
         <button className="partSelectorMobileBack" type="button" onClick={() => setOpen(false)}>
           Back to tune
         </button>
-      </section>
-    </div>
-  ) : null;
+          </motion.section>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
 
   return (
     <section className="partSelector">
@@ -459,7 +480,7 @@ export function PartSelector({
         )}
       </button>
       {selectedPartNumber ? <p className="part-helper-text">Part #: {selectedPartNumber}</p> : null}
-      {selectorDialog && typeof document !== "undefined" ? createPortal(selectorDialog, document.body) : selectorDialog}
+      {typeof document !== "undefined" ? createPortal(selectorDialog, document.body) : selectorDialog}
     </section>
   );
 }

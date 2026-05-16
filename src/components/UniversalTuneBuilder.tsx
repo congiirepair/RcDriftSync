@@ -1,4 +1,4 @@
-import { CarFront, Check, ChevronDown, CircleDot, CircuitBoard, ClipboardCheck, CopyPlus, Download, Eye, FileText, ImagePlus, Lightbulb, MapPinned, MoreHorizontal, Plus, Save, Share2, SlidersHorizontal, Trash2, Wrench } from "lucide-react";
+import { CarFront, Check, ChevronDown, CircleDot, CircuitBoard, ClipboardCheck, CopyPlus, Download, Eye, FileText, ImagePlus, Lightbulb, Loader2, MapPinned, MoreHorizontal, Plus, Save, Share2, SlidersHorizontal, Trash2, Wrench } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -455,11 +455,13 @@ export function UniversalTuneBuilder({
   const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [manualSaveBusy, setManualSaveBusy] = useState(false);
+  const [saveSuccessPulse, setSaveSuccessPulse] = useState(false);
   const [pitlaneBrowser, setPitlaneBrowser] = useState<{ tab: PitlaneProductTab; source: "electronics" | "tires" } | null>(null);
   const [pitlanePage, setPitlanePage] = useState<PitlanePage>("menu");
   const [pitlanePhotoManagerOpen, setPitlanePhotoManagerOpen] = useState(false);
   const [pitlanePhotoToRemove, setPitlanePhotoToRemove] = useState<TunePhoto | null>(null);
   const [navigationPending, startNavigationTransition] = useTransition();
+  const savePulseTimeoutRef = useRef<number | null>(null);
   const carTunes = tunes.filter((tune) => tune.carId === carId);
   const modeFields = builderMode === "advanced" ? allBuilderFields : allBuilderFields.filter((field) => basicFieldIds.has(field.id));
   const completion = activeTune ? Math.round((completedFieldCount(activeTune, modeFields) / Math.max(1, modeFields.length)) * 100) : 0;
@@ -516,9 +518,14 @@ export function UniversalTuneBuilder({
     return () => window.clearTimeout(handle);
   }, [activeTabId, visibleBuilderTabs]);
 
+  useEffect(() => () => {
+    if (savePulseTimeoutRef.current) window.clearTimeout(savePulseTimeoutRef.current);
+  }, []);
+
   async function saveWithConfirmation() {
     if (!activeTune || manualSaveBusy) return;
     setManualSaveBusy(true);
+    setSaveSuccessPulse(false);
     setSaveError("");
     let timedOut = false;
     const timeoutId = window.setTimeout(() => {
@@ -532,7 +539,12 @@ export function UniversalTuneBuilder({
         setSaveError("Save failed. Your edits are still on this screen. Check the account sync message and try again.");
         return;
       }
-      if (!timedOut) setSaveConfirmOpen(true);
+      if (!timedOut) {
+        setSaveSuccessPulse(true);
+        if (savePulseTimeoutRef.current) window.clearTimeout(savePulseTimeoutRef.current);
+        savePulseTimeoutRef.current = window.setTimeout(() => setSaveSuccessPulse(false), 1400);
+        setSaveConfirmOpen(true);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Save failed. Please try again.";
       setSaveError(message);
@@ -1080,10 +1092,12 @@ export function UniversalTuneBuilder({
           </motion.div>
         </AnimatePresence>
 
-        <button className="pitlaneSaveBar" type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
-          <span><Save size={30} /></span>
-          <strong>{manualSaveBusy ? "Saving..." : "Save Tune"}<em>Trackside Save</em></strong>
-          <span><Check size={32} /></span>
+        <button className={`pitlaneSaveBar ${manualSaveBusy ? "isSaving" : ""} ${saveSuccessPulse ? "isSaved" : ""}`} type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
+          <span className="pitlaneSaveIcon">
+            {manualSaveBusy ? <Loader2 size={30} className="spinIcon" /> : saveSuccessPulse ? <Check size={30} /> : <Save size={30} />}
+          </span>
+          <strong>{manualSaveBusy ? "Saving..." : saveSuccessPulse ? "Saved" : "Save Tune"}<em>{saveSuccessPulse ? "Synced" : "Trackside Save"}</em></strong>
+          <span className="pitlaneSaveCheck"><Check size={32} /></span>
         </button>
 
         {pitlaneBrowser ? (
@@ -1566,16 +1580,17 @@ export function UniversalTuneBuilder({
               <button className="smallPill" type="button" onClick={() => previousQuickTab && goToTab(previousQuickTab.id)} disabled={!previousQuickTab}>
                 Back
               </button>
-              <button className="smallPill nextStepButton" type="button" onClick={() => nextQuickTab ? goToTab(nextQuickTab.id) : saveWithConfirmation()} disabled={manualSaveBusy}>
-                {nextQuickTab ? `Next: ${nextQuickTab.label}` : manualSaveBusy ? "Saving..." : "Finish"}
+              <button className={`smallPill nextStepButton ${manualSaveBusy && !nextQuickTab ? "isSaving" : ""}`} type="button" onClick={() => nextQuickTab ? goToTab(nextQuickTab.id) : saveWithConfirmation()} disabled={manualSaveBusy}>
+                {!nextQuickTab && manualSaveBusy ? <Loader2 size={16} className="spinIcon" /> : null}
+                {nextQuickTab ? `Next: ${nextQuickTab.label}` : manualSaveBusy ? "Saving..." : saveSuccessPulse ? "Saved" : "Finish"}
               </button>
               <button className="smallPill pdfAction" type="button" onClick={previewPdf} disabled={pdfBusy}>
                 <FileText size={17} />
                 {pdfBusy ? "Building..." : "Preview PDF"}
               </button>
-              <button className="primaryAction" type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
-                <Save size={18} />
-                {manualSaveBusy ? "Saving..." : "Save"}
+              <button className={`primaryAction ${manualSaveBusy ? "isSaving" : ""} ${saveSuccessPulse ? "isSaved" : ""}`} type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
+                {manualSaveBusy ? <Loader2 size={18} className="spinIcon" /> : saveSuccessPulse ? <Check size={18} /> : <Save size={18} />}
+                {manualSaveBusy ? "Saving..." : saveSuccessPulse ? "Saved" : "Save"}
               </button>
             </div>
           ) : (
@@ -1589,9 +1604,9 @@ export function UniversalTuneBuilder({
               <FileText size={17} />
               {pdfBusy ? "Building..." : "PDF"}
             </button>
-            <button className="primaryAction" type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
-              <Save size={18} />
-              {manualSaveBusy ? "Saving..." : "Save"}
+            <button className={`primaryAction ${manualSaveBusy ? "isSaving" : ""} ${saveSuccessPulse ? "isSaved" : ""}`} type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
+              {manualSaveBusy ? <Loader2 size={18} className="spinIcon" /> : saveSuccessPulse ? <Check size={18} /> : <Save size={18} />}
+              {manualSaveBusy ? "Saving..." : saveSuccessPulse ? "Saved" : "Save"}
             </button>
             <button className="smallPill" type="button" onClick={exportPdf} disabled={pdfBusy}>
               <Download size={17} />
@@ -1897,8 +1912,23 @@ function BasicTuneForm({
   const internalDriveRatioValue = String(tune.values.internalDriveRatio ?? internalRatioPreset?.internalRatio ?? "");
   const autoFdrValue = calculateFinalDriveRatio(tune.values.spurGear, tune.values.pinionGear, internalDriveRatioValue);
   const fdrAutoEnabled = tune.values.fdrAuto !== false;
+  const [recentlyChangedField, setRecentlyChangedField] = useState("");
+  const changedFieldTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (changedFieldTimeoutRef.current) window.clearTimeout(changedFieldTimeoutRef.current);
+  }, []);
+
+  function markFieldUpdated(values: Record<string, BuilderValue>) {
+    const changedKey = Object.keys(values)[0];
+    if (!changedKey) return;
+    setRecentlyChangedField(changedKey);
+    if (changedFieldTimeoutRef.current) window.clearTimeout(changedFieldTimeoutRef.current);
+    changedFieldTimeoutRef.current = window.setTimeout(() => setRecentlyChangedField(""), 800);
+  }
 
   function patchValues(values: Record<string, BuilderValue>, patch: Partial<Tune> = {}, extraSelections: Record<string, string> = {}) {
+    markFieldUpdated(values);
     onChange({
       ...tune,
       ...patch,
@@ -1984,7 +2014,7 @@ function BasicTuneForm({
   function renderSetupTextField(label: string, valueKey: string, placeholder = "", inputMode?: "text" | "decimal" | "numeric", quickValues: string[] = []) {
     const allowsSignedValue = signedSetupValueKeys.has(valueKey);
     return (
-      <div className="rdxSheetField">
+      <div className={`rdxSheetField ${recentlyChangedField === valueKey ? "fieldJustUpdated" : ""}`}>
         <TextField
           label={label}
           value={valueForSetup(valueKey)}
@@ -2011,22 +2041,26 @@ function BasicTuneForm({
     const value = String(tune.values[valueKey] ?? "");
     const nextOptions = value && !options.includes(value) ? [value, ...options] : options;
     return (
-      <SelectField label={label} value={value} onChange={(event) => patchValues({ [valueKey]: event.target.value })}>
-        <option value="">{placeholder}</option>
-        {nextOptions.map((option) => <option key={option} value={option}>{option}</option>)}
-      </SelectField>
+      <div className={`rdxSheetField ${recentlyChangedField === valueKey ? "fieldJustUpdated" : ""}`}>
+        <SelectField label={label} value={value} onChange={(event) => patchValues({ [valueKey]: event.target.value })}>
+          <option value="">{placeholder}</option>
+          {nextOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+        </SelectField>
+      </div>
     );
   }
 
   function renderSetupTextarea(label: string, valueKey: string, placeholder = "") {
     return (
-      <TextAreaField
-        label={label}
-        value={String(tune.values[valueKey] ?? "")}
-        placeholder={placeholder}
-        rows={3}
-        onChange={(event) => patchValues({ [valueKey]: event.target.value })}
-      />
+      <div className={`rdxSheetField ${recentlyChangedField === valueKey ? "fieldJustUpdated" : ""}`}>
+        <TextAreaField
+          label={label}
+          value={String(tune.values[valueKey] ?? "")}
+          placeholder={placeholder}
+          rows={3}
+          onChange={(event) => patchValues({ [valueKey]: event.target.value })}
+        />
+      </div>
     );
   }
 
@@ -3175,30 +3209,38 @@ function AdvancedTuneDetails({
               </span>
               <ChevronDown size={18} aria-hidden="true" />
             </button>
-            {isOpen ? (
-              <div className="builderFieldGrid">
-                {section.profileType ? (
-                  <ElectronicsProfileTools
-                    section={section}
-                    profiles={electronicsProfiles.filter((profile) => profile.type === section.profileType)}
-                    onApply={onApplyElectronicsProfile}
-                    onSave={() => onSaveElectronicsProfile(section)}
-                  />
-                ) : null}
-                {section.fields.map((field) => (
-                  <BuilderField
-                    key={field.id}
-                    field={field}
-                    tune={activeTune}
-                    tunes={tunes}
-                    builderMode="advanced"
-                    onChange={(value) => onFieldChange(field, value)}
-                    onPartChange={(part, customName) => onPartChange(field, part, customName)}
-                    onElectronicsSettingChange={onElectronicsSettingChange}
-                  />
-                ))}
-              </div>
-            ) : null}
+            <AnimatePresence initial={false}>
+              {isOpen ? (
+                <motion.div
+                  className="builderFieldGrid"
+                  initial={{ height: 0, opacity: 0, y: -8 }}
+                  animate={{ height: "auto", opacity: 1, y: 0 }}
+                  exit={{ height: 0, opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
+                >
+                  {section.profileType ? (
+                    <ElectronicsProfileTools
+                      section={section}
+                      profiles={electronicsProfiles.filter((profile) => profile.type === section.profileType)}
+                      onApply={onApplyElectronicsProfile}
+                      onSave={() => onSaveElectronicsProfile(section)}
+                    />
+                  ) : null}
+                  {section.fields.map((field) => (
+                    <BuilderField
+                      key={field.id}
+                      field={field}
+                      tune={activeTune}
+                      tunes={tunes}
+                      builderMode="advanced"
+                      onChange={(value) => onFieldChange(field, value)}
+                      onPartChange={(part, customName) => onPartChange(field, part, customName)}
+                      onElectronicsSettingChange={onElectronicsSettingChange}
+                    />
+                  ))}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </article>
         );
       })}
@@ -3224,7 +3266,19 @@ function BasicTuneSection({ title, helper = "Skip anything you do not know yet."
         </span>
         <ChevronDown size={18} aria-hidden="true" />
       </button>
-      {open ? <div className="builderFieldGrid">{children}</div> : null}
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.div
+            className="builderFieldGrid"
+            initial={{ height: 0, opacity: 0, y: -8 }}
+            animate={{ height: "auto", opacity: 1, y: 0 }}
+            exit={{ height: 0, opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            {children}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </article>
   );
 }
@@ -3240,7 +3294,19 @@ function TuneSubcategory({ title, helper, children, defaultOpen = true }: { titl
         </span>
         <ChevronDown size={17} aria-hidden="true" />
       </button>
-      {open ? <div className="tuneSubcategoryBody">{children}</div> : null}
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.div
+            className="tuneSubcategoryBody"
+            initial={{ height: 0, opacity: 0, y: -6 }}
+            animate={{ height: "auto", opacity: 1, y: 0 }}
+            exit={{ height: 0, opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            {children}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }
