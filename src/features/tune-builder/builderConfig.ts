@@ -425,7 +425,7 @@ export const guidedSteps: GuidedStep[] = [
   {
     id: "geometry",
     label: "Geometry",
-    helper: "Record alignment, suspension mount inserts, shock holes, hub holes, steering holes, and shim stacks.",
+    helper: "Record spacer descriptions, mounting positions, hub choices, alignment, and geometry notes.",
     sectionIds: ["front", "rear"]
   },
   {
@@ -547,7 +547,7 @@ export const builderTabs: Array<{ id: BuilderTabId; label: string; stepId: strin
   { id: "track", label: "Track", stepId: "chassis", sectionIds: ["basics"], helper: "Track name and surface for this setup." },
   { id: "front", label: "Front", stepId: "steering", sectionIds: ["front"], helper: "Front arms, knuckles, axle, spring, toe block, damper, and wheel setup." },
   { id: "rear", label: "Rear", stepId: "suspension", sectionIds: ["rear"], helper: "Rear arms, hub carrier, axle length, toe block, spring, damper, and wheel setup." },
-  { id: "geometry", label: "Geometry", stepId: "geometry", sectionIds: [], helper: "Alignment, suspension mount inserts, shock holes, hub holes, steering holes, and shim notes." },
+  { id: "geometry", label: "Geometry", stepId: "geometry", sectionIds: [], helper: "Spacer descriptions, mounting positions, hub choices, alignment, and geometry notes." },
   { id: "drivetrain", label: "Drivetrain", stepId: "drivetrain", sectionIds: ["drivetrain"], helper: "Motor, gearing, differential, shafts, belts, and drive notes." },
   { id: "tires", label: "Tires/Wheels", stepId: "tires-wheels", sectionIds: ["tires-wheels"], helper: "Front and rear tire, wheel, offset, and fitment setup." },
   { id: "electronics", label: "Electronics", stepId: "electronics", sectionIds: ["esc-tune", "servo-tune", "gyro-tune", "radio-tune"], helper: "ESC, servo, gyro, motor, and radio settings in one place." },

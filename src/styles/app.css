@@ -13357,237 +13357,6 @@ a,
   }
 }
 
-/* Phase 1 visual tuning helper */
-.visualSetupHelper {
-  border: 1px solid rgba(0, 179, 255, 0.3);
-  border-radius: 14px;
-  background:
-    linear-gradient(145deg, rgba(8, 21, 30, 0.92), rgba(3, 10, 16, 0.94)),
-    rgba(6, 14, 20, 0.88);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 12px 28px rgba(0, 0, 0, 0.24);
-  overflow: hidden;
-}
-
-.visualSetupToggle {
-  width: 100%;
-  min-height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 13px 16px;
-  border: 0;
-  color: #f8fbff;
-  background: transparent;
-  text-align: left;
-}
-
-.visualSetupToggle span {
-  min-width: 0;
-  display: grid;
-  gap: 3px;
-}
-
-.visualSetupToggle strong {
-  font-size: clamp(1rem, 2vw, 1.2rem);
-  letter-spacing: 0;
-}
-
-.visualSetupToggle em {
-  color: rgba(222, 234, 244, 0.72);
-  font-style: normal;
-  font-size: 0.82rem;
-  line-height: 1.25;
-}
-
-.visualSetupToggle svg {
-  flex: 0 0 auto;
-  color: #24c6ff;
-  transition: transform 160ms ease;
-}
-
-.visualSetupToggle[aria-expanded="true"] svg {
-  transform: rotate(180deg);
-}
-
-.visualSetupPanel {
-  display: grid;
-  gap: 14px;
-  padding: 0 14px 16px;
-}
-
-.visualSetupIntro {
-  display: grid;
-  gap: 4px;
-  padding: 14px;
-  border: 1px solid rgba(148, 197, 229, 0.16);
-  border-radius: 12px;
-  background: rgba(2, 9, 15, 0.54);
-}
-
-.visualSetupIntro span {
-  color: #f9fcff;
-  font-weight: 900;
-}
-
-.visualSetupIntro p,
-.visualSetupSlot p {
-  margin: 0;
-  color: rgba(224, 236, 247, 0.7);
-  line-height: 1.35;
-}
-
-.visualSetupIntro small {
-  color: rgba(110, 204, 255, 0.78);
-  line-height: 1.35;
-}
-
-.visualSetupSlots {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.visualSetupSlot {
-  min-width: 0;
-  display: grid;
-  gap: 10px;
-  padding: 12px;
-  border: 1px solid rgba(0, 183, 255, 0.22);
-  border-radius: 12px;
-  background: rgba(2, 10, 17, 0.68);
-}
-
-.visualSetupSlot header {
-  display: grid;
-  gap: 2px;
-}
-
-.visualSetupSlot strong {
-  color: #ffffff;
-  font-size: 0.98rem;
-}
-
-.visualSetupSlot header span {
-  color: #30c8ff;
-  font-size: 0.86rem;
-  font-weight: 800;
-}
-
-.visualSetupDiagram {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  max-height: 280px;
-  border-radius: 12px;
-  overflow: visible;
-}
-
-.visualSetupPlate {
-  stroke: rgba(77, 210, 255, 0.76);
-  stroke-width: 1.35;
-  filter: drop-shadow(0 0 5px rgba(0, 179, 255, 0.34));
-}
-
-.visualSetupCenterline {
-  stroke: rgba(159, 214, 239, 0.18);
-  stroke-width: 0.7;
-  stroke-dasharray: 3 4;
-}
-
-.visualSetupColumnLabel {
-  fill: rgba(203, 230, 245, 0.74);
-  font-size: 6px;
-  font-weight: 900;
-  text-anchor: middle;
-  text-transform: uppercase;
-}
-
-.visualSetupHotspot {
-  cursor: pointer;
-  outline: none;
-}
-
-.visualSetupHotspot circle {
-  fill: rgba(9, 21, 29, 0.98);
-  stroke: rgba(191, 224, 242, 0.66);
-  stroke-width: 1.1;
-  transition: fill 140ms ease, stroke 140ms ease, filter 140ms ease;
-}
-
-.visualSetupHotspot text {
-  fill: rgba(255, 255, 255, 0.82);
-  font-size: 3.9px;
-  font-weight: 900;
-  text-anchor: middle;
-  dominant-baseline: middle;
-  pointer-events: none;
-}
-
-.visualSetupHotspot:hover circle,
-.visualSetupHotspot:focus-visible circle {
-  stroke: #58d8ff;
-  filter: drop-shadow(0 0 5px rgba(0, 196, 255, 0.58));
-}
-
-.visualSetupHotspot.selected circle {
-  fill: #12a8ff;
-  stroke: #dff8ff;
-  filter: drop-shadow(0 0 8px rgba(0, 190, 255, 0.8));
-}
-
-.visualSetupHotspot.selected text {
-  fill: #ffffff;
-}
-
-.visualSetupReadout {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0;
-}
-
-.visualSetupReadout div {
-  min-width: 0;
-  display: grid;
-  gap: 2px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.045);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.visualSetupReadout dt {
-  color: rgba(215, 230, 242, 0.68);
-  font-size: 0.72rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.visualSetupReadout dd {
-  margin: 0;
-  color: #ffffff;
-  font-weight: 900;
-}
-
-@media (max-width: 720px) {
-  .visualSetupPanel {
-    padding: 0 10px 12px;
-  }
-
-  .visualSetupSlots,
-  .visualSetupReadout {
-    grid-template-columns: 1fr;
-  }
-
-  .visualSetupSlot {
-    padding: 10px;
-  }
-
-  .visualSetupDiagram {
-    max-height: 250px;
-  }
-}
-
 /* Production polish pass: lighter frames, clearer mobile tune panels. */
 .pageHeader,
 .heroPanel,
@@ -15242,245 +15011,79 @@ body {
   padding: 10px 12px 12px;
 }
 
-.geometryPointPicker {
+.rdxSheetSummary {
   display: grid;
-  gap: 10px;
+  gap: 12px;
   border: 1px solid rgba(92, 202, 248, 0.22);
-  border-radius: 12px;
-  padding: 12px;
-  background: rgba(255, 255, 255, 0.025);
+  border-radius: 14px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.035);
 }
 
-.geometryPointPicker legend {
-  padding: 0 6px;
+.rdxSheetSummary > div:first-child {
+  display: grid;
+  gap: 3px;
+}
+
+.rdxSheetSummary strong {
   color: var(--text);
-  font-size: 0.82rem;
+  font-size: 0.98rem;
   font-weight: 950;
 }
 
-.geometryPointPickerVisual {
-  gap: 12px;
-  padding: 12px;
-  background:
-    linear-gradient(145deg, rgba(7, 25, 36, 0.82), rgba(2, 8, 13, 0.88)),
-    radial-gradient(circle at 20% 12%, rgba(44, 199, 255, 0.16), transparent 42%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 36px rgba(0, 0, 0, 0.28);
-}
-
-.geometryDiagramWrap {
-  display: grid;
-  grid-template-columns: minmax(132px, 190px) minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-}
-
-.geometryD3Diagram {
-  width: 100%;
-  aspect-ratio: 1;
-  min-width: 0;
-  overflow: visible;
-  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.34));
-}
-
-.geometryDiagramBackplate {
-  fill: rgba(2, 9, 15, 0.72);
-  stroke: rgba(83, 211, 255, 0.3);
-  stroke-width: 0.8;
-}
-
-.geometryDiagramPart {
-  fill: rgba(12, 31, 45, 0.94);
-  stroke: rgba(110, 220, 255, 0.66);
-  stroke-width: 1.6;
-  vector-effect: non-scaling-stroke;
-}
-
-.geometryDiagramPart.secondary {
-  fill: rgba(5, 18, 28, 0.92);
-}
-
-.geometryDiagramDetail {
-  fill: none;
-  stroke: rgba(166, 231, 255, 0.32);
-  stroke-linecap: round;
-  stroke-width: 1.2;
-  vector-effect: non-scaling-stroke;
-}
-
-.geometryD3Hole {
-  cursor: pointer;
-  outline: none;
-}
-
-.geometryD3HitArea {
-  fill: transparent;
-}
-
-.geometryD3HoleOuter {
-  fill: rgba(3, 9, 14, 0.96);
-  stroke: rgba(213, 235, 245, 0.74);
-  stroke-width: 1.7;
-  vector-effect: non-scaling-stroke;
-  transition: fill 140ms ease, r 140ms ease, stroke 140ms ease;
-}
-
-.geometryD3HoleInner {
-  fill: rgba(134, 152, 166, 0.7);
-  transition: fill 140ms ease, r 140ms ease;
-}
-
-.geometryD3Hole text {
-  fill: rgba(218, 235, 246, 0.84);
-  font-size: 5px;
-  font-weight: 950;
-  letter-spacing: 0;
-  text-anchor: middle;
-  pointer-events: none;
-}
-
-.geometryD3Hole:hover .geometryD3HoleOuter,
-.geometryD3Hole:focus-visible .geometryD3HoleOuter {
-  stroke: rgba(80, 218, 255, 0.98);
-  fill: rgba(4, 24, 34, 1);
-}
-
-.geometryD3Hole.selected .geometryD3HoleOuter {
-  fill: rgba(0, 151, 238, 0.96);
-  stroke: rgba(231, 250, 255, 1);
-  filter: drop-shadow(0 0 6px rgba(34, 196, 255, 0.78));
-}
-
-.geometryD3Hole.selected .geometryD3HoleInner {
-  fill: #ffffff;
-}
-
-.geometryD3Hole.selected text {
-  fill: #ffffff;
-}
-
-.geometryDiagramReadout {
-  display: grid;
-  align-content: center;
-  gap: 6px;
-  min-height: 78px;
-  border: 1px solid rgba(92, 202, 248, 0.18);
-  border-radius: 10px;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.18);
-}
-
-.geometryDiagramReadout span {
+.rdxSheetSummary span {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.rdxSheetSummaryChips,
+.rdxQuickValues {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rdxSheetSummaryChips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(92, 202, 248, 0.22);
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.18);
+  color: var(--text);
+  font-size: 0.76rem;
   font-weight: 900;
+}
+
+.rdxSheetSummaryChips em {
+  color: var(--muted);
+  font-style: normal;
+  font-weight: 950;
   text-transform: uppercase;
 }
 
-.geometryDiagramReadout strong {
-  color: var(--text);
-  font-size: 1rem;
-  font-weight: 950;
-  line-height: 1.15;
-}
-
-.geometryPointRail {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-  scrollbar-width: thin;
-}
-
-.geometryPointRail span {
+.rdxSheetField {
   display: grid;
-  flex: 0 0 28px;
-  width: 28px;
-  height: 28px;
-  place-items: center;
-  border: 1px solid rgba(92, 202, 248, 0.36);
-  border-radius: 999px;
-  color: var(--muted);
+  gap: 7px;
+  min-width: 0;
+}
+
+.rdxQuickValues .smallPill {
+  min-height: 28px;
+  padding: 4px 9px;
+  font-size: 0.72rem;
+}
+
+.rdxZoneTitle {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 10px;
+  color: var(--accent);
   font-size: 0.72rem;
   font-weight: 950;
-  background: rgba(0, 0, 0, 0.24);
-}
-
-.geometryPointRail span.selected {
-  border-color: rgba(117, 222, 255, 0.95);
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 0 18px rgba(0, 179, 255, 0.45);
-}
-
-.geometryPointOptions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
-  gap: 8px;
-}
-
-.geometryPointOptions button {
-  min-height: 42px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
-  padding: 9px 10px;
-  background: rgba(255, 255, 255, 0.035);
-  color: var(--text);
-  font: inherit;
-  font-size: 0.8rem;
-  font-weight: 900;
-  line-height: 1.15;
-  text-align: center;
-}
-
-.geometryPointOptions button:hover,
-.geometryPointOptions button:focus-visible {
-  border-color: rgba(92, 202, 248, 0.68);
-  outline: none;
-}
-
-.geometryPointOptions button.selected {
-  border-color: rgba(117, 222, 255, 0.92);
-  background: linear-gradient(180deg, rgba(28, 172, 255, 0.95), rgba(0, 91, 206, 0.96));
-  color: #fff;
-}
-
-.geometryPointValue {
-  color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 950;
-}
-
-@media (max-width: 640px) {
-  .geometryDiagramWrap {
-    grid-template-columns: 118px minmax(0, 1fr);
-    gap: 10px;
-  }
-
-  .geometryPointPickerVisual {
-    padding: 10px;
-  }
-
-  .geometryDiagramReadout {
-    min-height: 70px;
-    padding: 10px;
-  }
-
-  .geometryDiagramReadout strong {
-    font-size: 0.9rem;
-  }
-}
-
-@media (max-width: 390px) {
-  .geometryDiagramWrap {
-    grid-template-columns: 1fr;
-  }
-
-  .geometryD3Diagram {
-    max-width: 180px;
-    justify-self: center;
-  }
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .partSelectorOverlay {

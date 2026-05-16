@@ -1,7 +1,6 @@
 import { Activity, ArrowRightLeft, BatteryCharging, CarFront, CopyPlus, FileText, Gauge, RadioTower, Route, Share2, SlidersHorizontal, TimerReset, Wrench } from "lucide-react";
 import type { ChangeEvent } from "react";
 import { chassisInfoFromTune } from "../data/chassisBrands";
-import { visualSetupSummaryValues } from "../data/visualSetupDefinitions";
 import type { Car, Tune, TuneFeelProfile } from "../types";
 import { bestForTags, feelForTune, primaryFeelLabels, tuneConfidence, tuneDisplayName, valueText } from "../utils/tuneInsights";
 import { BrandLogo } from "./BrandIdentity";
@@ -116,11 +115,9 @@ function electronicsProductLabel(tune: Tune, category: "esc" | "motor" | "servo"
 
 function basicTuneSummaryRows(tune: Tune, car?: Car) {
   const chassisInfo = chassisInfoFromTune(tune, car);
-  const insertSummary = visualSetupSummaryValues(tune).slice(0, 4).join(" / ");
   const rows = [
     ["Chassis", `${chassisInfo.brand} ${chassisInfo.model}`.trim()],
     ["Track", tune.track],
-    ["Mount inserts", insertSummary],
     ["Motor", electronicsProductLabel(tune, "motor")],
     ["ESC", electronicsProductLabel(tune, "esc")],
     ["Servo", electronicsProductLabel(tune, "servo")],

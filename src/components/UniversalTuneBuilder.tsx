@@ -7,7 +7,6 @@ import { chassisBrands, chassisInfoFromTune, findChassisBrand, modelsForBrand, s
 import { findElectronicsSchema, findElectronicsSchemaForProduct, type ElectronicsSchemaField } from "../data/electronicsSchemas";
 import { catalogOptionDescription, catalogOptionLabel, filterProductCatalog, getProductCatalog, type ProductCatalogCategory, type ProductCatalogItem } from "../features/catalog";
 import { electronicsItemFromPart, findPartBySlug, matchKnownPart, partLabel, partsByCategory, type RcPart } from "../data/rcParts";
-import { resolveSuspensionMountVisualDefinition, type SuspensionMountVisualRequest, type VisualSetupDefinition, type VisualSetupOption, type VisualSetupSlot } from "../data/visualSetupDefinitions";
 import type { Car, ElectronicsCategory, ElectronicsProfile, SetupAssistantEntry, Tune, TuneElectronicsItem, TunePhoto } from "../types";
 import { absoluteShareUrl } from "../config/domain";
 import { snapshotTune } from "../utils/changes";
@@ -17,28 +16,19 @@ import { downloadUniversalTunePdf, generateUniversalTunePdf } from "../utils/uni
 import { formatFormLabel } from "../utils/formLabels";
 import { PhotosTab } from "./PhotosTab";
 import { BrandBadge, BrandLogo } from "./BrandIdentity";
-import { D3GeometryHolePicker, type GeometryDiagramType } from "./D3GeometryHolePicker";
 import { PhotoLightbox } from "./PhotoLightbox";
 import { PartSelector, type PartSelectorValue } from "./PartSelector";
 import { BasicTuneSummary, FeelEditor, TuneTimeline, TuneVisualSummary } from "./TuneVisuals";
 import { ConfirmDialog, EmptyState, SelectField, TextAreaField, TextField } from "./UiPrimitives";
-import { VisualSetupHelper } from "./VisualSetupHelper";
 
 import {
   allBuilderFields,
-  armDamperHoleOptions,
   basicFieldIds,
   builderTabs,
   calculateFinalDriveRatio,
-  ddssHoleOptions,
   guidedSteps,
-  ifsMountOptions,
   quickStepIds,
   quickTuneTabIds,
-  rearHubCarrierHoleOptions,
-  shockTowerHoleOptions,
-  slideRackPositionOptions,
-  steeringMountHoleOptions,
   suggestedInternalRatio,
   tuneDisplayName,
   universalSections,
@@ -986,7 +976,7 @@ export function UniversalTuneBuilder({
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("geometry")}>
             <span className="pitlaneRowIcon pitlaneRowIconGeometry"><SlidersHorizontal size={24} /></span>
-            <span><small>Geometry</small><strong>Alignment, holes, mounts</strong></span>
+            <span><small>Geometry</small><strong>Spacer and alignment descriptions</strong></span>
             <ChevronDown size={25} />
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("electronics")}>
@@ -1179,7 +1169,7 @@ export function UniversalTuneBuilder({
           <button type="button" onClick={() => goToTab("geometry")}>
             <span><SlidersHorizontal size={21} /></span>
             <em>Geometry</em>
-            <strong>{String(activeTune.values.frontShockTowerUpperHole || activeTune.values.rearHubCarrierUpperLinkHole || "Alignment and holes")}</strong>
+            <strong>{String(activeTune.values.frontRideHeight || activeTune.values.rearRideHeight || "Spacers and alignment")}</strong>
             <ChevronDown size={20} />
           </button>
           <button type="button" onClick={() => goToTab("electronics")}>
@@ -1825,25 +1815,14 @@ function BasicTuneForm({
   const isReveDMultiKnuckleChassis = brandSlug === "reve-d" && /rdx|mc-?iii|mc-?3/i.test(`${selectedModel} ${chassisInfo.model}`);
   const rearLowerArmBrandText = String(tune.values.rearLowerArmBrand ?? tune.chassisSetup?.rear?.lowerArm?.brand ?? "");
   const isReveDRearLowerArm = /\breve\s*d\b|\breved\b/i.test(rearLowerArmBrandText);
-  const frontSuspensionIdentity = [
-    tune.values.frontShockTowerBrand,
-    tune.values.frontShockTower,
-    tune.values.frontDamperBrand,
-    tune.values.frontDamper,
-    tune.values.frontLowerArmBrand,
-    tune.values.frontLowerArm,
-    tune.chassisBrand,
-    tune.customChassisBrand,
-    tune.chassisModel,
-    selectedModel,
-    chassisInfo.brand,
-    chassisInfo.model
-  ].join(" ");
-  const usesOverdoseIfs = /\boverdose\b|\bgalm\b|\bvacula\b|\bifs\b/i.test(frontSuspensionIdentity);
+  const rearLowerArmSideValue = String(tune.values.rearLowerArmSide ?? tune.chassisSetup?.rear?.lowerArm?.side ?? "");
+  const rearLowerArmOrientation = /down|curved/i.test(rearLowerArmSideValue) ? "Down position" : rearLowerArmSideValue ? "Straight position" : "";
+  const isRdxSetup = /rdx/i.test(`${selectedModel} ${chassisInfo.model} ${tune.chassisModel ?? ""} ${car?.chassis ?? ""}`);
   const internalRatioPreset = suggestedInternalRatio(brandSlug);
   const internalDriveRatioValue = String(tune.values.internalDriveRatio ?? internalRatioPreset?.internalRatio ?? "");
   const autoFdrValue = calculateFinalDriveRatio(tune.values.spurGear, tune.values.pinionGear, internalDriveRatioValue);
   const fdrAutoEnabled = tune.values.fdrAuto !== false;
+
   function patchValues(values: Record<string, BuilderValue>, patch: Partial<Tune> = {}, extraSelections: Record<string, string> = {}) {
     onChange({
       ...tune,
@@ -1923,65 +1902,157 @@ function BasicTuneForm({
     );
   }
 
-  function visualValuesFor(definition: VisualSetupDefinition, helperId: SuspensionMountVisualRequest["helperId"]) {
-    const acceptedLabels = new Set(definition.options.map((option) => option.label));
-    const storedPositions = tune.visualSetup?.[helperId]?.positions ?? {};
-    return Object.fromEntries(
-      definition.slots.map((slot) => {
-        const value = String(tune.values[slot.fieldId] ?? storedPositions[slot.fieldId] ?? "");
-        return [slot.fieldId, acceptedLabels.has(value) ? value : ""];
-      })
-    );
+  function valueForSetup(key: string) {
+    return String(tune.values[key] ?? "");
   }
 
-  function patchVisualSetupSelection(
-    request: SuspensionMountVisualRequest,
-    definition: VisualSetupDefinition,
-    slot: VisualSetupSlot,
-    option: VisualSetupOption
-  ) {
-    const now = new Date().toISOString();
-    const previous = tune.visualSetup?.[request.helperId];
-    const positions = {
-      ...(previous?.positions ?? {}),
-      [slot.fieldId]: option.label
-    };
-    patchValues(
-      { [slot.fieldId]: option.label },
-      {
-        visualSetup: {
-          ...(tune.visualSetup ?? {}),
-          [request.helperId]: {
-            helperId: request.helperId,
-            brand: definition.brand,
-            partCategory: definition.partCategory,
-            definitionVersion: definition.version,
-            source: definition.source,
-            label: request.label,
-            positions,
-            updatedAt: now
-          }
-        }
-      },
-      { [slot.fieldId]: option.label }
-    );
-  }
-
-  function renderSuspensionMountVisual(request: SuspensionMountVisualRequest) {
-    const definition = resolveSuspensionMountVisualDefinition({
-      ...request,
-      partBrand: request.partBrand ?? String(tune.values[`${request.helperId}Brand`] ?? ""),
-      chassisBrand: request.chassisBrand ?? String(tune.chassisBrand ?? tune.customChassisBrand ?? chassisInfo.brand ?? ""),
-      tune
-    });
+  function renderSetupTextField(label: string, valueKey: string, placeholder = "", inputMode?: "text" | "decimal" | "numeric", quickValues: string[] = []) {
     return (
-      <VisualSetupHelper
-        definition={definition}
-        values={visualValuesFor(definition, request.helperId)}
-        onSelect={(slot, option) => patchVisualSetupSelection(request, definition, slot, option)}
+      <div className="rdxSheetField">
+        <TextField
+          label={label}
+          value={valueForSetup(valueKey)}
+          placeholder={placeholder}
+          inputMode={inputMode}
+          onChange={(event) => patchValues({ [valueKey]: event.target.value })}
+        />
+        {quickValues.length ? (
+          <div className="rdxQuickValues" aria-label={`${label} quick values`}>
+            {quickValues.map((quickValue) => (
+              <button key={quickValue} className="smallPill" type="button" onClick={() => patchValues({ [valueKey]: quickValue })}>
+                {quickValue}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  function renderSetupSelectField(label: string, valueKey: string, options: string[], placeholder = "Select") {
+    const value = String(tune.values[valueKey] ?? "");
+    const nextOptions = value && !options.includes(value) ? [value, ...options] : options;
+    return (
+      <SelectField label={label} value={value} onChange={(event) => patchValues({ [valueKey]: event.target.value })}>
+        <option value="">{placeholder}</option>
+        {nextOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+      </SelectField>
+    );
+  }
+
+  function renderSetupTextarea(label: string, valueKey: string, placeholder = "") {
+    return (
+      <TextAreaField
+        label={label}
+        value={String(tune.values[valueKey] ?? "")}
+        placeholder={placeholder}
+        rows={3}
+        onChange={(event) => patchValues({ [valueKey]: event.target.value })}
       />
     );
   }
+
+  function applyChuckRdxBaseline() {
+    patchValues(
+      {
+        driver: "Charles Ong",
+        body: "",
+        wing: "",
+        tires: "",
+        bellcrankAckermanHole: "Outer",
+        frontBallCaps: "M",
+        frontUpperArmSpacer: "3",
+        frontUpperArmInnerFrontSpacer: "1",
+        frontUpperArmInnerRearSpacer: "0",
+        frontLowerArmSpacer: "2",
+        frontLowerArmInnerFrontSpacer: "2",
+        frontLowerArmInnerRearSpacer: "1",
+        frontShockTowerSpacer: "2",
+        frontLowerShockSpacer: "1",
+        frontUpperBallStud: "Stock",
+        frontLowerBallStud: "Stock",
+        frontKnuckleTopSpacer: "4",
+        frontKnuckleSteeringLinkSpacer: "2",
+        frontKnuckleBottomSpacer: "0",
+        frontLowerSusMountSide: "Positive side",
+        frontWheelHubType: "Aluminum",
+        frontWheelHubSpacer: "2",
+        frontKnuckleStopper: "3.0mm",
+        frontRideHeight: "8",
+        frontCamber: "-8",
+        frontToe: "0.3d",
+        frontDamper: "Overdose HG4",
+        frontShockShaft: "Full extension stroke",
+        frontSpring: "Yokomo Hard",
+        frontPistonHoles: "6",
+        frontPistonDiameter: "0.8",
+        frontShockOil: "#100",
+        frontRetainer: "Normal",
+        motorPosition: "Low Mount",
+        rfSusMountType: "Aluminum",
+        rearSusMountNumber: "#7",
+        rearSusMountFlipped: "Flipped",
+        rrSusMountType: "Aluminum",
+        rrSusMountNumber: "",
+        rfSusMountPosition: "D",
+        rrSusMountPosition: "E",
+        spacerUnderSusMountRF: "6",
+        spacerUnderSusMountRR: "6.5",
+        rearSusArm: "42mm 0.0d",
+        rearHubCarrierType: "Aluminum",
+        rearWheelHubType: "Aluminum",
+        rearWheelHubSpacer: "5",
+        lowerSusHolePosition: "Lower Hole",
+        diffType: "Gear Diff",
+        rearHubCarrierUpperLinkHole: "RD-012 marked upper holes",
+        rearHubCarrierLowerLinkHole: "RD-012 lower hole",
+        rearHubCarrierUpperLinkSpacer: "4",
+        rearHubCarrierLowerLinkSpacer: "0",
+        rearRideHeight: "5",
+        rearCamber: "-5",
+        rearShockShaft: "5mm rebound",
+        rearSpring: "Barrel V2",
+        rearPistonHoles: "6",
+        rearPistonDiameter: "0.8",
+        rearShockOil: "#300",
+        rearRetainer: "Aluminum",
+        frontWheel: "Hayate SHT",
+        frontWheelOffset: "8",
+        rearWheel: "Shibata SHT",
+        rearWheelOffset: "7",
+        servoModel: "RSST Pro",
+        servoHornLength: "21.5",
+        servoPosition: "Front",
+        gyroModel: "Revox",
+        gyroGain: "50",
+        gyroCurve: "2",
+        motorModel: "Maclan MDP",
+        motor: "Maclan MDP",
+        motorTiming: "30",
+        battery: "Maclan MDP",
+        escModel: "Maclan MDP",
+        pinionGear: "30",
+        spurGear: "80",
+        boostTiming: "30",
+        turboTiming: "30"
+      },
+      {
+        date: "2026-03-22",
+        track: "Prodigy RC",
+        surface: "P-tile"
+      }
+    );
+  }
+
+  const rdxSummaryItems = [
+    ["Front", [valueForSetup("frontRideHeight") && `${valueForSetup("frontRideHeight")}mm`, valueForSetup("frontCamber") && `${valueForSetup("frontCamber")}deg`, valueForSetup("frontToe")].filter(Boolean).join(" / ")],
+    ["Rear", [valueForSetup("rearRideHeight") && `${valueForSetup("rearRideHeight")}mm`, valueForSetup("rearCamber") && `${valueForSetup("rearCamber")}deg`].filter(Boolean).join(" / ")],
+    ["RF mount", [valueForSetup("rearSusMountNumber"), valueForSetup("rearSusMountFlipped")].filter(Boolean).join(" ")],
+    ["Rear arm", valueForSetup("rearSusArm")],
+    ["Diff", valueForSetup("diffType")],
+    ["Shocks", [valueForSetup("frontShockOil"), valueForSetup("rearShockOil")].filter(Boolean).join(" / ")],
+    ["Electronics", [valueForSetup("motorModel") || valueForSetup("motor"), valueForSetup("escModel"), valueForSetup("gyroModel")].filter(Boolean).join(" / ")]
+  ].filter(([, value]) => value);
 
   function patchElectronics(category: "servo" | "gyro" | "motor" | "esc", values: Record<string, BuilderValue>, patch: Partial<Tune> = {}) {
     const current = tune.electronics?.[category] ?? { brand: "", model: "", settings: {} };
@@ -2326,7 +2397,7 @@ function BasicTuneForm({
           onChange={(part) => patchPartSelector("frontShockOil", "frontDamperOilBrand", "damperOils", part)}
         />
         </TuneSubcategory>
-        <TuneSubcategory title="Front suspension mounts" helper="FF/FR mount choices and visual insert helper." defaultOpen={false}>
+        <TuneSubcategory title="Front suspension mounts" helper="FF/FR mount choices and insert position notes." defaultOpen={false}>
         <PartSelector
           label="FF suspension mount"
           category="frontToeBlocks"
@@ -2338,12 +2409,7 @@ function BasicTuneForm({
             ...(tune.values.frontToeBlockBrand ? {} : { frontToeBlockBrand: part.brand || "" })
           })}
         />
-        {renderSuspensionMountVisual({
-          helperId: "ffToeBlock",
-          label: "FF suspension mount",
-          partCategory: "frontToeBlocks",
-          partBrand: String(tune.values.ffToeBlockBrand ?? tune.values.frontToeBlockBrand ?? "")
-        })}
+        <TextAreaField label="FF mount insert / spacer notes" value={String(tune.values.ffToeBlockInsertNotes ?? tune.values.ffToeBlockPositionNotes ?? "")} placeholder="Describe insert marks, dot direction, shims, or spacer stack." rows={3} onChange={(event) => patchValues({ ffToeBlockInsertNotes: event.target.value, ffToeBlockPositionNotes: event.target.value })} />
         <PartSelector
           label="FR suspension mount"
           category="frontToeBlocks"
@@ -2355,12 +2421,7 @@ function BasicTuneForm({
             ...(tune.values.frontToeBlockBrand ? {} : { frontToeBlockBrand: part.brand || "" })
           })}
         />
-        {renderSuspensionMountVisual({
-          helperId: "frToeBlock",
-          label: "FR suspension mount",
-          partCategory: "frontToeBlocks",
-          partBrand: String(tune.values.frToeBlockBrand ?? tune.values.frontToeBlockBrand ?? "")
-        })}
+        <TextAreaField label="FR mount insert / spacer notes" value={String(tune.values.frToeBlockInsertNotes ?? tune.values.frToeBlockPositionNotes ?? "")} placeholder="Describe insert marks, dot direction, shims, or spacer stack." rows={3} onChange={(event) => patchValues({ frToeBlockInsertNotes: event.target.value, frToeBlockPositionNotes: event.target.value })} />
         </TuneSubcategory>
         </>
         ) : (
@@ -2392,19 +2453,19 @@ function BasicTuneForm({
         />
         {isReveDRearLowerArm ? (
           <fieldset className="wizardChoiceGroup fieldWide">
-            <legend>Reve D rear lower arm side</legend>
-            {["Straight", "Curved"].map((option) => (
+            <legend>Reve D HT rear lower arm orientation</legend>
+            {["Straight position", "Down position"].map((option) => (
               <label key={option}>
                 <input
                   type="radio"
                   name={`rear-lower-arm-side-${tune.id}`}
-                  checked={String(tune.values.rearLowerArmSide ?? tune.chassisSetup?.rear?.lowerArm?.side ?? "") === option}
+                  checked={rearLowerArmOrientation === option}
                   onChange={() => patchValues({ rearLowerArmSide: option })}
                 />
                 <span>{option}</span>
               </label>
             ))}
-            <small className="fieldHelper">{beginnerHelpers.rearLowerArmSide}</small>
+            <small className="fieldHelper">Straight position improves traction performance during on-power driving. Down position can help improve sideway grip.</small>
           </fieldset>
         ) : null}
         <PartSelector
@@ -2449,7 +2510,7 @@ function BasicTuneForm({
           <small className="fieldHelper">{beginnerHelpers.rearShockMountingNotes}</small>
         </div>
         </TuneSubcategory>
-        <TuneSubcategory title="Rear suspension mounts" helper="RF/RR mount choices and visual insert helper." defaultOpen={false}>
+        <TuneSubcategory title="Rear suspension mounts" helper="RF/RR mount choices and insert position notes." defaultOpen={false}>
         <PartSelector
           label="RF suspension mount"
           category="rearToeBlocks"
@@ -2461,12 +2522,7 @@ function BasicTuneForm({
             ...(tune.values.rearToeBlockBrand ? {} : { rearToeBlockBrand: part.brand || "" })
           })}
         />
-        {renderSuspensionMountVisual({
-          helperId: "rfToeBlock",
-          label: "RF suspension mount",
-          partCategory: "rearToeBlocks",
-          partBrand: String(tune.values.rfToeBlockBrand ?? tune.values.rearToeBlockBrand ?? "")
-        })}
+        <TextAreaField label="RF mount insert / spacer notes" value={String(tune.values.rfToeBlockInsertNotes ?? tune.values.rfToeBlockPositionNotes ?? "")} placeholder="Describe insert marks, dot direction, shims, or spacer stack." rows={3} onChange={(event) => patchValues({ rfToeBlockInsertNotes: event.target.value, rfToeBlockPositionNotes: event.target.value })} />
         <PartSelector
           label="RR suspension mount"
           category="rearToeBlocks"
@@ -2478,12 +2534,7 @@ function BasicTuneForm({
             ...(tune.values.rearToeBlockBrand ? {} : { rearToeBlockBrand: part.brand || "" })
           })}
         />
-        {renderSuspensionMountVisual({
-          helperId: "rrToeBlock",
-          label: "RR suspension mount",
-          partCategory: "rearToeBlocks",
-          partBrand: String(tune.values.rrToeBlockBrand ?? tune.values.rearToeBlockBrand ?? "")
-        })}
+        <TextAreaField label="RR mount insert / spacer notes" value={String(tune.values.rrToeBlockInsertNotes ?? tune.values.rrToeBlockPositionNotes ?? "")} placeholder="Describe insert marks, dot direction, shims, or spacer stack." rows={3} onChange={(event) => patchValues({ rrToeBlockInsertNotes: event.target.value, rrToeBlockPositionNotes: event.target.value })} />
         </TuneSubcategory>
         <TuneSubcategory title="Miscellaneous" helper="Optional rear sway bar notes." defaultOpen={false}>
           <div className="formSplit">
@@ -2681,47 +2732,177 @@ function BasicTuneForm({
 
       {activeTabId === "geometry" ? (
       <>
-      <BasicTuneSection title="Front geometry" helper="Alignment, shim stack notes, shock holes, steering holes, and front mounting points.">
-        <TuneSubcategory title="Front alignment" helper="Core front measurements and shim notes." defaultOpen>
-          <div className="formSplit"><TextField label="Front camber (deg)" value={String(tune.values.frontCamber ?? "")} placeholder="ex. -6" onChange={(event) => patchValues({ frontCamber: event.target.value })} /><TextField label="Front toe (deg)" value={String(tune.values.frontToe ?? "")} placeholder="ex. out 1" onChange={(event) => patchValues({ frontToe: event.target.value })} /></div>
-          <TextField label="Trail" value={String(tune.values.trail ?? "")} placeholder="Trail / spacer notes" onChange={(event) => patchValues({ trail: event.target.value })} />
-          <div className="formSplit"><TextField label="FF toe block shim (mm)" value={String(tune.values.ffToeBlockShim ?? "")} placeholder="ex. 0.5" onChange={(event) => patchValues({ ffToeBlockShim: event.target.value })} /><TextField label="FR toe block shim (mm)" value={String(tune.values.frToeBlockShim ?? "")} placeholder="ex. 1.0" onChange={(event) => patchValues({ frToeBlockShim: event.target.value })} /></div>
-          <TextField label="Front anti-dive / kick-up notes" value={String(tune.values.frontAntiDiveNotes ?? "")} placeholder="What the FF/FR shim stack creates" onChange={(event) => patchValues({ frontAntiDiveNotes: event.target.value })} />
+      <section className="rdxSheetSummary" aria-label="RDX setup sheet summary">
+        <div>
+          <strong>{isRdxSetup ? "RDX geometry snapshot" : "Geometry snapshot"}</strong>
+          <span>{rdxSummaryItems.length ? "Quick scan of the important geometry values." : "Apply a baseline or start filling fields to build the geometry summary."}</span>
+        </div>
+        <div className="rdxSheetSummaryChips">
+          {rdxSummaryItems.map(([label, value]) => (
+            <span key={label}><em>{label}</em>{value}</span>
+          ))}
+        </div>
+        {isRdxSetup ? <button className="smallPill" type="button" onClick={applyChuckRdxBaseline}>Apply Chuck RDX P-tile baseline</button> : null}
+      </section>
+      <BasicTuneSection title={isRdxSetup ? "RDX geometry details" : "Mounting details"} helper={isRdxSetup ? "Trackside geometry fields for spacer stacks, shock positions, hubs, alignment, and mounting notes." : "Sheet-style mounting details and position notes."} defaultOpen>
+        <TuneSubcategory title="Header and surface" helper="The identity fields tuners scan first on a setup sheet." defaultOpen>
+          <div className="formSplit">
+            <TextField label="Date" value={String(tune.date ?? "")} onChange={(event) => patchValues({}, { date: event.target.value })} />
+            {renderSetupTextField("Driver", "driver", "ex. Charles Ong")}
+          </div>
+          <div className="formSplit">
+            <TextField label="Driving place" value={String(tune.track ?? "")} placeholder="ex. Prodigy RC" onChange={(event) => patchValues({}, { track: event.target.value })} />
+            <SelectField label="Surface" value={String(tune.surface ?? "")} onChange={(event) => patchValues({}, { surface: event.target.value })}>
+              {["", "P-tile", "Plastic Tile", "Carpet", "Asphalt", "Colored Concrete", "Concrete", "Other / Custom"].map((option) => <option key={option} value={option}>{option || "Select surface"}</option>)}
+            </SelectField>
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Body", "body", "Body shell")}
+            {renderSetupTextField("Wing", "wing", "Wing")}
+          </div>
+          {renderSetupTextField("Tires", "tires", "Tire set or compound")}
         </TuneSubcategory>
-        <TuneSubcategory title="Front shock and steering holes" helper="Record the actual holes and steering positions used on the car." defaultOpen={false}>
-          {usesOverdoseIfs ? (
-            <>
-              <GeometryPointPicker label="Overdose IFS damper / rocker position" value={String(tune.values.frontIfsDamperPosition ?? "")} options={ifsMountOptions} diagram="ifs" helper="Use this instead of a normal front shock tower hole for GALM / Overdose-style inboard front suspension." onChange={(value) => patchValues({ frontIfsDamperPosition: value })} />
-              <TextAreaField label="IFS mounting notes" value={String(tune.values.frontIfsMountingNotes ?? "")} placeholder="ex. Front rocker outer hole, damper side inner hole, 2mm spacer" rows={3} onChange={(event) => patchValues({ frontIfsMountingNotes: event.target.value })} />
-            </>
-          ) : (
-            <>
-              <GeometryPointPicker label="Front shock tower upper hole" value={String(tune.values.frontShockTowerUpperHole ?? "")} options={shockTowerHoleOptions} diagram="shockTower" helper="Choose the tower hole used by the top of the front damper." onChange={(value) => patchValues({ frontShockTowerUpperHole: value })} />
-              <GeometryPointPicker label="Front lower arm damper hole" value={String(tune.values.frontDamperLowerArmHole ?? "")} options={armDamperHoleOptions} diagram="damperArm" helper="Choose the lower arm hole used by the bottom of the front damper." onChange={(value) => patchValues({ frontDamperLowerArmHole: value })} />
-              <TextAreaField label="Front damper mounting notes" value={String(tune.values.frontDamperMountingNotes ?? "")} placeholder="ex. Top hole 3, lower arm outer hole, 2mm spacer behind ball end" rows={3} onChange={(event) => patchValues({ frontDamperMountingNotes: event.target.value })} />
-            </>
-          )}
-          <GeometryPointPicker label="Knuckle steering link hole" value={String(tune.values.frontKnuckleSteeringLinkHole ?? "")} options={steeringMountHoleOptions} diagram="steering" helper="Record the steering link position on the knuckle or knuckle plate." onChange={(value) => patchValues({ frontKnuckleSteeringLinkHole: value })} />
-          <GeometryPointPicker label="Knuckle upper link / kingpin hole" value={String(tune.values.frontKnuckleUpperLinkHole ?? "")} options={steeringMountHoleOptions} diagram="steering" helper="Use for multi-hole knuckles or upper-link plates." onChange={(value) => patchValues({ frontKnuckleUpperLinkHole: value })} />
-          <GeometryPointPicker label="Bellcrank Ackerman hole" value={String(tune.values.bellcrankAckermanHole ?? "")} options={steeringMountHoleOptions} diagram="steering" helper="Record the bellcrank hole used by the steering link." onChange={(value) => patchValues({ bellcrankAckermanHole: value })} />
-          <GeometryPointPicker label="Sliding rack position" value={String(tune.values.slideRackPosition ?? "")} options={slideRackPositionOptions} diagram="slideRack" helper="For slide-rack cars, record the rack or link position." onChange={(value) => patchValues({ slideRackPosition: value })} />
-          <GeometryPointPicker label="DDSS hole" value={String(tune.values.ddssHole ?? "")} options={ddssHoleOptions} diagram="ddss" helper="For DDSS / direct steering systems, record the active steering hole." onChange={(value) => patchValues({ ddssHole: value })} />
+        <TuneSubcategory title="Front callouts" helper="Front alignment, bellcrank, ball caps, spacers, hubs, and stopper settings.">
+          <div className="formSplit">
+            {renderSetupSelectField("Bell crank position", "bellcrankAckermanHole", ["Inner", "Outer"])}
+            {renderSetupSelectField("Front ball caps", "frontBallCaps", ["S", "M", "L"])}
+          </div>
+          <div className="rdxZoneTitle">Front upper arm spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Front upper arm outer spacer (mm)", "frontUpperArmSpacer", "ex. 3", "decimal")}
+            {renderSetupTextField("Front upper arm inner front spacer (mm)", "frontUpperArmInnerFrontSpacer", "ex. 1", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front upper arm inner rear spacer (mm)", "frontUpperArmInnerRearSpacer", "ex. 0", "decimal")}
+            {renderSetupTextField("Front upper ball stud", "frontUpperBallStud", "Stock", "text", ["Stock", "Custom"])}
+          </div>
+          <div className="rdxZoneTitle">Front lower arm spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Front lower arm outer spacer (mm)", "frontLowerArmSpacer", "ex. 2", "decimal")}
+            {renderSetupTextField("Front lower arm inner front spacer (mm)", "frontLowerArmInnerFrontSpacer", "ex. 2", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front lower arm inner rear spacer (mm)", "frontLowerArmInnerRearSpacer", "ex. 1", "decimal")}
+            {renderSetupTextField("Front lower ball stud", "frontLowerBallStud", "Stock", "text", ["Stock", "Custom"])}
+          </div>
+          <div className="rdxZoneTitle">Front shock spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Front shock upper spacer (mm)", "frontShockTowerSpacer", "ex. 2", "decimal")}
+            {renderSetupTextField("Front shock lower spacer (mm)", "frontLowerShockSpacer", "ex. 1", "decimal")}
+          </div>
+          <div className="rdxZoneTitle">Front knuckle spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Front knuckle upper spacer (mm)", "frontKnuckleTopSpacer", "ex. 4", "decimal")}
+            {renderSetupTextField("Front knuckle steering spacer (mm)", "frontKnuckleSteeringLinkSpacer", "ex. 2", "decimal")}
+          </div>
+          {renderSetupTextField("Front knuckle lower spacer (mm)", "frontKnuckleBottomSpacer", "ex. 0", "decimal")}
+          <div className="formSplit">
+            {renderSetupSelectField("Lower sus-mount side", "frontLowerSusMountSide", ["Positive side", "Negative side", "Stock"])}
+            {renderSetupSelectField("Front wheel hubs", "frontWheelHubType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front wheel hub spacer (mm)", "frontWheelHubSpacer", "ex. 2", "decimal")}
+            {renderSetupTextField("Knuckle stopper", "frontKnuckleStopper", "ex. 3.0mm")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front ride height (mm)", "frontRideHeight", "ex. 8", "decimal")}
+            {renderSetupTextField("Front camber (deg)", "frontCamber", "ex. -8", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front toe", "frontToe", "ex. 0.3d")}
+            {renderSetupTextField("Trail / steering notes", "trail", "Spacer or trail notes")}
+          </div>
+          {renderSetupTextarea("Front mounting notes", "frontDamperMountingNotes", "Shock hole, steering link, spacer stack, or IFS notes")}
+        </TuneSubcategory>
+        <TuneSubcategory title="Front shock" helper="Shock package details from the right side of the RDX sheet.">
+          <PartSelector label="Front shock" category="dampers" value={selectorValueFromFields("frontDamper", "frontDamperBrand", "dampers")} emptyLabel="Select front shock" onChange={(part) => patchPartSelector("frontDamper", "frontDamperBrand", "dampers", part)} />
+          <div className="formSplit">
+            {renderSetupTextField("Front shock / shaft", "frontShockShaft", "ex. Overdose HG4 full extension stroke")}
+            {renderSetupTextField("Front spring", "frontSpring", "ex. Yokomo Hard")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front piston holes", "frontPistonHoles", "ex. 6", "numeric")}
+            {renderSetupTextField("Front piston diameter (mm)", "frontPistonDiameter", "ex. 0.8", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front oil", "frontShockOil", "ex. #100")}
+            {renderSetupTextField("Front O-ring", "frontOring", "O-ring notes")}
+          </div>
+          {renderSetupSelectField("Front retainer", "frontRetainer", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
         </TuneSubcategory>
       </BasicTuneSection>
-      <BasicTuneSection title="Rear geometry" helper="Rear alignment, suspension mount shims, shock holes, hub holes, and damper mounting notes.">
-        <TuneSubcategory title="Rear alignment" helper="Core rear measurements and shim notes." defaultOpen>
-          <div className="formSplit"><TextField label="Rear camber (deg)" value={String(tune.values.rearCamber ?? "")} placeholder="ex. -3" onChange={(event) => patchValues({ rearCamber: event.target.value })} /><TextField label="Rear toe (deg)" value={String(tune.values.rearToe ?? "")} placeholder="ex. in 3" onChange={(event) => patchValues({ rearToe: event.target.value })} /></div>
-          <div className="formSplit"><TextField label="RF toe block shim (mm)" value={String(tune.values.rfToeBlockShim ?? "")} placeholder="ex. 1.0" onChange={(event) => patchValues({ rfToeBlockShim: event.target.value })} /><TextField label="RR toe block shim (mm)" value={String(tune.values.rrToeBlockShim ?? "")} placeholder="ex. 0.0" onChange={(event) => patchValues({ rrToeBlockShim: event.target.value })} /></div>
-          <TextField label="Rear pro-squat / anti-squat notes" value={String(tune.values.rearSquatNotes ?? "")} placeholder="What the RF/RR shim stack creates" onChange={(event) => patchValues({ rearSquatNotes: event.target.value })} />
+      <BasicTuneSection title={isRdxSetup ? "RDX rear geometry" : "Rear mounting details"} helper="Rear sus mounts, arm, hub, diff, shock, and spacer descriptions." defaultOpen>
+        <TuneSubcategory title="Rear callouts" helper="Rear drivetrain, suspension mount, arm, hub, and alignment values." defaultOpen>
+          <div className="formSplit">
+            {renderSetupSelectField("Motor position", "motorPosition", ["High Mount", "Low Mount", "High", "Low", "Mid", "Rear", "Stock"])}
+            {renderSetupSelectField("RF sus mount type", "rfSusMountType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("RF sus mount number", "rearSusMountNumber", "ex. #7")}
+            {renderSetupSelectField("RF sus mount flipped", "rearSusMountFlipped", ["No", "Yes", "Flipped"])}
+          </div>
+          <div className="formSplit">
+            {renderSetupSelectField("RR sus mount type", "rrSusMountType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+            {renderSetupTextField("RR sus mount number", "rrSusMountNumber", "ex. #7")}
+          </div>
+          <div className="formSplit">
+            {renderSetupSelectField("RF insert / dot position", "rfSusMountPosition", ["D", "E", "Custom / Other"])}
+            {renderSetupSelectField("RR insert / dot position", "rrSusMountPosition", ["D", "E", "Custom / Other"])}
+          </div>
+          <div className="rdxZoneTitle">Rear suspension mount spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("RF spacer under sus mount (mm)", "spacerUnderSusMountRF", "ex. 6", "decimal")}
+            {renderSetupTextField("RR spacer under sus mount (mm)", "spacerUnderSusMountRR", "ex. 6.5", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupSelectField("Rear lower arm", "rearSusArm", ["Straight", "Gull Arm", "42mm 0.0d", "42mm 2.6d", "45mm", "48mm", "51mm", "Custom / Other"])}
+            {renderSetupSelectField("Rear hub carrier", "rearHubCarrierType", ["Normal", "Aluminum", "RD-012", "A-Arm", "Custom / Other"])}
+          </div>
+          <div className="rdxZoneTitle">Rear hub spacer zone</div>
+          <div className="formSplit">
+            {renderSetupSelectField("Rear wheel hubs", "rearWheelHubType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+            {renderSetupTextField("Rear wheel hub spacer (mm)", "rearWheelHubSpacer", "ex. 5", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupSelectField("Lower sus hole position", "lowerSusHolePosition", ["Upper Hole", "Lower Hole"])}
+            {renderSetupSelectField("Diff", "diffType", ["Gear Diff", "Ball Diff", "Spool", "LSD", "Stock", "Custom / Other"])}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("RD-012 upper link hole", "rearHubCarrierUpperLinkHole", "ex. upper outer / row 3")}
+            {renderSetupTextField("RD-012 lower / axle hole", "rearHubCarrierLowerLinkHole", "ex. lower tab / axle low")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear hub upper link spacer (mm)", "rearHubCarrierUpperLinkSpacer", "ex. 4", "decimal")}
+            {renderSetupTextField("Rear hub lower / axle spacer (mm)", "rearHubCarrierLowerLinkSpacer", "ex. 0", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear ride height (mm)", "rearRideHeight", "ex. 5", "decimal")}
+            {renderSetupTextField("Rear camber (deg)", "rearCamber", "ex. -5", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear skid / camber angle", "rearSkidAngle", "ex. -5")}
+            {renderSetupTextField("Rear toe", "rearToe", "ex. 0")}
+          </div>
+          {renderSetupTextarea("Rear hub and damper notes", "rearGeometryNotes", "RD-012 hole marks, upper/lower link spacers, axle height, damper notes")}
         </TuneSubcategory>
-        <TuneSubcategory title="Rear holes and hub positions" helper="Record the holes, hub positions, and damper mounting points used on the rear of the car." defaultOpen={false}>
-          <GeometryPointPicker label="Rear shock tower upper hole" value={String(tune.values.rearShockTowerUpperHole ?? "")} options={shockTowerHoleOptions} diagram="shockTower" helper="Choose the tower hole used by the top of the rear damper." onChange={(value) => patchValues({ rearShockTowerUpperHole: value })} />
-          <GeometryPointPicker label="Rear lower arm damper hole" value={String(tune.values.rearDamperLowerArmHole ?? "")} options={armDamperHoleOptions} diagram="damperArm" helper="Choose the lower arm hole used by the bottom of the rear damper." onChange={(value) => patchValues({ rearDamperLowerArmHole: value })} />
-          <GeometryPointPicker label="Rear hub upper link hole" value={String(tune.values.rearHubCarrierUpperLinkHole ?? "")} options={rearHubCarrierHoleOptions} diagram="rearHub" helper="Record the rear hub carrier hole used by the upper turnbuckle." onChange={(value) => patchValues({ rearHubCarrierUpperLinkHole: value })} />
-          <GeometryPointPicker label="Rear hub lower link / axle height" value={String(tune.values.rearHubCarrierLowerLinkHole ?? "")} options={rearHubCarrierHoleOptions} diagram="rearHub" helper="Use when the hub carrier has lower link or axle-height choices." onChange={(value) => patchValues({ rearHubCarrierLowerLinkHole: value })} />
-          <TextAreaField label="Rear hub and damper geometry notes" value={String(tune.values.rearGeometryNotes ?? "")} placeholder="ex. Upper link outer middle hole, axle center position, 1mm spacer outside ball stud" rows={3} onChange={(event) => patchValues({ rearGeometryNotes: event.target.value })} />
+        <TuneSubcategory title="Rear shock" helper="Rear shock package details from the RDX sheet.">
+          <PartSelector label="Rear shock" category="dampers" value={selectorValueFromFields("rearDamper", "rearDamperBrand", "dampers")} emptyLabel="Select rear shock" onChange={(part) => patchPartSelector("rearDamper", "rearDamperBrand", "dampers", part)} />
+          <div className="formSplit">
+            {renderSetupTextField("Rear shock / shaft", "rearShockShaft", "ex. Overdose HG4 5mm rebound")}
+            {renderSetupTextField("Rear spring", "rearSpring", "ex. Barrel V2")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear piston holes", "rearPistonHoles", "ex. 6", "numeric")}
+            {renderSetupTextField("Rear piston diameter (mm)", "rearPistonDiameter", "ex. 0.8", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear oil", "rearShockOil", "ex. #300")}
+            {renderSetupTextField("Rear O-ring", "rearOring", "O-ring notes")}
+          </div>
+          {renderSetupSelectField("Rear retainer", "rearRetainer", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
         </TuneSubcategory>
       </BasicTuneSection>
+
       </>
       ) : null}
 
@@ -2781,6 +2962,14 @@ function BasicTuneForm({
       <BasicTuneSection title={activeTabId === "notes" ? "Notes" : activeTabId === "front" ? "Front hubs and axles" : "Rear hubs and axles"}>
         {activeTabId === "front" ? (
         <>
+        <PartSelector
+          label="Steering rack"
+          category="steeringRacks"
+          value={selectorValueFromFields("steeringRackProduct", "steeringRackBrand", "steeringRacks")}
+          emptyLabel="Select steering rack"
+          helper="Steering rack, steering bridge, or rack-style steering unit used on this chassis."
+          onChange={(part) => patchPartSelector("steeringRackProduct", "steeringRackBrand", "steeringRacks", part)}
+        />
         <PartSelector
           label="Front knuckle"
           category="frontKnuckles"
@@ -3018,24 +3207,6 @@ function TuneSubcategory({ title, helper, children, defaultOpen = true }: { titl
       {open ? <div className="tuneSubcategoryBody">{children}</div> : null}
     </section>
   );
-}
-
-function GeometryPointPicker({
-  label,
-  value,
-  options,
-  helper,
-  diagram,
-  onChange
-}: {
-  label: string;
-  value: string;
-  options: string[];
-  helper?: string;
-  diagram: GeometryDiagramType;
-  onChange: (value: string) => void;
-}) {
-  return <D3GeometryHolePicker label={label} value={value} options={options} helper={helper} diagram={diagram} onChange={onChange} />;
 }
 
 function BufferedTextField({
