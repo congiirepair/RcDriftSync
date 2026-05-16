@@ -220,3 +220,73 @@ test("Yokomo rear sus mount bushings use numbered options with In Out positions"
   await expect(page.getByLabel("RR sus mount bushing")).toHaveValue("5");
   await expect(page.getByLabel("RR bushing position")).toHaveValue("In");
 });
+
+test("Selected suspension mount brands override chassis bushing options", async ({ page }) => {
+  const now = "2026-05-15T12:00:00.000Z";
+
+  await resetDb(page);
+  await seedDb(page, {
+    cars: [{
+      id: "car-mixed-sus-mount-brand-fixture",
+      name: "Mixed sus mount brand fixture car",
+      brand: "Yokomo",
+      chassisBrand: "Yokomo",
+      chassisBrandSlug: "yokomo",
+      chassis: "Yokomo SD 2.0",
+      chassisModel: "SD 2.0",
+      chassisModelSlug: "sd-2-0",
+      chassisType: "RWD drift",
+      drivetrainType: "RWD",
+      scale: "1/10",
+      photos: [],
+      sheetId: "universal",
+      createdAt: now,
+      updatedAt: now
+    }],
+    tunes: [{
+      id: "tune-mixed-sus-mount-brand-fixture",
+      name: "Mixed sus mount brand fixture tune",
+      carId: "car-mixed-sus-mount-brand-fixture",
+      sheetId: "universal",
+      date: "2026-05-15",
+      track: "QA track",
+      surface: "P-tile",
+      grip: "Medium",
+      rating: 3,
+      tags: [],
+      values: {
+        rfToeBlockBrand: "Reve D",
+        rfToeBlock: "RF Sus Mount",
+        rrToeBlockBrand: "Yokomo",
+        rrToeBlock: "RR Suspension Mount"
+      },
+      selections: {},
+      notes: "",
+      photos: [],
+      history: [],
+      ownerId: "local-user",
+      createdAt: now,
+      updatedAt: now
+    }],
+    electronicsProfiles: [],
+    profiles: [],
+    comments: [],
+    favorites: [],
+    follows: [],
+    trackSessions: [],
+    notificationSettings: {
+      tuneCloned: false,
+      tuneLiked: false,
+      tuneCommented: false,
+      followedDriverSharedTune: false,
+      weeklyTrendingTunes: false,
+      backupReminder: true
+    }
+  });
+
+  await page.goto("/builder");
+  await page.getByRole("button", { name: /Geometry/ }).first().click();
+
+  await expect(page.getByLabel("RF sus mount bushing").locator("option")).toHaveText(["Select", "A", "B", "C", "D", "E"]);
+  await expect(page.getByLabel("RR sus mount bushing").locator("option")).toHaveText(["Select", "1", "2", "3", "4", "5"]);
+});

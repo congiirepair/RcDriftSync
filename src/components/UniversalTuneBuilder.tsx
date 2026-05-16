@@ -1820,6 +1820,16 @@ function saveBasicRecent(ownerId: string | undefined, fieldId: string, value: st
   window.localStorage.setItem(basicRecentKey(ownerId, fieldId), JSON.stringify([clean, ...existing].slice(0, 6)));
 }
 
+function firstNonBlank(...values: Array<BuilderValue | null | undefined>) {
+  return values.map((value) => String(value ?? "").trim()).find(Boolean) ?? "";
+}
+
+function suspensionMountBushingOptionsFor(descriptor: string) {
+  if (/\breve\s*d\b|\breved\b/i.test(descriptor)) return ["A", "B", "C", "D", "E"];
+  if (/\byokomo\b/i.test(descriptor)) return ["1", "2", "3", "4", "5"];
+  return ["A", "B", "C", "D", "E", "1", "2", "3", "4", "5"];
+}
+
 function BasicTuneForm({
   tune,
   car,
@@ -1840,10 +1850,11 @@ function BasicTuneForm({
   const brandSlug = selectedBrand?.slug ?? "other";
   const models = modelsForBrand(brandSlug);
   const selectedModel = tune.chassisModel || (models.includes(chassisInfo.model) ? chassisInfo.model : models[0] ?? "Custom");
-  const rearSusMountBushingOptions =
-    brandSlug === "reve-d" ? ["A", "B", "C", "D", "E"] :
-    brandSlug === "yokomo" ? ["1", "2", "3", "4", "5"] :
-    ["A", "B", "C", "D", "E", "1", "2", "3", "4", "5"];
+  const fallbackRearSusMountBrand = firstNonBlank(tune.values.rearToeBlockBrand, tune.chassisSetup?.rear?.toeBlock?.brand, selectedBrand?.name, chassisInfo.brand);
+  const rfRearSusMountDescriptor = `${firstNonBlank(tune.values.rfToeBlockBrand, fallbackRearSusMountBrand)} ${firstNonBlank(tune.values.rfToeBlock, tune.values.rearToeBlock, tune.values.toeBlockSuspensionMount)}`;
+  const rrRearSusMountDescriptor = `${firstNonBlank(tune.values.rrToeBlockBrand, fallbackRearSusMountBrand)} ${firstNonBlank(tune.values.rrToeBlock, tune.values.rearToeBlock, tune.values.toeBlockSuspensionMount)}`;
+  const rfRearSusMountBushingOptions = suspensionMountBushingOptionsFor(rfRearSusMountDescriptor);
+  const rrRearSusMountBushingOptions = suspensionMountBushingOptionsFor(rrRearSusMountDescriptor);
   const isReveDMultiKnuckleChassis = brandSlug === "reve-d" && /rdx|mc-?iii|mc-?3/i.test(`${selectedModel} ${chassisInfo.model}`);
   const rearLowerArmBrandText = String(tune.values.rearLowerArmBrand ?? tune.chassisSetup?.rear?.lowerArm?.brand ?? "");
   const isReveDRearLowerArm = /\breve\s*d\b|\breved\b/i.test(rearLowerArmBrandText);
@@ -2816,12 +2827,12 @@ function BasicTuneForm({
       <BasicTuneSection title="Rear geometry" helper="Rear suspension mounts, arm, hub, shock, and spacer descriptions." defaultOpen>
         <TuneSubcategory title="Rear callouts" helper="Rear suspension mount, arm, hub, and alignment values." defaultOpen>
           <div className="formSplit">
-            {renderSetupSelectField("RF sus mount bushing", "rfSusMountType", rearSusMountBushingOptions)}
+            {renderSetupSelectField("RF sus mount bushing", "rfSusMountType", rfRearSusMountBushingOptions)}
             {renderSetupTextField("RF sus mount part / number", "rearSusMountNumber", "ex. #7 / aluminum mount")}
           </div>
           <div className="formSplit">
             {renderSetupSelectField("RF sus mount flipped", "rearSusMountFlipped", ["No", "Yes", "Flipped"])}
-            {renderSetupSelectField("RR sus mount bushing", "rrSusMountType", rearSusMountBushingOptions)}
+            {renderSetupSelectField("RR sus mount bushing", "rrSusMountType", rrRearSusMountBushingOptions)}
           </div>
           <div className="formSplit">
             {renderSetupTextField("RR sus mount part / number", "rrSusMountNumber", "ex. #7 / aluminum mount")}
