@@ -16348,3 +16348,372 @@ body {
     bottom: 24px;
   }
 }
+
+/* Mobile-first system consolidation: shared surfaces, controls, focus, and safe-area behavior. */
+:root {
+  --rcds-radius-card: 16px;
+  --rcds-radius-control: 11px;
+  --rcds-radius-tight: 9px;
+  --rcds-tap-size: 44px;
+  --rcds-control-height: 46px;
+  --rcds-control-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)), rgba(2, 7, 12, 0.72);
+  --rcds-surface-frame:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018) 42%, rgba(0, 0, 0, 0.18)),
+    linear-gradient(126deg, rgba(66, 216, 255, 0.095), transparent 36%),
+    linear-gradient(180deg, rgba(12, 27, 38, 0.94), rgba(4, 9, 15, 0.96));
+  --rcds-surface-flat:
+    linear-gradient(145deg, rgba(24, 49, 62, 0.58), rgba(5, 11, 18, 0.92)),
+    rgba(3, 8, 14, 0.88);
+  --rcds-focus-ring: 0 0 0 3px rgba(66, 216, 255, 0.18);
+  --rcds-tactile-shadow: 0 14px 32px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  --rcds-tactile-shadow-active: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+:root[data-theme="light"] {
+  --rcds-control-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(235, 243, 244, 0.92));
+  --rcds-surface-frame:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(229, 241, 244, 0.9)),
+    linear-gradient(126deg, rgba(8, 126, 99, 0.08), transparent 38%);
+  --rcds-surface-flat:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(233, 239, 237, 0.94));
+  --rcds-focus-ring: 0 0 0 3px rgba(8, 126, 99, 0.18);
+  --rcds-tactile-shadow: 0 14px 30px rgba(22, 44, 40, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  --rcds-tactile-shadow-active: 0 8px 18px rgba(22, 44, 40, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+[role="button"],
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgba(141, 232, 255, 0.95);
+  outline-offset: 3px;
+  box-shadow: var(--rcds-focus-ring);
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  filter: saturate(0.75);
+}
+
+.shellContent,
+.appPage,
+.builderPage,
+.publicPage,
+.communityLibrary,
+.pitlaneHomePage,
+.pitlaneTuneExperience,
+.pitlaneBuilder {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.appPage > *,
+.builderPage > *,
+.publicPage > *,
+.communityLibrary > *,
+.pitlaneHomePage > *,
+.pitlaneTuneExperience > *,
+.pitlaneBuilder > * {
+  min-width: 0;
+}
+
+:is(.pageHeader, .heroPanel, .appCard, .homeActionCard, .dashboardSection, .communityTuneCard, .myTuneCard, .publicHero, .publicSection, .profileSummary, .sharePanel, .brandCard, .brandHeader, .carDetailPanel, .garageBrandBox, .garageBrandPanel, .garageCarCompact, .garageCarTuneTray, .emptyState, .loadingState, .errorState, .sessionForm, .pitlaneSetupCard, .pitlanePhotoSection, .pitlaneNotesSection, .pitlaneSubPageBody, .builderSectionCard, .basicTuneCard, .tuneSubcategory, .readonlyTuneSection) {
+  border-color: rgba(91, 203, 248, 0.24);
+  border-radius: var(--rcds-radius-card);
+  background: var(--rcds-surface-frame);
+  box-shadow: var(--rcds-tactile-shadow);
+  overflow-wrap: anywhere;
+}
+
+:is(.pageHeader, .heroPanel, .appCard, .dashboardSection, .communityTuneCard, .myTuneCard, .publicSection, .profileSummary, .sharePanel, .emptyState, .loadingState, .errorState)::after {
+  opacity: 0.16;
+}
+
+.dashboardSection {
+  gap: 12px;
+}
+
+.dashboardSection > h2,
+.sectionHeader h2,
+.pitlaneSectionTitle h2,
+.pitlaneSectionHead h2 {
+  letter-spacing: 0;
+}
+
+.pageHeader {
+  align-items: center;
+  min-height: 64px;
+  padding: 14px;
+}
+
+.pageHeaderText,
+.pageHeaderActions,
+.myTuneMain,
+.myTuneActions,
+.communityTuneBody,
+.communityActions,
+.garageCarText,
+.pitlaneTuneText,
+.publicTuneHeaderText {
+  min-width: 0;
+}
+
+.pageHeaderText h1,
+.pitlanePageTitle h1,
+.publicHero h1,
+.heroPanel h2 {
+  letter-spacing: 0;
+}
+
+.pageHeaderText p,
+.heroPanel p,
+.dashboardSection > h2,
+.pitlaneSetupRow small,
+.communityMeta span,
+.communityStats span,
+.myTuneMetaLine b {
+  text-transform: none;
+}
+
+:is(.primaryAction, .smallPill, .secondaryAction, .ghostAction, .iconButton, .homeActionCard, .myTuneActions button, .communityActions button, .communityRails button, .segmentedNav button, .garageTunePdfButton, .garageCarTuneCreate, .garageTuneDisclosure, .partSelectorCard, .pitlaneSetupRow, .pitlaneChipRow button, .pitlaneSelectProduct, .pitlaneCustomProduct) {
+  min-height: var(--rcds-tap-size);
+  border-radius: var(--rcds-radius-control);
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease,
+    color 140ms ease,
+    opacity 140ms ease;
+}
+
+:is(.primaryAction, .smallPill, .secondaryAction, .ghostAction, .iconButton, .myTuneActions button, .communityActions button, .communityRails button, .segmentedNav button, .garageTunePdfButton, .garageCarTuneCreate, .garageTuneDisclosure, .pitlaneChipRow button, .pitlaneSelectProduct, .pitlaneCustomProduct) {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.075),
+    0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  :is(.appCard.tappable, .homeActionCard, .primaryAction, .smallPill, .iconButton, .myTuneActions button, .communityActions button, .communityRails button, .garageBrandBox, .garageCarSummary, .partSelectorCard, .pitlaneSetupRow):not(:disabled):hover {
+    transform: translateY(-1px);
+    border-color: rgba(111, 217, 255, 0.5);
+  }
+}
+
+:is(.appCard.tappable, .homeActionCard, .primaryAction, .smallPill, .iconButton, .myTuneActions button, .communityActions button, .communityRails button, .garageBrandBox, .garageCarSummary, .partSelectorCard, .pitlaneSetupRow):not(:disabled):active {
+  transform: translateY(1px) scale(0.99);
+  box-shadow: var(--rcds-tactile-shadow-active);
+}
+
+:is(.segmentedNav button.active, .communityRails button.active, .categoryPillButtons button.active, .tunePicker button.active, .pitlaneSectionPicker button.active, .pitlaneChipRow button.active, .garageBrandBox.active, .myTuneCard.active, .partSelectorCard.selected) {
+  border-color: rgba(92, 222, 255, 0.66);
+  box-shadow:
+    0 0 0 1px rgba(92, 222, 255, 0.18),
+    0 12px 28px rgba(0, 121, 255, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.formField {
+  min-width: 0;
+}
+
+:is(.formField input, .formField select, .formField textarea, .searchBox input, .globalSearch input, .communitySearchPanel input, .partSelectorSearch input, .pitlaneNotesSection textarea) {
+  min-height: var(--rcds-control-height);
+  border-color: rgba(138, 188, 212, 0.22);
+  border-radius: var(--rcds-radius-control);
+  background: var(--rcds-control-bg);
+  color: var(--text);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+  transition:
+    transform 140ms ease,
+    border-color 140ms ease,
+    box-shadow 140ms ease,
+    background 140ms ease;
+}
+
+:is(.formField input, .formField select, .formField textarea, .searchBox input, .globalSearch input, .communitySearchPanel input, .partSelectorSearch input, .pitlaneNotesSection textarea):focus {
+  transform: translateY(-1px);
+  border-color: rgba(92, 222, 255, 0.78);
+  outline: none;
+  box-shadow:
+    var(--rcds-focus-ring),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+.formField > span,
+.schemaField > span,
+.sessionLabel,
+.partSelectorHeader h4 {
+  letter-spacing: 0;
+}
+
+.emptyState,
+.loadingState,
+.errorState {
+  justify-items: start;
+  text-align: left;
+}
+
+.emptyState .stateIcon {
+  display: inline-grid;
+  width: fit-content;
+  min-width: 52px;
+  min-height: 30px;
+  place-items: center;
+  border: 1px solid rgba(92, 222, 255, 0.28);
+  border-radius: 999px;
+  padding: 0 10px;
+  color: rgba(141, 232, 255, 0.95);
+  background: rgba(0, 145, 255, 0.1);
+  font-family: var(--font-brand);
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.errorState {
+  border-color: rgba(255, 120, 107, 0.38);
+  background:
+    linear-gradient(145deg, rgba(255, 120, 107, 0.12), transparent 42%),
+    var(--rcds-surface-flat);
+}
+
+.loadingState svg {
+  color: rgba(92, 222, 255, 0.94);
+}
+
+.modalShade,
+.partSelectorOverlay,
+.pitlaneBrowserOverlay,
+.pitlanePhotoManagerOverlay {
+  z-index: 30000;
+  padding:
+    max(14px, env(safe-area-inset-top))
+    max(12px, env(safe-area-inset-right))
+    calc(var(--bottomNavHeight) + 14px)
+    max(12px, env(safe-area-inset-left));
+}
+
+.confirmModal,
+.partSelectorSheet,
+.pitlaneBrowserSheet,
+.pitlanePhotoManagerSheet {
+  position: relative;
+  z-index: 30001;
+  max-width: min(100%, 720px);
+  border-radius: var(--rcds-radius-card);
+}
+
+body:has(.modalShade) .bottomNav,
+body:has(.partSelectorOverlay) .bottomNav,
+body:has(.pitlaneBrowserOverlay) .bottomNav,
+body:has(.pitlanePhotoManagerOverlay) .bottomNav {
+  pointer-events: none;
+}
+
+.bottomNav {
+  width: min(100% - 20px, 440px);
+  border-radius: 18px 18px max(18px, env(safe-area-inset-bottom)) max(18px, env(safe-area-inset-bottom));
+}
+
+.bottomNav button {
+  min-width: 0;
+}
+
+.bottomNav button.active {
+  box-shadow:
+    inset 0 2px 0 rgba(92, 222, 255, 0.86),
+    0 0 22px rgba(0, 151, 255, 0.12);
+}
+
+@media (max-width: 760px) {
+  .appPage,
+  .builderPage,
+  .publicPage,
+  .communityLibrary {
+    gap: 12px;
+    padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right));
+  }
+
+  :is(.pageHeader, .heroPanel, .appCard, .dashboardSection, .communityTuneCard, .myTuneCard, .publicHero, .publicSection, .profileSummary, .sharePanel, .emptyState, .loadingState, .errorState, .sessionForm) {
+    border-radius: 14px;
+    padding: 14px;
+  }
+
+  :is(.formField input, .formField select, .formField textarea, .searchBox input, .globalSearch input, .communitySearchPanel input, .partSelectorSearch input) {
+    font-size: 16px;
+  }
+
+  .pageHeader {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .pageHeaderActions {
+    justify-content: flex-end;
+  }
+
+  .primaryAction,
+  .smallPill,
+  .iconButton {
+    min-height: var(--rcds-tap-size);
+  }
+}
+
+@media (max-width: 380px) {
+  .appPage,
+  .builderPage,
+  .publicPage,
+  .communityLibrary,
+  .pitlaneTuneExperience,
+  .pitlaneBuilder {
+    padding-inline: max(10px, env(safe-area-inset-left)) max(10px, env(safe-area-inset-right));
+  }
+
+  :is(.pageHeader, .heroPanel, .appCard, .dashboardSection, .communityTuneCard, .myTuneCard, .publicHero, .publicSection, .profileSummary, .sharePanel, .emptyState, .loadingState, .errorState, .sessionForm) {
+    padding: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  :is(.appCard.tappable, .homeActionCard, .primaryAction, .smallPill, .iconButton, .myTuneActions button, .communityActions button, .communityRails button, .garageBrandBox, .garageCarSummary, .partSelectorCard, .pitlaneSetupRow):not(:disabled):active,
+  :is(.formField input, .formField select, .formField textarea, .searchBox input, .globalSearch input, .communitySearchPanel input, .partSelectorSearch input, .pitlaneNotesSection textarea):focus {
+    transform: none;
+  }
+}
