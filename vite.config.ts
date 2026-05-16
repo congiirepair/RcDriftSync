@@ -19,6 +19,34 @@ export default defineConfig({
               test: /node_modules[\\/](lucide-react|qrcode\.react|idb)[\\/]/
             },
             {
+              name: 'vendor-motion',
+              test: /node_modules[\\/](motion|framer-motion)[\\/]/
+            },
+            {
+              name: 'vendor-tanstack',
+              test: /node_modules[\\/]@tanstack[\\/]/
+            },
+            {
+              name: 'vendor-sentry',
+              test: /node_modules[\\/](@sentry)[\\/]/
+            },
+            {
+              name: 'vendor-firebase-auth',
+              test: /node_modules[\\/](@firebase[\\/](auth|component|logger|util)|firebase[\\/]auth)[\\/]/
+            },
+            {
+              name: 'vendor-firebase-firestore',
+              test: /node_modules[\\/](@firebase[\\/]firestore|firebase[\\/]firestore)[\\/]/
+            },
+            {
+              name: 'vendor-firebase-storage',
+              test: /node_modules[\\/](@firebase[\\/]storage|firebase[\\/]storage)[\\/]/
+            },
+            {
+              name: 'vendor-firebase-core',
+              test: /node_modules[\\/](@firebase|firebase)[\\/]/
+            },
+            {
               name: 'vendor-pdf',
               test: /node_modules[\\/](pdf-lib|pdfjs-dist)[\\/]/
             },

@@ -13,7 +13,6 @@ import { absoluteShareUrl } from "../config/domain";
 import { snapshotTune } from "../utils/changes";
 import { displayPhotoUrl, photoFromFile, photoStorageStatusLabel } from "../utils/photoStorage";
 import { syncTuneSharedModel } from "../utils/sharedTuneModel";
-import { downloadUniversalTunePdf, generateUniversalTunePdf } from "../utils/universalPdfExport";
 import { formatFormLabel } from "../utils/formLabels";
 import { PhotosTab } from "./PhotosTab";
 import { BrandBadge, BrandLogo } from "./BrandIdentity";
@@ -804,6 +803,7 @@ export function UniversalTuneBuilder({
     if (!activeTune || !selectedCar) return;
     setPdfBusy(true);
     try {
+      const { generateUniversalTunePdf } = await import("../utils/universalPdfExport");
       const bytes = await generateUniversalTunePdf(activeTune, selectedCar, { shareUrl: absoluteShareUrl(activeTune.shareId || activeTune.id) });
       if (pdfPreviewUrl) URL.revokeObjectURL(pdfPreviewUrl);
       const blob = new Blob([bytes.slice().buffer], { type: "application/pdf" });
@@ -820,6 +820,7 @@ export function UniversalTuneBuilder({
     try {
       const saved = await Promise.resolve(onSaveTune());
       if (saved === false) return;
+      const { downloadUniversalTunePdf } = await import("../utils/universalPdfExport");
       await downloadUniversalTunePdf(activeTune, selectedCar, { shareUrl: absoluteShareUrl(activeTune.shareId || activeTune.id) });
     } finally {
       setPdfBusy(false);

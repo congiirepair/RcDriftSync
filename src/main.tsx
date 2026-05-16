@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Component, StrictMode, type ErrorInfo, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
@@ -6,6 +5,7 @@ import "./index.css";
 import App from "./App";
 
 const sentryDsn = import.meta.env.VITE_SENTRY_DSN;
+let captureAppException: (error: unknown, info: ErrorInfo) => void = () => undefined;
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -21,11 +21,16 @@ const queryClient = new QueryClient({
 });
 
 if (sentryDsn) {
-  Sentry.init({
-    dsn: sentryDsn,
-    integrations: [Sentry.browserTracingIntegration()],
-    tracesSampleRate: import.meta.env.DEV ? 1 : 0.1,
-    environment: import.meta.env.MODE
+  void import("@sentry/react").then((Sentry) => {
+    Sentry.init({
+      dsn: sentryDsn,
+      integrations: [Sentry.browserTracingIntegration()],
+      tracesSampleRate: import.meta.env.DEV ? 1 : 0.1,
+      environment: import.meta.env.MODE
+    });
+    captureAppException = (error, info) => {
+      Sentry.captureException(error, { contexts: { react: { componentStack: info.componentStack } } });
+    };
   });
 }
 
@@ -66,7 +71,7 @@ class AppErrorBoundary extends Component<{ children: ReactNode }, { hasError: bo
 
   componentDidCatch(error: unknown, info: ErrorInfo) {
     console.error("RC Drift Sync render failed", error, info);
-    Sentry.captureException(error, { contexts: { react: { componentStack: info.componentStack } } });
+    captureAppException(error, info);
     void recoverCachedApp();
   }
 
