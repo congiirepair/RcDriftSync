@@ -1,20 +1,18 @@
-import { CarFront, Check, ChevronDown, CircleDot, CircuitBoard, ClipboardCheck, CopyPlus, Download, Eye, FileText, ImagePlus, Lightbulb, MapPinned, MoreHorizontal, Plus, Save, Share2, SlidersHorizontal, Trash2, Wrench } from "lucide-react";
+import { CarFront, Check, ChevronDown, CircleDot, CircuitBoard, ClipboardCheck, CopyPlus, Download, Eye, FileText, ImagePlus, Lightbulb, Loader2, MapPinned, MoreHorizontal, Plus, Save, Share2, SlidersHorizontal, Trash2, Wrench } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 import { BASIC_CUSTOM_OPTION, basicTuneOptions } from "../data/basicTuneOptions";
 import { chassisBrands, chassisInfoFromTune, findChassisBrand, modelsForBrand, slugifyChassis } from "../data/chassisBrands";
 import { findElectronicsSchema, findElectronicsSchemaForProduct, type ElectronicsSchemaField } from "../data/electronicsSchemas";
-import { type ProductCatalogCategory, type ProductCatalogItem } from "../data/productCatalog";
-import { electronicsItemFromPart, findPartBySlug, matchKnownPart, partLabel, partsByCategory, type RcPart, type RcPartCategory } from "../data/rcParts";
-import { resolveSuspensionMountVisualDefinition, type SuspensionMountVisualRequest, type VisualSetupDefinition, type VisualSetupOption, type VisualSetupSlot } from "../data/visualSetupDefinitions";
-import { catalogOptionDescription, catalogOptionLabel, filterProductCatalog, getProductCatalog } from "../services/productCatalog";
-import type { Car, ElectronicsCategory, ElectronicsProfile, ElectronicsProfileType, SetupAssistantEntry, Tune, TuneElectronicsItem, TunePhoto } from "../types";
+import { catalogOptionDescription, catalogOptionLabel, filterProductCatalog, getProductCatalog, type ProductCatalogCategory, type ProductCatalogItem } from "../features/catalog";
+import { electronicsItemFromPart, findPartBySlug, matchKnownPart, partLabel, partsByCategory, type RcPart } from "../data/rcParts";
+import type { Car, ElectronicsCategory, ElectronicsProfile, SetupAssistantEntry, Tune, TuneElectronicsItem, TunePhoto } from "../types";
 import { absoluteShareUrl } from "../config/domain";
 import { snapshotTune } from "../utils/changes";
 import { displayPhotoUrl, photoFromFile, photoStorageStatusLabel } from "../utils/photoStorage";
 import { syncTuneSharedModel } from "../utils/sharedTuneModel";
-import { downloadUniversalTunePdf, generateUniversalTunePdf } from "../utils/universalPdfExport";
 import { formatFormLabel } from "../utils/formLabels";
 import { PhotosTab } from "./PhotosTab";
 import { BrandBadge, BrandLogo } from "./BrandIdentity";
@@ -22,542 +20,30 @@ import { PhotoLightbox } from "./PhotoLightbox";
 import { PartSelector, type PartSelectorValue } from "./PartSelector";
 import { BasicTuneSummary, FeelEditor, TuneTimeline, TuneVisualSummary } from "./TuneVisuals";
 import { ConfirmDialog, EmptyState, SelectField, TextAreaField, TextField } from "./UiPrimitives";
-import { VisualSetupHelper } from "./VisualSetupHelper";
 
-type SetupMode = "official" | "universal" | "custom";
-type StartingPoint = "blank" | "duplicate" | "baseline" | "import";
-type BuilderValue = string | number | boolean | string[];
-type ElectronicsSettingValue = string | number | boolean | string[];
-
-function tuneDisplayName(tune: Pick<Tune, "name">) {
-  return tune.name.trim() || "Untitled tune";
-}
-
-const verifiedInternalRatioDefaults = [
-  {
-    brandSlug: "yokomo",
-    label: "Yokomo drift chassis",
-    internalRatio: 2.6,
-    sourceNote: "Yokomo YD-2 gear-ratio chart"
-  }
-] as const;
-
-function numericGearValue(value: unknown): number | null {
-  if (typeof value === "number") return Number.isFinite(value) && value > 0 ? value : null;
-  if (typeof value !== "string") return null;
-  const parsed = Number.parseFloat(value.replace(/[^\d.]/g, ""));
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
-}
-
-function suggestedInternalRatio(brandSlug: string) {
-  return verifiedInternalRatioDefaults.find((preset) => preset.brandSlug === brandSlug);
-}
-
-function calculateFinalDriveRatio(spur: unknown, pinion: unknown, internalRatio: unknown) {
-  const spurTeeth = numericGearValue(spur);
-  const pinionTeeth = numericGearValue(pinion);
-  const internal = numericGearValue(internalRatio);
-  if (!spurTeeth || !pinionTeeth || !internal) return "";
-  return ((spurTeeth / pinionTeeth) * internal).toFixed(2);
-}
-
-interface UniversalTuneBuilderProps {
-  cars: Car[];
-  tunes: Tune[];
-  activeTune: Tune | null;
-  electronicsProfiles: ElectronicsProfile[];
-  onCreateTune: (options: { carId: string; setupMode: SetupMode; startingPoint: StartingPoint; sourceTuneId?: string }) => void;
-  onUpdateTune: (tune: Tune) => void;
-  onSaveTune: () => boolean | void | Promise<boolean | void>;
-  onSaveElectronicsProfile: (profile: ElectronicsProfile) => void;
-  onDeleteTune: (tuneId: string) => boolean | void | Promise<boolean | void>;
-  onDuplicateTune: (tune: Tune) => void;
-  onSelectTune: (tuneId: string) => void;
-  onViewTune?: (tuneId: string) => void;
-  dirty: boolean;
-}
-
-type ProfiledElectronicsCategory = "esc" | "servo" | "gyro";
-type BuilderTabId = "chassis" | "track" | "front" | "rear" | "drivetrain" | "tires" | "electronics" | "esc" | "servo" | "gyro" | "radio" | "feel" | "photos" | "notes" | "pdf";
-type PitlaneProductTab = "all" | "motor" | "esc" | "gyro" | "servo" | "other";
-type PitlanePage = "menu" | "chassis" | "surface" | "electronics" | "tires";
-
-interface UniversalField {
-  id: string;
-  label: string;
-  type: "text" | "number" | "select" | "combo" | "textarea" | "rating" | "tags" | "part";
-  options?: string[];
-  placeholder?: string;
-  suffix?: string;
-  meta?: keyof Tune;
-  notSure?: boolean;
-  helper?: string;
-  partCategory?: RcPartCategory;
-  partSubcategory?: string;
-  electronicsKey?: "esc" | "motor" | "servo" | "gyro" | "receiver" | "battery";
-  brandFieldId?: string;
-  modelFieldId?: string;
-}
-
-interface UniversalSection {
-  id: string;
-  title: string;
-  profileType?: ElectronicsProfileType;
-  helper?: string;
-  fields: UniversalField[];
-}
-
-interface GuidedStep {
-  id: string;
-  label: string;
-  helper: string;
-  sectionIds: string[];
-}
-
-const universalSections: UniversalSection[] = [
-  {
-    id: "basics",
-    title: "Basics",
-    fields: [
-      { id: "name", label: "Tune name", type: "text", meta: "name", placeholder: "Enter tune name" },
-      { id: "date", label: "Date", type: "text", meta: "date" },
-      { id: "driver", label: "Driver", type: "text" },
-      { id: "chassisVariant", label: "Chassis variant", type: "text", meta: "chassisVariant", placeholder: "S, ZX, conversion, custom" },
-      { id: "conversionKit", label: "Conversion kit", type: "text", placeholder: "Not sure", notSure: true },
-      { id: "wheelbase", label: "Wheelbase", type: "number", suffix: "mm" },
-      { id: "overallTrackWidth", label: "Track width", type: "number", suffix: "mm" },
-      { id: "weightBias", label: "Weight bias", type: "text", placeholder: "50/50, rear bias..." },
-      { id: "batteryPosition", label: "Battery mount position", type: "select", options: ["Not sure", "Front", "Middle", "Rear", "Left side", "Right side", "Transverse", "Longitudinal", "Stock"], notSure: true },
-      { id: "motorPosition", label: "Motor position", type: "select", options: ["Not sure", "High", "Low", "Mid", "Rear"], notSure: true },
-      { id: "servoPosition", label: "Servo mount position", type: "select", options: ["Not sure", "Front", "Middle", "Rear", "Stock"], notSure: true },
-      { id: "track", label: "Track / location", type: "text", meta: "track" },
-      { id: "surface", label: "Track surface", type: "select", meta: "surface", options: ["Not sure", "P-tile", "Carpet", "Asphalt", "Polished concrete", "Epoxy", "Painted concrete", "Other / Custom"], notSure: true },
-      { id: "grip", label: "Grip level", type: "select", meta: "grip", options: ["Not sure", "Low", "Medium", "High", "Very High"], notSure: true },
-      { id: "tires", label: "Tire", type: "part", partCategory: "tire", placeholder: "DS LF-5, LF-4..." },
-      { id: "body", label: "Body", type: "text" },
-      { id: "wing", label: "Wing", type: "text" },
-      { id: "rating", label: "Rating", type: "rating", meta: "rating" },
-      { id: "confidenceRating", label: "Confidence rating", type: "rating", meta: "confidenceRating" },
-      { id: "trackConditionPreset", label: "Track condition", type: "select", meta: "trackConditionPreset", options: ["Not sure", "Dusty", "Clean", "Cold", "Warm", "Fresh layout", "Grooved-in", "Competition day", "Practice day"], notSure: true },
-      { id: "bestForTags", label: "Best for", type: "tags", meta: "bestForTags", placeholder: "P-tile, comp, low grip" },
-      { id: "tags", label: "Tags", type: "tags", meta: "tags", placeholder: "baseline, carpet, high grip" },
-      { id: "notes", label: "Notes", type: "textarea", meta: "notes" }
-    ]
-  },
-  {
-    id: "tires-wheels",
-    title: "Tires and wheels",
-    fields: [
-      { id: "frontTire", label: "Front tire", type: "part", partCategory: "tire", placeholder: "Search front tire..." },
-      { id: "frontTireCompound", label: "Front tire compound", type: "text" },
-      { id: "rearTire", label: "Rear tire", type: "part", partCategory: "tire", placeholder: "Search rear tire..." },
-      { id: "rearTireCompound", label: "Rear tire compound", type: "text" },
-      { id: "tireDiameter", label: "Tire diameter", type: "text" },
-      { id: "wheelModel", label: "Wheel brand / model", type: "part", partCategory: "wheel", placeholder: "Search wheel..." },
-      { id: "frontWheelOffset", label: "Front wheel offset", type: "text" },
-      { id: "rearWheelOffset", label: "Rear wheel offset", type: "text" },
-      { id: "frontWheelWidth", label: "Front wheel width", type: "text" },
-      { id: "rearWheelWidth", label: "Rear wheel width", type: "text" },
-      { id: "tirePrepNotes", label: "Tire prep notes", type: "textarea" },
-      { id: "tireWearNotes", label: "Tire wear notes", type: "textarea" }
-    ]
-  },
-  {
-    id: "front",
-    title: "Front setup",
-    fields: [
-      { id: "frontRideHeight", label: "Front ride height", type: "number", suffix: "mm" },
-      { id: "frontCamber", label: "Front camber", type: "number", suffix: "deg" },
-      { id: "frontToe", label: "Front toe", type: "number", suffix: "deg" },
-      { id: "caster", label: "Caster", type: "text", placeholder: "Not sure", notSure: true },
-      { id: "kpi", label: "KPI", type: "text", placeholder: "Not sure", notSure: true },
-      { id: "steeringAngle", label: "Steering angle", type: "text", placeholder: "Not sure", notSure: true },
-      { id: "ackerman", label: "Ackerman", type: "text", placeholder: "Not sure", notSure: true },
-      { id: "steeringRackPosition", label: "Steering rack position", type: "text" },
-      { id: "tieRodPosition", label: "Tie rod position", type: "text" },
-      { id: "frontTrackWidth", label: "Front track width", type: "number", suffix: "mm" },
-      { id: "frontWheelOffset", label: "Front wheel offset", type: "text" },
-      { id: "frontWheel", label: "Front wheel", type: "part", partCategory: "wheel", placeholder: "Search wheel..." },
-      { id: "frontSpringBrand", label: "Front spring brand", type: "text" },
-      { id: "frontSpring", label: "Front spring", type: "text" },
-      { id: "frontShockOil", label: "Front shock oil", type: "text" },
-      { id: "frontPiston", label: "Front piston holes / diameter", type: "text" },
-      { id: "frontShockShaft", label: "Front shock shaft", type: "text" },
-      { id: "frontShockPosition", label: "Front shock position upper / lower", type: "text" },
-      { id: "frontDroop", label: "Front droop", type: "text" },
-      { id: "frontPreload", label: "Front preload", type: "text" },
-      { id: "frontSwayBar", label: "Front sway bar", type: "text" },
-      { id: "frontShockStyle", label: "Front shock style", type: "text" },
-      { id: "frontUpperLink", label: "Front upper arm / link position", type: "text" },
-      { id: "frontLowerArm", label: "Front lower arm position", type: "text" },
-      { id: "frontKnuckle", label: "Front knuckle", type: "text", helper: "The steering knuckle/upright used on the front suspension." },
-      { id: "frontHub", label: "Front hub", type: "text" },
-      { id: "frontOffsetSpacer", label: "Front offset spacer", type: "text", helper: "Spacer added at the front wheel hub/hex to fine-tune track width or wheel clearance." },
-      { id: "frontHubSpacers", label: "Front hub spacers", type: "text" },
-      { id: "ffToeBlock", label: "FF suspension mount", type: "text", helper: "Front-front suspension mount / toe block." },
-      { id: "frToeBlock", label: "FR suspension mount", type: "text", helper: "Front-rear suspension mount / toe block." },
-      { id: "bumpSteerNotes", label: "Bump steer notes", type: "textarea" },
-      { id: "frontSpacerNotes", label: "Front spacer notes", type: "textarea" },
-      { id: "frontMemo", label: "Front memo", type: "textarea" }
-    ]
-  },
-  {
-    id: "rear",
-    title: "Rear setup",
-    fields: [
-      { id: "rearRideHeight", label: "Rear ride height", type: "number", suffix: "mm" },
-      { id: "rearCamber", label: "Rear camber", type: "number", suffix: "deg" },
-      { id: "rearToe", label: "Rear toe", type: "number", suffix: "deg" },
-      { id: "skidAngle", label: "Skid angle", type: "text", placeholder: "Not sure", notSure: true },
-      { id: "rearRollCenter", label: "Rear roll center", type: "text", placeholder: "Not sure", notSure: true },
-      { id: "rearTrackWidth", label: "Rear track width", type: "number", suffix: "mm" },
-      { id: "rearWheelOffset", label: "Rear wheel offset", type: "text" },
-      { id: "rearWheel", label: "Rear wheel", type: "part", partCategory: "wheel", placeholder: "Search wheel..." },
-      { id: "rearSpringBrand", label: "Rear spring brand", type: "text" },
-      { id: "rearSpring", label: "Rear spring", type: "text" },
-      { id: "rearShockOil", label: "Rear shock oil", type: "text" },
-      { id: "rearPiston", label: "Rear piston holes / diameter", type: "text" },
-      { id: "rearShockShaft", label: "Rear shock shaft", type: "text" },
-      { id: "rearShockPosition", label: "Rear shock position upper / lower", type: "text" },
-      { id: "rearDroop", label: "Rear droop", type: "text" },
-      { id: "rearPreload", label: "Rear preload", type: "text" },
-      { id: "rearSwayBar", label: "Rear sway bar", type: "text" },
-      { id: "rearShockStyle", label: "Rear shock style", type: "text" },
-      { id: "rearUpperLink", label: "Rear upper arm / link position", type: "text" },
-      { id: "rearLowerArm", label: "Rear lower arm position", type: "text" },
-      { id: "rearHubCarrier", label: "Rear hub carrier", type: "text" },
-      { id: "rearOffsetSpacer", label: "Rear offset spacer", type: "text", helper: "Spacer added at the rear wheel hub/hex to fine-tune track width or wheel clearance." },
-      { id: "rearHubSpacers", label: "Rear hub spacers", type: "text" },
-      { id: "rfToeBlock", label: "RF suspension mount", type: "text", helper: "Rear-front suspension mount / toe block." },
-      { id: "rrToeBlock", label: "RR suspension mount", type: "text", helper: "Rear-rear suspension mount / toe block." },
-      { id: "rearSpacerNotes", label: "Rear spacer notes", type: "textarea" },
-      { id: "rearMemo", label: "Rear memo", type: "textarea" }
-    ]
-  },
-  {
-    id: "drivetrain",
-    title: "Drivetrain",
-    fields: [
-      { id: "driveType", label: "Drive type", type: "select", options: ["Not sure", "RWD", "AWD", "CS"], notSure: true },
-      { id: "motorPosition", label: "Motor position", type: "select", options: ["Not sure", "High", "Low", "Mid", "Rear"], notSure: true },
-      { id: "differentialProduct", label: "Differential product", type: "select", options: ["Not sure", "Gear differential", "Ball differential", "Spool / solid axle", "LSD differential", "Custom / Other"], notSure: true },
-      { id: "diffType", label: "Differential type", type: "select", options: ["Not sure", "Gear diff", "Ball diff", "Spool", "Solid axle", "LSD"], notSure: true },
-      { id: "ballDiffSetting", label: "Ball diff setting", type: "text" },
-      { id: "gearDiffOil", label: "Gear diff oil", type: "text" },
-      { id: "lsdSetting", label: "LSD setting", type: "text" },
-      { id: "spurGear", label: "Spur gear", type: "number" },
-      { id: "pinionGear", label: "Pinion gear", type: "number" },
-      { id: "finalDriveRatio", label: "Final drive ratio", type: "text" },
-      { id: "gearPitch", label: "Gear pitch", type: "select", options: ["Not sure", "48P", "64P", "Mod 0.6", "Mod 0.8"], notSure: true },
-      { id: "diffOil", label: "Diff oil", type: "text" },
-      { id: "diffGrease", label: "Diff grease", type: "text" },
-      { id: "diffShimSetup", label: "Diff shim setup", type: "textarea" },
-      { id: "rearAxleType", label: "Rear axle type", type: "text" },
-      { id: "beltShaftNotes", label: "Belt / shaft notes", type: "textarea" },
-      { id: "drivetrainMemo", label: "Drivetrain memo", type: "textarea" }
-    ]
-  },
-  {
-    id: "weight-body",
-    title: "Weight and body",
-    fields: [
-      { id: "batteryPosition", label: "Battery position", type: "text" },
-      { id: "addedWeight", label: "Added weight", type: "text" },
-      { id: "weightLocation", label: "Weight location", type: "text" },
-      { id: "chassisBrace", label: "Chassis brace", type: "text" },
-      { id: "battery", label: "Battery", type: "part", partCategory: "battery", electronicsKey: "battery", modelFieldId: "battery", placeholder: "Search battery..." },
-      { id: "bodyShell", label: "Body shell", type: "text" },
-      { id: "bodyWeight", label: "Body weight", type: "text" },
-      { id: "aeroWing", label: "Wing", type: "text" },
-      { id: "wingPosition", label: "Wing position", type: "text" },
-      { id: "bodyMountPosition", label: "Body mount position", type: "text" },
-      { id: "frontWeight", label: "Front weight", type: "text" },
-      { id: "rearWeight", label: "Rear weight", type: "text" },
-      { id: "sideWeight", label: "Side weight", type: "text" },
-      { id: "aeroNotes", label: "Aero notes", type: "textarea" },
-      { id: "weightBalanceNotes", label: "Weight balance notes", type: "textarea" }
-    ]
-  },
-  {
-    id: "esc-tune",
-    title: "ESC Tune",
-    profileType: "esc",
-    helper: "Save different ESC profiles for high grip, low grip, carpet, asphalt, and tire changes.",
-    fields: [
-      { id: "escModel", label: "ESC", type: "part", partCategory: "esc", electronicsKey: "esc", brandFieldId: "escBrand", modelFieldId: "escModel", placeholder: "Search ESC model..." },
-      { id: "escBrand", label: "ESC brand", type: "text", placeholder: "Acuvance, Hobbywing..." },
-      { id: "escProfileName", label: "ESC profile name", type: "text", placeholder: "High Grip ESC Tune" },
-      { id: "throttleCurve", label: "Throttle curve", type: "text", placeholder: "Not sure", notSure: true },
-      { id: "throttlePunch", label: "Throttle punch", type: "text" },
-      { id: "brakeStrength", label: "Brake strength", type: "text" },
-      { id: "dragBrake", label: "Drag brake", type: "text" },
-      { id: "neutralBrake", label: "Neutral brake", type: "text" },
-      { id: "initialBrake", label: "Initial brake", type: "text" },
-      { id: "boostTiming", label: "Boost timing", type: "text" },
-      { id: "boostStartRpm", label: "Boost start RPM", type: "number" },
-      { id: "boostEndRpm", label: "Boost end RPM", type: "number" },
-      { id: "turboTiming", label: "Turbo timing", type: "text" },
-      { id: "turboDelay", label: "Turbo delay", type: "text" },
-      { id: "turboSlope", label: "Turbo slope", type: "text" },
-      { id: "motor", label: "Motor", type: "part", partCategory: "motor", electronicsKey: "motor", modelFieldId: "motor", placeholder: "Search motor..." },
-      { id: "motorTiming", label: "Motor timing", type: "text" },
-      { id: "motorFan", label: "Motor fan", type: "part", partCategory: "accessory", partSubcategory: "motor-fan", placeholder: "Search motor fan..." },
-      { id: "escFan", label: "ESC fan", type: "part", partCategory: "accessory", partSubcategory: "esc-fan", placeholder: "Search ESC fan..." },
-      { id: "powerCapacitor", label: "Power capacitor", type: "part", partCategory: "accessory", partSubcategory: "capacitor", placeholder: "Search capacitor..." },
-      { id: "pwmFrequency", label: "PWM frequency", type: "text" },
-      { id: "driveFrequency", label: "Drive frequency", type: "text" },
-      { id: "brakeFrequency", label: "Brake frequency", type: "text" },
-      { id: "becVoltage", label: "BEC voltage", type: "text" },
-      { id: "currentLimit", label: "Current limit", type: "text" },
-      { id: "reverseStrength", label: "Reverse strength", type: "text" },
-      { id: "motorRotation", label: "Motor rotation", type: "select", options: ["Not sure", "Normal", "Reverse"], notSure: true },
-      { id: "escFirmwareVersion", label: "Firmware version", type: "text" },
-      { id: "escNotes", label: "ESC notes", type: "textarea" },
-      { id: "escProgrammerPhotoNote", label: "Photo of ESC programmer screen", type: "text", placeholder: "Attach in Photos, add note here" },
-      { id: "escWiringPhotoNote", label: "Photo of ESC wiring", type: "text", placeholder: "Attach in Photos, add note here" }
-    ]
-  },
-  {
-    id: "servo-tune",
-    title: "Servo Tune",
-    profileType: "servo",
-    helper: "Servo settings are saved on each tune so you can change speed, endpoints, and trim by track.",
-    fields: [
-      { id: "servoModel", label: "Servo", type: "part", partCategory: "servo", electronicsKey: "servo", brandFieldId: "servoBrand", modelFieldId: "servoModel", placeholder: "Search servo model..." },
-      { id: "servoBrand", label: "Servo brand", type: "text" },
-      { id: "servoHornLength", label: "Servo horn length", type: "text" },
-      { id: "servoSpline", label: "Servo spline", type: "text" },
-      { id: "servoSpeedSetting", label: "Servo speed setting", type: "text" },
-      { id: "servoTorqueSetting", label: "Servo torque setting", type: "text" },
-      { id: "endpointLeft", label: "Endpoint left", type: "text" },
-      { id: "endpointRight", label: "Endpoint right", type: "text" },
-      { id: "centerTrim", label: "Center trim", type: "text" },
-      { id: "subtrim", label: "Subtrim", type: "text" },
-      { id: "deadband", label: "Deadband", type: "text" },
-      { id: "servoFrequency", label: "Frequency", type: "text" },
-      { id: "servoVoltage", label: "Voltage", type: "text" },
-      { id: "directMode", label: "Direct / SR / SSR mode", type: "select", options: ["Not sure", "Direct mode", "SR mode", "SSR mode", "Normal"], notSure: true },
-      { id: "servoSaver", label: "Servo saver or solid horn", type: "select", options: ["Not sure", "Servo saver", "Solid horn"], notSure: true },
-      { id: "servoNotes", label: "Servo notes", type: "textarea" },
-      { id: "servoSetupPhotoNote", label: "Photo of servo setup", type: "text", placeholder: "Attach in Photos, add note here" }
-    ]
-  },
-  {
-    id: "gyro-tune",
-    title: "Gyro Tune",
-    profileType: "gyro",
-    helper: "Gyro gain and mode often change with tire, surface, and track speed.",
-    fields: [
-      { id: "gyroModel", label: "Gyro", type: "part", partCategory: "gyro", electronicsKey: "gyro", brandFieldId: "gyroBrand", modelFieldId: "gyroModel", placeholder: "Search gyro model..." },
-      { id: "gyroBrand", label: "Gyro brand", type: "text" },
-      { id: "gyroGain", label: "Gyro gain", type: "text" },
-      { id: "gyroMode", label: "Gyro mode", type: "select", options: ["Not sure", "Normal", "Assist", "AVCS", "Soft", "Hard"], notSure: true },
-      { id: "gyroEndpointSetting", label: "Endpoint setting", type: "text" },
-      { id: "gyroCurveSetting", label: "Curve setting", type: "text" },
-      { id: "gainFromTransmitter", label: "Gain from transmitter", type: "select", options: ["Not sure", "Yes", "No"], notSure: true },
-      { id: "gyroDirection", label: "Gyro direction", type: "select", options: ["Not sure", "Normal", "Reverse"], notSure: true },
-      { id: "gyroNotes", label: "Gyro notes", type: "textarea" }
-    ]
-  },
-  {
-    id: "radio-tune",
-    title: "Radio Tune",
-    profileType: "radio",
-    helper: "Radio settings are tune-specific because expo, endpoints, and curves can change by surface.",
-    fields: [
-      { id: "radioModel", label: "Radio", type: "part", partCategory: "radio", electronicsKey: "receiver", brandFieldId: "radioBrand", modelFieldId: "radioModel", placeholder: "Search radio..." },
-      { id: "radioBrand", label: "Radio brand", type: "text" },
-      { id: "steeringDualRate", label: "Steering dual rate", type: "text" },
-      { id: "steeringExpo", label: "Steering expo", type: "text" },
-      { id: "throttleExpo", label: "Throttle expo", type: "text" },
-      { id: "radioThrottleCurve", label: "Throttle curve", type: "text" },
-      { id: "brakeCurve", label: "Brake curve", type: "text" },
-      { id: "channelMixingNotes", label: "Channel mixing notes", type: "textarea" },
-      { id: "steeringEndpointLeft", label: "Steering endpoint left", type: "text" },
-      { id: "steeringEndpointRight", label: "Steering endpoint right", type: "text" },
-      { id: "throttleEndpoint", label: "Throttle endpoint", type: "text" },
-      { id: "brakeEndpoint", label: "Brake endpoint", type: "text" },
-      { id: "radioNotes", label: "Radio notes", type: "textarea" }
-    ]
-  },
-  {
-    id: "notes-section",
-    title: "Notes",
-    fields: [
-      { id: "generalNotes", label: "General notes", type: "textarea" },
-      { id: "trackNotes", label: "Track notes", type: "textarea" },
-      { id: "whatChanged", label: "What changed", type: "textarea" },
-      { id: "previousTuneVersion", label: "Previous tune version", type: "text" },
-      { id: "changeSummary", label: "Change summary", type: "textarea" },
-      { id: "changeReason", label: "Why I changed it", type: "textarea", meta: "changeReason" },
-      { id: "howItFelt", label: "How it felt", type: "textarea" },
-      { id: "testResult", label: "Test result", type: "select", meta: "testResult", options: ["", "better", "worse", "no-change"] },
-      { id: "trackConditionDuringTest", label: "Track condition during test", type: "select", options: ["", "Dusty", "Clean", "Cold", "Warm", "Fresh layout", "Grooved-in", "Competition day", "Practice day"] },
-      { id: "dateTested", label: "Date tested", type: "text" },
-      { id: "sessionNotes", label: "Session notes", type: "textarea" },
-      { id: "nextChanges", label: "Next changes to try", type: "textarea" }
-    ]
-  }
-];
-
-const allBuilderFields = universalSections.flatMap((section) => section.fields);
-
-const guidedSteps: GuidedStep[] = [
-  {
-    id: "chassis",
-    label: "Chassis",
-    helper: "Confirm the car, setup mode, tune name, driver, and template before adding details.",
-    sectionIds: ["basics"]
-  },
-  {
-    id: "surface-track",
-    label: "Surface / Track",
-    helper: "Capture where this tune works: track, surface, grip, tire, condition, and goal.",
-    sectionIds: ["basics"]
-  },
-  {
-    id: "electronics",
-    label: "Electronics",
-    helper: "Save ESC, servo, gyro, and radio settings that change by track or tire.",
-    sectionIds: ["esc-tune", "servo-tune", "gyro-tune", "radio-tune"]
-  },
-  {
-    id: "steering",
-    label: "Steering Geometry",
-    helper: "Focus on steering angle, toe, caster, Ackerman, hubs, knuckles, and front link notes.",
-    sectionIds: ["front"]
-  },
-  {
-    id: "suspension",
-    label: "Suspension",
-    helper: "Tune ride height, camber, springs, shock oils, pistons, shafts, and mount positions.",
-    sectionIds: ["front", "rear"]
-  },
-  {
-    id: "drivetrain",
-    label: "Drivetrain / Differential",
-    helper: "Track motor position, diff behavior, gearing, belts, shafts, and drive notes.",
-    sectionIds: ["drivetrain"]
-  },
-  {
-    id: "tires-wheels",
-    label: "Tires / Wheels",
-    helper: "Keep tire, wheel offset, track width, and tire-related notes together.",
-    sectionIds: ["tires-wheels"]
-  },
-  {
-    id: "body-weight",
-    label: "Body / Weight",
-    helper: "Record battery position, added weight, body, wing, braces, and balance notes.",
-    sectionIds: ["weight-body", "basics"]
-  },
-  {
-    id: "driver-feel",
-    label: "Driver Feel",
-    helper: "Describe how the car should feel so the tune is readable without decoding every number.",
-    sectionIds: []
-  },
-  {
-    id: "notes-publish",
-    label: "Notes / Photos / Publish",
-    helper: "Attach photos, log changes, save recommendations, and choose private or shared visibility.",
-    sectionIds: ["notes-section"]
-  }
-];
-
-const quickStepIds = new Set(["chassis", "electronics", "steering", "suspension", "drivetrain", "driver-feel", "notes-publish"]);
-
-const basicFieldIds = new Set([
-  "name",
-  "track",
-  "surface",
-  "grip",
-  "trackConditionPreset",
-  "setupIntent",
-  "tires",
-  "frontTire",
-  "rearTire",
-  "rating",
-  "bestForTags",
-  "tags",
-  "notes",
-  "chassisDeck",
-  "chassisCustomizations",
-  "conversionKit",
-  "frontDamperBrand",
-  "frontSpringBrand",
-  "frontSpring",
-  "frontKnuckleBrand",
-  "frontKnuckle",
-  "frontAxle",
-  "frontWheelBrand",
-  "frontWheel",
-  "frontLowerArmBrand",
-  "frontLowerArm",
-  "frontLowerArmShims",
-  "frontToeBlockBrand",
-  "frontToeBlock",
-  "servoBrand",
-  "servoModel",
-  "servoProfileName",
-  "gyroBrand",
-  "gyroModel",
-  "gyroProfileName",
-  "motor",
-  "motorBrand",
-  "motorModel",
-  "escBrand",
-  "escModel",
-  "escProfileName",
-  "rearLowerArmBrand",
-  "rearLowerArm",
-  "rearLowerArmShims",
-  "rearHubCarrierBrand",
-  "rearHubCarrier",
-  "rearAxleLength",
-  "rearWheelBrand",
-  "rearWheel",
-  "rearToeBlockBrand",
-  "rearToeBlock",
-  "basicCustomNotes",
-  "rearSpring",
-  "diffType",
-  "spurGear",
-  "pinionGear",
-  "internalDriveRatio",
-  "finalDriveRatio",
-  "batteryPosition",
-  "servoPosition",
-  "battery",
-  "gyroGain",
-  "gyroMode",
-  "generalNotes",
-  "whatChanged",
-  "changeSummary",
-  "howItFelt",
-  "testResult",
-  "nextChanges"
-]);
-
-const builderTabs: Array<{ id: BuilderTabId; label: string; stepId: string; sectionIds: string[]; helper: string }> = [
-  { id: "chassis", label: "Basic", stepId: "chassis", sectionIds: ["basics"], helper: "Tune identity, chassis, deck, track, and simple setup context." },
-  { id: "track", label: "Track", stepId: "chassis", sectionIds: ["basics"], helper: "Track name and surface for this setup." },
-  { id: "front", label: "Front", stepId: "steering", sectionIds: ["front"], helper: "Front arms, knuckles, axle, spring, toe block, damper, and wheel setup." },
-  { id: "rear", label: "Rear", stepId: "suspension", sectionIds: ["rear"], helper: "Rear arms, hub carrier, axle length, toe block, spring, damper, and wheel setup." },
-  { id: "drivetrain", label: "Drivetrain", stepId: "drivetrain", sectionIds: ["drivetrain"], helper: "Motor, gearing, differential, shafts, belts, and drive notes." },
-  { id: "tires", label: "Tires/Wheels", stepId: "tires-wheels", sectionIds: ["tires-wheels"], helper: "Front and rear tire, wheel, offset, and fitment setup." },
-  { id: "electronics", label: "Electronics", stepId: "electronics", sectionIds: ["esc-tune", "servo-tune", "gyro-tune", "radio-tune"], helper: "ESC, servo, gyro, motor, and radio settings in one place." },
-  { id: "esc", label: "ESC", stepId: "electronics", sectionIds: ["esc-tune"], helper: "ESC product, profile, throttle, brake, boost, turbo, and capacitor." },
-  { id: "servo", label: "Servo", stepId: "electronics", sectionIds: ["servo-tune"], helper: "Servo product, horn, profile, endpoints, speed, torque, and notes." },
-  { id: "gyro", label: "Gyro", stepId: "electronics", sectionIds: ["gyro-tune"], helper: "Gyro product, gain, mode, curve, direction, endpoint, and notes." },
-  { id: "radio", label: "Radio", stepId: "electronics", sectionIds: ["radio-tune"], helper: "Radio model, expo, endpoints, curves, and transmitter notes." },
-  { id: "feel", label: "Feel", stepId: "driver-feel", sectionIds: [], helper: "Use sliders to describe how the car drives at a glance." },
-  { id: "photos", label: "Photos", stepId: "notes-publish", sectionIds: [], helper: "Attach photos for the car, electronics, suspension, tires, and body." },
-  { id: "notes", label: "Notes", stepId: "notes-publish", sectionIds: ["notes-section"], helper: "Change notes, test result, setup assistant, history, and sharing settings." },
-  { id: "pdf", label: "Preview/PDF", stepId: "notes-publish", sectionIds: [], helper: "Preview the setup summary and export the filled setup sheet PDF." }
-];
-
-const quickTuneTabIds = new Set<BuilderTabId>(["chassis", "track", "front", "rear", "drivetrain", "tires", "electronics", "esc", "servo", "gyro", "radio", "photos", "notes", "pdf"]);
+import {
+  allBuilderFields,
+  basicFieldIds,
+  builderTabs,
+  calculateFinalDriveRatio,
+  guidedSteps,
+  quickStepIds,
+  quickTuneTabIds,
+  suggestedInternalRatio,
+  tuneDisplayName,
+  universalSections,
+  type BuilderTabId,
+  type BuilderValue,
+  type ElectronicsSettingValue,
+  type PitlanePage,
+  type PitlaneProductTab,
+  type ProfiledElectronicsCategory,
+  type SetupMode,
+  type StartingPoint,
+  type UniversalField,
+  type UniversalSection,
+  type UniversalTuneBuilderProps
+} from "../features/tune-builder/builderConfig";
 
 const assistantSurfaces = ["Not sure", "Plastic tile", "Carpet", "Asphalt", "Colored concrete", "Concrete", "Other"];
 const assistantGripLevels = ["Not sure", "Low", "Low to medium", "Medium", "High", "Very high"];
@@ -566,6 +52,19 @@ const assistantResults: Array<{ id: NonNullable<SetupAssistantEntry["result"]>; 
   { id: "worse", label: "Felt worse" },
   { id: "no-change", label: "No change" }
 ];
+
+const signedSetupValueKeys = new Set([
+  "frontCamber",
+  "frontToe",
+  "rearCamber",
+  "rearToe",
+  "rearSkidAngle",
+  "skidAngle",
+  "frontWeightNotes",
+  "rearWeightNotes",
+  "leftWeightNotes",
+  "rightWeightNotes"
+]);
 
 const assistantSuggestions: Record<string, { label: string; areas: string[]; explanation: string; starterChange: string }> = {
   spinsOut: {
@@ -676,6 +175,8 @@ function fieldValue(tune: Tune, field: UniversalField) {
     rearDamper: tune.chassisSetup?.rear?.dampers?.model,
     rearLowerArm: tune.chassisSetup?.rear?.lowerArm?.model,
     rearLowerArmShims: tune.chassisSetup?.rear?.lowerArm?.shims,
+    rearLowerArmSide: tune.chassisSetup?.rear?.lowerArm?.side,
+    rearShockMountingNotes: tune.chassisSetup?.rear?.dampers?.notes,
     rearHubCarrier: tune.chassisSetup?.rear?.hubCarrier?.model,
     rearAxleLength: tune.chassisSetup?.rear?.axle?.length,
     rearWheelBrand: tune.chassisSetup?.rear?.wheel?.brand,
@@ -733,6 +234,7 @@ function patchSharedSetupValue(tune: Tune, fieldId: string, value: BuilderValue)
 
   switch (fieldId) {
     case "chassisDeck":
+    case "lowerDeck":
     case "chassisBrace":
       chassisSetup.chassis.deck = stringValue;
       break;
@@ -833,6 +335,7 @@ function patchSharedSetupValue(tune: Tune, fieldId: string, value: BuilderValue)
       chassisSetup.rear.dampers.notes = stringValue;
       break;
     case "rearShockShaft":
+    case "rearShockMountingNotes":
       chassisSetup.rear.dampers.notes = stringValue;
       break;
     case "rearLowerArmBrand":
@@ -844,6 +347,9 @@ function patchSharedSetupValue(tune: Tune, fieldId: string, value: BuilderValue)
     case "rearLowerArmShims":
     case "rearSpacerNotes":
       chassisSetup.rear.lowerArm.shims = stringValue;
+      break;
+    case "rearLowerArmSide":
+      chassisSetup.rear.lowerArm.side = stringValue;
       break;
     case "rearHubCarrierBrand":
       chassisSetup.rear.hubCarrier.brand = stringValue;
@@ -949,10 +455,13 @@ export function UniversalTuneBuilder({
   const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [manualSaveBusy, setManualSaveBusy] = useState(false);
+  const [saveSuccessPulse, setSaveSuccessPulse] = useState(false);
   const [pitlaneBrowser, setPitlaneBrowser] = useState<{ tab: PitlaneProductTab; source: "electronics" | "tires" } | null>(null);
   const [pitlanePage, setPitlanePage] = useState<PitlanePage>("menu");
   const [pitlanePhotoManagerOpen, setPitlanePhotoManagerOpen] = useState(false);
   const [pitlanePhotoToRemove, setPitlanePhotoToRemove] = useState<TunePhoto | null>(null);
+  const [navigationPending, startNavigationTransition] = useTransition();
+  const savePulseTimeoutRef = useRef<number | null>(null);
   const carTunes = tunes.filter((tune) => tune.carId === carId);
   const modeFields = builderMode === "advanced" ? allBuilderFields : allBuilderFields.filter((field) => basicFieldIds.has(field.id));
   const completion = activeTune ? Math.round((completedFieldCount(activeTune, modeFields) / Math.max(1, modeFields.length)) * 100) : 0;
@@ -968,6 +477,11 @@ export function UniversalTuneBuilder({
       return basicFieldIds.has(field.id) || (existing !== undefined && String(existing).trim() !== "");
     });
   });
+  const countActiveTuneValues = (keys: string[]) => keys.filter((key) => String(activeTune?.values[key] ?? "").trim()).length;
+  const activePartsCount = countActiveTuneValues(["frontShockTower", "frontDamper", "frontLowerArm", "frontUpperArm", "frontKnuckle", "frontAxle", "rearShockTower", "rearDamper", "rearLowerArm", "rearUpperArm", "rearHubCarrier", "rearAxleLength", "ffToeBlock", "frToeBlock", "rfToeBlock", "rrToeBlock", "diffType"]);
+  const activeGeometryCount = countActiveTuneValues(["frontRideHeight", "frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "frontTrackWidth", "frontDroop", "frontPreload", "frontRebound", "frontUpperArmSpacer", "frontLowerArmSpacer", "frontShockPosition", "frontDamperMountingNotes", "rearRideHeight", "rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearDroop", "rearPreload", "rearRebound", "rfSusMountType", "rrSusMountType", "rfSusMountPosition", "rrSusMountPosition", "rearGeometryNotes", "rearAntiSquatNotes", "rearAxleHeightNotes"]);
+  const activeTireSummary = String(activeTune?.values.frontTire || activeTune?.values.rearTire || activeTune?.values.tires || activeTune?.values.frontWheel || "Select tires and wheels");
+  const activeBodyWeightSummary = [activeTune?.values.bodyShell || activeTune?.values.body, activeTune?.values.addedWeight, activeTune?.values.batteryPosition].filter(Boolean).join(" / ") || "Body, wing, weight";
 
   useEffect(() => {
     if (!selectedCar) return;
@@ -1004,9 +518,14 @@ export function UniversalTuneBuilder({
     return () => window.clearTimeout(handle);
   }, [activeTabId, visibleBuilderTabs]);
 
+  useEffect(() => () => {
+    if (savePulseTimeoutRef.current) window.clearTimeout(savePulseTimeoutRef.current);
+  }, []);
+
   async function saveWithConfirmation() {
     if (!activeTune || manualSaveBusy) return;
     setManualSaveBusy(true);
+    setSaveSuccessPulse(false);
     setSaveError("");
     let timedOut = false;
     const timeoutId = window.setTimeout(() => {
@@ -1020,7 +539,12 @@ export function UniversalTuneBuilder({
         setSaveError("Save failed. Your edits are still on this screen. Check the account sync message and try again.");
         return;
       }
-      if (!timedOut) setSaveConfirmOpen(true);
+      if (!timedOut) {
+        setSaveSuccessPulse(true);
+        if (savePulseTimeoutRef.current) window.clearTimeout(savePulseTimeoutRef.current);
+        savePulseTimeoutRef.current = window.setTimeout(() => setSaveSuccessPulse(false), 1400);
+        setSaveConfirmOpen(true);
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Save failed. Please try again.";
       setSaveError(message);
@@ -1189,29 +713,38 @@ export function UniversalTuneBuilder({
 
   function goToTab(tabId: BuilderTabId) {
     const tab = builderTabs.find((item) => item.id === tabId) ?? builderTabs[0];
-    setActiveTabId(tab.id);
-    setActiveStepId(tab.stepId);
-    setOpenSection(tab.sectionIds[0] ?? tab.id);
-    if (tab.id === "pdf") setPreviewOpen(true);
+    startNavigationTransition(() => {
+      setActiveTabId(tab.id);
+      setActiveStepId(tab.stepId);
+      setOpenSection(tab.sectionIds[0] ?? tab.id);
+      if (tab.id === "pdf") setPreviewOpen(true);
+    });
   }
 
   function switchBuilderMode(mode: "basic" | "advanced") {
-    setBuilderMode(mode);
-    if (mode === "basic" && !quickTuneTabIds.has(activeTabId)) {
-      goToTab(activeTabId === "electronics" || activeTabId === "tires" || activeTabId === "track" || activeTabId === "feel" ? "chassis" : "notes");
-    }
+    startNavigationTransition(() => {
+      setBuilderMode(mode);
+      if (mode === "basic" && !quickTuneTabIds.has(activeTabId)) {
+        goToTab(activeTabId === "electronics" || activeTabId === "tires" || activeTabId === "track" || activeTabId === "feel" ? "chassis" : "notes");
+      }
+    });
   }
 
   function openPitlanePage(page: Exclude<PitlanePage, "menu">) {
-    setPitlanePage(page);
-    setPitlanePhotoManagerOpen(false);
     const firstTabByPage: Record<Exclude<PitlanePage, "menu">, BuilderTabId> = {
       chassis: "chassis",
       surface: "track",
+      parts: "front",
+      geometry: "geometry",
+      body: "body",
       electronics: "electronics",
       tires: "tires"
     };
-    goToTab(firstTabByPage[page]);
+    startNavigationTransition(() => {
+      setPitlanePage(page);
+      setPitlanePhotoManagerOpen(false);
+      goToTab(firstTabByPage[page]);
+    });
   }
 
   function removePitlanePhoto(photoId: string) {
@@ -1282,6 +815,7 @@ export function UniversalTuneBuilder({
     if (!activeTune || !selectedCar) return;
     setPdfBusy(true);
     try {
+      const { generateUniversalTunePdf } = await import("../utils/universalPdfExport");
       const bytes = await generateUniversalTunePdf(activeTune, selectedCar, { shareUrl: absoluteShareUrl(activeTune.shareId || activeTune.id) });
       if (pdfPreviewUrl) URL.revokeObjectURL(pdfPreviewUrl);
       const blob = new Blob([bytes.slice().buffer], { type: "application/pdf" });
@@ -1298,6 +832,7 @@ export function UniversalTuneBuilder({
     try {
       const saved = await Promise.resolve(onSaveTune());
       if (saved === false) return;
+      const { downloadUniversalTunePdf } = await import("../utils/universalPdfExport");
       await downloadUniversalTunePdf(activeTune, selectedCar, { shareUrl: absoluteShareUrl(activeTune.shareId || activeTune.id) });
     } finally {
       setPdfBusy(false);
@@ -1311,29 +846,38 @@ export function UniversalTuneBuilder({
   const shouldRenderPitlane = Boolean(activeTune);
   if (shouldRenderPitlane) {
     const pitlaneTune = activeTune as Tune;
-    const pitlanePhotoSlots: Array<TunePhoto | null> = [
-      ...pitlaneTune.photos.slice(0, 2),
-      ...Array.from({ length: Math.max(0, 2 - pitlaneTune.photos.slice(0, 2).length) }, () => null)
-    ];
+    const pitlanePreviewPhotos = pitlaneTune.photos.slice(0, 10);
     const electronicsCount = [pitlaneTune.electronics?.motor?.model, pitlaneTune.electronics?.esc?.model, pitlaneTune.electronics?.servo?.model, pitlaneTune.electronics?.gyro?.model].filter(Boolean).length;
     const surfaceSummary = [pitlaneTune.track, pitlaneTune.surface].filter(Boolean).join(" / ") || "Set track and surface";
+    const countFilledValues = (keys: string[]) => keys.filter((key) => String(pitlaneTune.values[key] ?? "").trim()).length;
+    const partsCount = countFilledValues(["frontShockTower", "frontDamper", "frontLowerArm", "frontUpperArm", "frontKnuckle", "frontAxle", "rearShockTower", "rearDamper", "rearLowerArm", "rearUpperArm", "rearHubCarrier", "rearAxleLength", "ffToeBlock", "frToeBlock", "rfToeBlock", "rrToeBlock", "diffType"]);
+    const geometryCount = countFilledValues(["frontRideHeight", "frontCamber", "frontToe", "caster", "kpi", "ackerman", "steeringAngle", "frontTrackWidth", "frontDroop", "frontPreload", "frontRebound", "frontUpperArmSpacer", "frontLowerArmSpacer", "frontShockPosition", "frontDamperMountingNotes", "rearRideHeight", "rearCamber", "rearToe", "skidAngle", "rearRollCenter", "rearTrackWidth", "rearDroop", "rearPreload", "rearRebound", "rfSusMountType", "rrSusMountType", "rfSusMountPosition", "rrSusMountPosition", "rearGeometryNotes", "rearAntiSquatNotes", "rearAxleHeightNotes"]);
+    const tireSummary = String(pitlaneTune.values.frontTire || pitlaneTune.values.rearTire || pitlaneTune.values.tires || pitlaneTune.values.frontWheel || "Select tires / wheels");
+    const bodyWeightSummary = [pitlaneTune.values.bodyShell || pitlaneTune.values.body, pitlaneTune.values.addedWeight, pitlaneTune.values.batteryPosition].filter(Boolean).join(" / ") || "Body, wing, weight";
     const pitlanePageTitle: Record<PitlanePage, string> = {
       menu: builderMode === "basic" ? "Quick" : "Advanced",
       chassis: "Chassis",
       surface: "Surface",
+      parts: "Parts",
+      geometry: "Geometry",
+      body: "Body / Weight",
       electronics: "Electronics",
       tires: "Tires / Wheels"
     };
     const pitlaneSectionOptions: Record<Exclude<PitlanePage, "menu">, Array<{ id: BuilderTabId; label: string }>> = {
       chassis: [
         { id: "chassis", label: "Identity" },
-        { id: "front", label: "Front" },
-        { id: "rear", label: "Rear" },
-        { id: "drivetrain", label: "Drivetrain" },
         { id: "photos", label: "Photos" },
         { id: "notes", label: "Notes / Share" }
       ],
+      parts: [
+        { id: "front", label: "Front" },
+        { id: "rear", label: "Rear" },
+        { id: "drivetrain", label: "Drivetrain" }
+      ],
       surface: [{ id: "track", label: "Track" }],
+      geometry: [{ id: "geometry", label: "Geometry" }],
+      body: [{ id: "body", label: "Body / Weight" }],
       electronics: [
         { id: "electronics", label: "Motor" },
         { id: "esc", label: "ESC" },
@@ -1362,6 +906,10 @@ export function UniversalTuneBuilder({
               </SelectField>
               <SelectField label="Track condition" value={pitlaneTune.trackConditionPreset ?? ""} onChange={(event) => onUpdateTune({ ...pitlaneTune, trackConditionPreset: event.target.value, values: { ...pitlaneTune.values, trackConditionPreset: event.target.value }, updatedAt: new Date().toISOString() })}>
                 {surfaceConditionOptions.map((condition) => <option key={condition} value={condition}>{condition || "Skip for now"}</option>)}
+              </SelectField>
+              <TextField label="Track temperature" value={String(pitlaneTune.values.trackTemperature ?? "")} placeholder="ex. 72F / 22C" onChange={(event) => onUpdateTune({ ...pitlaneTune, values: { ...pitlaneTune.values, trackTemperature: event.target.value }, updatedAt: new Date().toISOString() })} />
+              <SelectField label="Layout speed" value={String(pitlaneTune.values.layoutSpeed ?? "")} onChange={(event) => onUpdateTune({ ...pitlaneTune, values: { ...pitlaneTune.values, layoutSpeed: event.target.value }, updatedAt: new Date().toISOString() })}>
+                {["", "Not sure", "Slow / technical", "Medium", "Fast", "Mixed"].map((speed) => <option key={speed} value={speed}>{speed || "Skip for now"}</option>)}
               </SelectField>
               <TextField
                 label="Best-for tags"
@@ -1396,7 +944,6 @@ export function UniversalTuneBuilder({
             tune={pitlaneTune}
             car={selectedCar}
             activeTabId={activeTabId}
-            builderMode={builderMode}
             electronicsProfiles={electronicsProfiles}
             onSaveElectronicsProfile={onSaveElectronicsProfile}
             onChange={(nextTune) => onUpdateTune(syncTuneSharedModel(nextTune, selectedCar))}
@@ -1437,7 +984,7 @@ export function UniversalTuneBuilder({
       );
     }
     return (
-      <main className={`pitlaneTuneExperience pitlanePage-${pitlanePage}`}>
+      <main className={`pitlaneTuneExperience pitlanePage-${pitlanePage} ${navigationPending ? "isNavigating" : ""}`}>
         <header className="pitlaneTuneTopbar" aria-label="Tune Builder mode">
           <button className="pitlaneBackButton" type="button" onClick={() => pitlanePage === "menu" ? window.history.back() : setPitlanePage("menu")} aria-label={pitlanePage === "menu" ? "Back" : "Back to Tune Builder menu"}>
             <ChevronDown size={23} />
@@ -1457,9 +1004,18 @@ export function UniversalTuneBuilder({
 
         <div className="pitlanePageTitle" aria-live="polite">
           <h1>{pitlanePageTitle[pitlanePage]}</h1>
-          <span>{pitlanePage === "menu" ? "Pick a setup area" : "Tap back to return to the four-button menu"}</span>
+          <span>{pitlanePage === "menu" ? "Pick a setup area" : "Tap back to return to the setup area menu"}</span>
         </div>
 
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pitlanePage}
+            className="pitlaneMotionPane"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+          >
         {pitlanePage === "menu" ? (
           <>
         <section className="pitlaneSetupCard" aria-label="Tune setup">
@@ -1473,6 +1029,21 @@ export function UniversalTuneBuilder({
             <span><small>Surface</small><strong>{surfaceSummary}</strong></span>
             <ChevronDown size={25} />
           </button>
+          <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("parts")}>
+            <span className="pitlaneRowIcon pitlaneRowIconParts"><Wrench size={24} /></span>
+            <span><small>Parts</small><strong>{partsCount ? `${partsCount} parts selected` : "Arms, towers, drivetrain"}</strong></span>
+            <ChevronDown size={25} />
+          </button>
+          <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("geometry")}>
+            <span className="pitlaneRowIcon pitlaneRowIconGeometry"><SlidersHorizontal size={24} /></span>
+            <span><small>Geometry</small><strong>{geometryCount ? `${geometryCount} values filled` : "Spacer and alignment descriptions"}</strong></span>
+            <ChevronDown size={25} />
+          </button>
+          <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("body")}>
+            <span className="pitlaneRowIcon pitlaneRowIconBody"><ClipboardCheck size={24} /></span>
+            <span><small>Body / Weight</small><strong>{bodyWeightSummary}</strong></span>
+            <ChevronDown size={25} />
+          </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("electronics")}>
             <span className="pitlaneRowIcon pitlaneRowIconElectronics"><CircuitBoard size={24} /></span>
             <span><small>Electronics</small><strong>{electronicsCount || 0} Items Selected</strong></span>
@@ -1480,7 +1051,7 @@ export function UniversalTuneBuilder({
           </button>
           <button className="pitlaneSetupRow" type="button" onClick={() => openPitlanePage("tires")}>
             <span className="pitlaneRowIcon pitlaneRowIconTires"><CircleDot size={24} /></span>
-            <span><small>Tires / Wheels</small><strong>{String(pitlaneTune.values.tires || pitlaneTune.values.frontWheel || "Select tires / wheels")}</strong></span>
+            <span><small>Tires / Wheels</small><strong>{tireSummary}</strong></span>
             <ChevronDown size={25} />
           </button>
         </section>
@@ -1491,20 +1062,22 @@ export function UniversalTuneBuilder({
             <span>{pitlaneTune.photos.length} / 10</span>
           </div>
           <div className="pitlanePhotoGrid">
-            {pitlanePhotoSlots.map((photo, index) => (
-              <div className="pitlanePhotoTile" key={photo?.id ?? `placeholder-${index}`}>
-                {photo ? <img src={displayPhotoUrl(photo)} alt={photo.label || "Tune photo"} /> : <img src="/icons/icon.svg" alt="" />}
-                {photo ? (
-                  <button type="button" aria-label="Remove photo" onClick={() => setPitlanePhotoToRemove(photo)}>
-                    <Trash2 size={16} />
-                  </button>
-                ) : null}
-              </div>
-            ))}
             <button className="pitlaneAddPhoto" type="button" onClick={() => setPitlanePhotoManagerOpen(true)}>
               <ImagePlus size={30} />
               Add Photo
             </button>
+            {pitlanePreviewPhotos.map((photo) => {
+              const photoUrl = displayPhotoUrl(photo);
+              if (!photoUrl) return null;
+              return (
+                <div className="pitlanePhotoTile" key={photo.id}>
+                  <img src={photoUrl} alt={photo.label || "Tune photo"} />
+                  <button type="button" aria-label="Remove photo" onClick={() => setPitlanePhotoToRemove(photo)}>
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </section>
 
@@ -1520,11 +1093,15 @@ export function UniversalTuneBuilder({
         </section>
           </>
         ) : renderPitlaneSubPage()}
+          </motion.div>
+        </AnimatePresence>
 
-        <button className="pitlaneSaveBar" type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
-          <span><Save size={30} /></span>
-          <strong>{manualSaveBusy ? "Saving..." : "Save Tune"}<em>Trackside Save</em></strong>
-          <span><Check size={32} /></span>
+        <button className={`pitlaneSaveBar ${manualSaveBusy ? "isSaving" : ""} ${saveSuccessPulse ? "isSaved" : ""}`} type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
+          <span className="pitlaneSaveIcon">
+            {manualSaveBusy ? <Loader2 size={30} className="spinIcon" /> : saveSuccessPulse ? <Check size={30} /> : <Save size={30} />}
+          </span>
+          <strong>{manualSaveBusy ? "Saving..." : saveSuccessPulse ? "Saved" : "Save Tune"}<em>{saveSuccessPulse ? "Synced" : "Trackside Save"}</em></strong>
+          <span className="pitlaneSaveCheck"><Check size={32} /></span>
         </button>
 
         {pitlaneBrowser ? (
@@ -1656,6 +1233,24 @@ export function UniversalTuneBuilder({
             <strong>{activeTune.surface || activeTune.track || "Track surface"}</strong>
             <ChevronDown size={20} />
           </button>
+          <button type="button" onClick={() => goToTab("front")}>
+            <span><Wrench size={21} /></span>
+            <em>Parts</em>
+            <strong>{activePartsCount ? `${activePartsCount} parts selected` : "Arms, towers, drivetrain"}</strong>
+            <ChevronDown size={20} />
+          </button>
+          <button type="button" onClick={() => goToTab("geometry")}>
+            <span><SlidersHorizontal size={21} /></span>
+            <em>Geometry</em>
+            <strong>{activeGeometryCount ? `${activeGeometryCount} values filled` : "Spacers and alignment"}</strong>
+            <ChevronDown size={20} />
+          </button>
+          <button type="button" onClick={() => goToTab("body")}>
+            <span><ClipboardCheck size={21} /></span>
+            <em>Body / Weight</em>
+            <strong>{activeBodyWeightSummary}</strong>
+            <ChevronDown size={20} />
+          </button>
           <button type="button" onClick={() => goToTab("electronics")}>
             <span><CircuitBoard size={21} /></span>
             <em>Electronics</em>
@@ -1665,7 +1260,7 @@ export function UniversalTuneBuilder({
           <button type="button" onClick={() => goToTab("tires")}>
             <span><CircleDot size={21} /></span>
             <em>Tires / Wheels</em>
-            <strong>{String(activeTune.values.tires || activeTune.values.frontWheel || "Select tires and wheels")}</strong>
+            <strong>{activeTireSummary}</strong>
             <ChevronDown size={20} />
           </button>
         </section>
@@ -1795,7 +1390,6 @@ export function UniversalTuneBuilder({
               tune={activeTune}
               car={selectedCar}
               activeTabId={activeTabId}
-              builderMode={builderMode}
               electronicsProfiles={electronicsProfiles}
               onSaveElectronicsProfile={onSaveElectronicsProfile}
               onChange={(nextTune) => onUpdateTune(syncTuneSharedModel(nextTune, selectedCar))}
@@ -1990,16 +1584,17 @@ export function UniversalTuneBuilder({
               <button className="smallPill" type="button" onClick={() => previousQuickTab && goToTab(previousQuickTab.id)} disabled={!previousQuickTab}>
                 Back
               </button>
-              <button className="smallPill nextStepButton" type="button" onClick={() => nextQuickTab ? goToTab(nextQuickTab.id) : saveWithConfirmation()} disabled={manualSaveBusy}>
-                {nextQuickTab ? `Next: ${nextQuickTab.label}` : manualSaveBusy ? "Saving..." : "Finish"}
+              <button className={`smallPill nextStepButton ${manualSaveBusy && !nextQuickTab ? "isSaving" : ""}`} type="button" onClick={() => nextQuickTab ? goToTab(nextQuickTab.id) : saveWithConfirmation()} disabled={manualSaveBusy}>
+                {!nextQuickTab && manualSaveBusy ? <Loader2 size={16} className="spinIcon" /> : null}
+                {nextQuickTab ? `Next: ${nextQuickTab.label}` : manualSaveBusy ? "Saving..." : saveSuccessPulse ? "Saved" : "Finish"}
               </button>
               <button className="smallPill pdfAction" type="button" onClick={previewPdf} disabled={pdfBusy}>
                 <FileText size={17} />
                 {pdfBusy ? "Building..." : "Preview PDF"}
               </button>
-              <button className="primaryAction" type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
-                <Save size={18} />
-                {manualSaveBusy ? "Saving..." : "Save"}
+              <button className={`primaryAction ${manualSaveBusy ? "isSaving" : ""} ${saveSuccessPulse ? "isSaved" : ""}`} type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
+                {manualSaveBusy ? <Loader2 size={18} className="spinIcon" /> : saveSuccessPulse ? <Check size={18} /> : <Save size={18} />}
+                {manualSaveBusy ? "Saving..." : saveSuccessPulse ? "Saved" : "Save"}
               </button>
             </div>
           ) : (
@@ -2013,9 +1608,9 @@ export function UniversalTuneBuilder({
               <FileText size={17} />
               {pdfBusy ? "Building..." : "PDF"}
             </button>
-            <button className="primaryAction" type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
-              <Save size={18} />
-              {manualSaveBusy ? "Saving..." : "Save"}
+            <button className={`primaryAction ${manualSaveBusy ? "isSaving" : ""} ${saveSuccessPulse ? "isSaved" : ""}`} type="button" onClick={saveWithConfirmation} disabled={manualSaveBusy}>
+              {manualSaveBusy ? <Loader2 size={18} className="spinIcon" /> : saveSuccessPulse ? <Check size={18} /> : <Save size={18} />}
+              {manualSaveBusy ? "Saving..." : saveSuccessPulse ? "Saved" : "Save"}
             </button>
             <button className="smallPill" type="button" onClick={exportPdf} disabled={pdfBusy}>
               <Download size={17} />
@@ -2037,13 +1632,18 @@ function pitlaneProductName(item: ProductCatalogItem) {
 }
 
 function pitlaneCategoriesForTab(tab: PitlaneProductTab, source: "electronics" | "tires"): ProductCatalogCategory[] {
-  if (source === "tires" && tab === "other") return ["tires", "frontWheels", "rearWheels"];
+  if (source === "tires") {
+    if (tab === "tires") return ["tires"];
+    if (tab === "frontWheels") return ["frontWheels"];
+    if (tab === "rearWheels") return ["rearWheels"];
+    return ["tires", "frontWheels", "rearWheels"];
+  }
   if (tab === "motor") return ["motors"];
   if (tab === "esc") return ["escs"];
   if (tab === "gyro") return ["gyros"];
   if (tab === "servo") return ["servos"];
-  if (tab === "other") return source === "tires" ? ["tires", "frontWheels", "rearWheels"] : ["capacitors"];
-  return source === "tires" ? ["tires", "frontWheels", "rearWheels"] : ["motors", "escs", "gyros", "servos"];
+  if (tab === "other") return ["capacitors"];
+  return ["motors", "escs", "gyros", "servos"];
 }
 
 function PitlaneProductBrowser({
@@ -2063,23 +1663,34 @@ function PitlaneProductBrowser({
   const [selectedId, setSelectedId] = useState("");
   const categories = pitlaneCategoriesForTab(activeTab, source);
   const allItems = getProductCatalog();
+  const categoryItems = categories.flatMap((category) => filterProductCatalog(allItems, {
+    category,
+    tuneSelectableOnly: true
+  }));
   const items = categories
     .flatMap((category) => filterProductCatalog(allItems, {
       category,
       brand: brand === "All" ? undefined : brand,
       tuneSelectableOnly: true
     }))
-    .slice(0, 24);
-  const brands = ["All", ...Array.from(new Set(items.map((item) => item.brand))).filter(Boolean).slice(0, 8)];
+    .slice(0, source === "tires" ? 48 : 24);
+  const brands = ["All", ...Array.from(new Set(categoryItems.map((item) => item.brand))).filter(Boolean).slice(0, source === "tires" ? 24 : 8)];
   const selected = items.find((item) => item.id === selectedId) ?? items[0];
-  const tabs: Array<{ id: PitlaneProductTab; label: string }> = [
-    { id: "all", label: "All" },
-    { id: "motor", label: "Motor" },
-    { id: "esc", label: "ESC" },
-    { id: "gyro", label: "Gyro" },
-    { id: "servo", label: "Servo" },
-    { id: "other", label: "Other" }
-  ];
+  const tabs: Array<{ id: PitlaneProductTab; label: string }> = source === "tires"
+    ? [
+        { id: "all", label: "All" },
+        { id: "tires", label: "Tires" },
+        { id: "frontWheels", label: "Front Wheels" },
+        { id: "rearWheels", label: "Rear Wheels" }
+      ]
+    : [
+        { id: "all", label: "All" },
+        { id: "motor", label: "Motor" },
+        { id: "esc", label: "ESC" },
+        { id: "gyro", label: "Gyro" },
+        { id: "servo", label: "Servo" },
+        { id: "other", label: "Other" }
+      ];
 
   return (
     <div className="pitlaneBrowserOverlay" role="presentation">
@@ -2146,6 +1757,10 @@ const beginnerHelpers: Record<string, string> = {
   chassisCatalogProduct: "The main chassis kit or platform this tune is for.",
   deckBrand: "Choose Stock if the deck is the original kit deck.",
   chassisDeck: "The main chassis plate or deck installed on the car.",
+  upperDeckBrand: "Choose Stock if the upper deck is the original kit upper deck.",
+  upperDeck: "The upper deck or top chassis brace installed on the car.",
+  lowerDeckBrand: "Choose Stock if the lower deck is the original kit lower deck.",
+  lowerDeck: "The lower deck or main chassis plate installed on the car.",
   transmissionGear: "Most drivers only need to know whether the gearbox is 3-gear or 4-gear.",
   frontShockTower: "The tower that holds the upper front shock positions.",
   rearShockTower: "The tower that holds the upper rear shock positions.",
@@ -2153,8 +1768,10 @@ const beginnerHelpers: Record<string, string> = {
   rearDamper: "The rear shock absorber/damper body installed on the car.",
   frontShockOil: "The oil weight used in the front dampers.",
   rearShockOil: "The oil weight used in the rear dampers.",
+  rearShockMountingNotes: "Describe the exact lower-arm hole, tower hole, spacers, and orientation so the rear shock setup is easy to repeat.",
   frontLowerArm: "The lower suspension arm used on the front suspension.",
   rearLowerArm: "The lower suspension arm used on the rear suspension.",
+  rearLowerArmSide: "Choose which side of the Reve D rear lower arm is being used for the shock mount.",
   frontUpperArm: "The upper arm or upper link used on the front suspension.",
   rearUpperArm: "The upper arm or upper link used on the rear suspension.",
   frontKnuckle: "The steering knuckle/upright used on the front suspension.",
@@ -2255,11 +1872,20 @@ function saveBasicRecent(ownerId: string | undefined, fieldId: string, value: st
   window.localStorage.setItem(basicRecentKey(ownerId, fieldId), JSON.stringify([clean, ...existing].slice(0, 6)));
 }
 
+function firstNonBlank(...values: Array<BuilderValue | null | undefined>) {
+  return values.map((value) => String(value ?? "").trim()).find(Boolean) ?? "";
+}
+
+function suspensionMountBushingOptionsFor(descriptor: string) {
+  if (/\breve\s*d\b|\breved\b/i.test(descriptor)) return ["A", "B", "C", "D", "E"];
+  if (/\byokomo\b/i.test(descriptor)) return ["1", "2", "3", "4", "5"];
+  return ["A", "B", "C", "D", "E", "1", "2", "3", "4", "5"];
+}
+
 function BasicTuneForm({
   tune,
   car,
   activeTabId,
-  builderMode,
   electronicsProfiles,
   onSaveElectronicsProfile,
   onChange
@@ -2267,7 +1893,6 @@ function BasicTuneForm({
   tune: Tune;
   car?: Car;
   activeTabId: BuilderTabId;
-  builderMode: "basic" | "advanced";
   electronicsProfiles: ElectronicsProfile[];
   onSaveElectronicsProfile: (profile: ElectronicsProfile) => void;
   onChange: (tune: Tune) => void;
@@ -2277,12 +1902,37 @@ function BasicTuneForm({
   const brandSlug = selectedBrand?.slug ?? "other";
   const models = modelsForBrand(brandSlug);
   const selectedModel = tune.chassisModel || (models.includes(chassisInfo.model) ? chassisInfo.model : models[0] ?? "Custom");
+  const fallbackRearSusMountBrand = firstNonBlank(tune.values.rearToeBlockBrand, tune.chassisSetup?.rear?.toeBlock?.brand, selectedBrand?.name, chassisInfo.brand);
+  const rfRearSusMountDescriptor = `${firstNonBlank(tune.values.rfToeBlockBrand, fallbackRearSusMountBrand)} ${firstNonBlank(tune.values.rfToeBlock, tune.values.rearToeBlock, tune.values.toeBlockSuspensionMount)}`;
+  const rrRearSusMountDescriptor = `${firstNonBlank(tune.values.rrToeBlockBrand, fallbackRearSusMountBrand)} ${firstNonBlank(tune.values.rrToeBlock, tune.values.rearToeBlock, tune.values.toeBlockSuspensionMount)}`;
+  const rfRearSusMountBushingOptions = suspensionMountBushingOptionsFor(rfRearSusMountDescriptor);
+  const rrRearSusMountBushingOptions = suspensionMountBushingOptionsFor(rrRearSusMountDescriptor);
   const isReveDMultiKnuckleChassis = brandSlug === "reve-d" && /rdx|mc-?iii|mc-?3/i.test(`${selectedModel} ${chassisInfo.model}`);
+  const rearLowerArmBrandText = String(tune.values.rearLowerArmBrand ?? tune.chassisSetup?.rear?.lowerArm?.brand ?? "");
+  const isReveDRearLowerArm = /\breve\s*d\b|\breved\b/i.test(rearLowerArmBrandText);
+  const rearLowerArmSideValue = String(tune.values.rearLowerArmSide ?? tune.chassisSetup?.rear?.lowerArm?.side ?? "");
+  const rearLowerArmOrientation = /down|curved/i.test(rearLowerArmSideValue) ? "Down position" : rearLowerArmSideValue ? "Straight position" : "";
   const internalRatioPreset = suggestedInternalRatio(brandSlug);
   const internalDriveRatioValue = String(tune.values.internalDriveRatio ?? internalRatioPreset?.internalRatio ?? "");
   const autoFdrValue = calculateFinalDriveRatio(tune.values.spurGear, tune.values.pinionGear, internalDriveRatioValue);
   const fdrAutoEnabled = tune.values.fdrAuto !== false;
+  const [recentlyChangedField, setRecentlyChangedField] = useState("");
+  const changedFieldTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (changedFieldTimeoutRef.current) window.clearTimeout(changedFieldTimeoutRef.current);
+  }, []);
+
+  function markFieldUpdated(values: Record<string, BuilderValue>) {
+    const changedKey = Object.keys(values)[0];
+    if (!changedKey) return;
+    setRecentlyChangedField(changedKey);
+    if (changedFieldTimeoutRef.current) window.clearTimeout(changedFieldTimeoutRef.current);
+    changedFieldTimeoutRef.current = window.setTimeout(() => setRecentlyChangedField(""), 800);
+  }
+
   function patchValues(values: Record<string, BuilderValue>, patch: Partial<Tune> = {}, extraSelections: Record<string, string> = {}) {
+    markFieldUpdated(values);
     onChange({
       ...tune,
       ...patch,
@@ -2361,63 +2011,60 @@ function BasicTuneForm({
     );
   }
 
-  function visualValuesFor(definition: VisualSetupDefinition, helperId: SuspensionMountVisualRequest["helperId"]) {
-    const acceptedLabels = new Set(definition.options.map((option) => option.label));
-    const storedPositions = tune.visualSetup?.[helperId]?.positions ?? {};
-    return Object.fromEntries(
-      definition.slots.map((slot) => {
-        const value = String(tune.values[slot.fieldId] ?? storedPositions[slot.fieldId] ?? "");
-        return [slot.fieldId, acceptedLabels.has(value) ? value : ""];
-      })
-    );
+  function valueForSetup(key: string) {
+    return String(tune.values[key] ?? "");
   }
 
-  function patchVisualSetupSelection(
-    request: SuspensionMountVisualRequest,
-    definition: VisualSetupDefinition,
-    slot: VisualSetupSlot,
-    option: VisualSetupOption
-  ) {
-    const now = new Date().toISOString();
-    const previous = tune.visualSetup?.[request.helperId];
-    const positions = {
-      ...(previous?.positions ?? {}),
-      [slot.fieldId]: option.label
-    };
-    patchValues(
-      { [slot.fieldId]: option.label },
-      {
-        visualSetup: {
-          ...(tune.visualSetup ?? {}),
-          [request.helperId]: {
-            helperId: request.helperId,
-            brand: definition.brand,
-            partCategory: definition.partCategory,
-            definitionVersion: definition.version,
-            source: definition.source,
-            label: request.label,
-            positions,
-            updatedAt: now
-          }
-        }
-      },
-      { [slot.fieldId]: option.label }
-    );
-  }
-
-  function renderSuspensionMountVisual(request: SuspensionMountVisualRequest) {
-    const definition = resolveSuspensionMountVisualDefinition({
-      ...request,
-      partBrand: request.partBrand ?? String(tune.values[`${request.helperId}Brand`] ?? ""),
-      chassisBrand: request.chassisBrand ?? String(tune.chassisBrand ?? tune.customChassisBrand ?? chassisInfo.brand ?? ""),
-      tune
-    });
+  function renderSetupTextField(label: string, valueKey: string, placeholder = "", inputMode?: "text" | "decimal" | "numeric", quickValues: string[] = []) {
+    const allowsSignedValue = signedSetupValueKeys.has(valueKey);
     return (
-      <VisualSetupHelper
-        definition={definition}
-        values={visualValuesFor(definition, request.helperId)}
-        onSelect={(slot, option) => patchVisualSetupSelection(request, definition, slot, option)}
-      />
+      <div className={`rdxSheetField ${recentlyChangedField === valueKey ? "fieldJustUpdated" : ""}`}>
+        <TextField
+          label={label}
+          value={valueForSetup(valueKey)}
+          placeholder={placeholder}
+          inputMode={allowsSignedValue ? "text" : inputMode}
+          data-signed-number={allowsSignedValue ? "true" : undefined}
+          autoComplete="off"
+          onChange={(event) => patchValues({ [valueKey]: event.target.value })}
+        />
+        {quickValues.length ? (
+          <div className="setupQuickValues" aria-label={`${label} quick values`}>
+            {quickValues.map((quickValue) => (
+              <button key={quickValue} className="smallPill" type="button" onClick={() => patchValues({ [valueKey]: quickValue })}>
+                {quickValue}
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    );
+  }
+
+  function renderSetupSelectField(label: string, valueKey: string, options: string[], placeholder = "Select") {
+    const value = String(tune.values[valueKey] ?? "");
+    const nextOptions = value && !options.includes(value) ? [value, ...options] : options;
+    return (
+      <div className={`rdxSheetField ${recentlyChangedField === valueKey ? "fieldJustUpdated" : ""}`}>
+        <SelectField label={label} value={value} onChange={(event) => patchValues({ [valueKey]: event.target.value })}>
+          <option value="">{placeholder}</option>
+          {nextOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+        </SelectField>
+      </div>
+    );
+  }
+
+  function renderSetupTextarea(label: string, valueKey: string, placeholder = "") {
+    return (
+      <div className={`rdxSheetField ${recentlyChangedField === valueKey ? "fieldJustUpdated" : ""}`}>
+        <TextAreaField
+          label={label}
+          value={String(tune.values[valueKey] ?? "")}
+          placeholder={placeholder}
+          rows={3}
+          onChange={(event) => patchValues({ [valueKey]: event.target.value })}
+        />
+      </div>
     );
   }
 
@@ -2613,11 +2260,22 @@ function BasicTuneForm({
             }}
           />
           <PartSelector
-            label="Deck"
-            category="decks"
-            value={selectorValueFromFields("chassisDeck", "deckBrand", "decks", String(tune.values.deckBrand ?? tune.chassisBrand ?? chassisInfo.brand ?? ""), String(tune.chassisSetup?.chassis?.deck ?? ""))}
-            emptyLabel="Select deck"
-            onChange={(part) => patchPartSelector("chassisDeck", "deckBrand", "decks", part)}
+            label="Upper deck"
+            category="upperDecks"
+            value={selectorValueFromFields("upperDeck", "upperDeckBrand", "upperDecks", String(tune.values.upperDeckBrand ?? tune.values.deckBrand ?? tune.chassisBrand ?? chassisInfo.brand ?? ""), String(tune.values.upperDeck ?? ""))}
+            emptyLabel="Select upper deck"
+            onChange={(part) => patchPartSelector("upperDeck", "upperDeckBrand", "upperDecks", part)}
+          />
+          <PartSelector
+            label="Lower deck / main chassis plate"
+            category="lowerDecks"
+            value={selectorValueFromFields("lowerDeck", "lowerDeckBrand", "lowerDecks", String(tune.values.lowerDeckBrand ?? tune.values.deckBrand ?? tune.chassisBrand ?? chassisInfo.brand ?? ""), String(tune.values.lowerDeck ?? tune.values.chassisDeck ?? tune.chassisSetup?.chassis?.deck ?? ""))}
+            emptyLabel="Select lower deck"
+            onChange={(part) => {
+              const brand = part.brand ?? "";
+              const model = part.model || part.customName || "";
+              patchPartSelector("lowerDeck", "lowerDeckBrand", "lowerDecks", part, { chassisDeck: model, deckBrand: brand });
+            }}
           />
           <fieldset className="wizardChoiceGroup"><legend>Transmission</legend>{[BEGINNER_NOT_SURE_OPTION, "3 gear", "4 gear"].map((option) => <label key={option}><input type="radio" name={`transmission-${tune.id}`} checked={tune.values.transmissionGear === option} onChange={() => patchValues({ transmissionGear: option })} /><span>{option}</span></label>)}</fieldset>
           <div className="formSplit">
@@ -2640,14 +2298,29 @@ function BasicTuneForm({
       <BasicTuneSection title="Track" helper="Save where this setup is meant to run. You can leave either field blank and finish it later.">
         <TextField label="Track name" value={tune.track} placeholder="Track or location name" onChange={(event) => onChange({ ...tune, track: event.target.value, values: { ...tune.values, track: event.target.value }, updatedAt: new Date().toISOString() })} />
         <SelectField label="Surface" value={tune.surface} onChange={(event) => onChange({ ...tune, surface: event.target.value, values: { ...tune.values, surface: event.target.value }, updatedAt: new Date().toISOString() })}>
-          {["", BEGINNER_NOT_SURE_OPTION, "P-tile", "Carpet", "Asphalt", "Polished concrete", "Epoxy", "Painted concrete", "Other / Custom"].map((surface) => <option key={surface} value={surface}>{surface || "Skip for now"}</option>)}
+          {["", BEGINNER_NOT_SURE_OPTION, "P-tile", "Carpet", "Asphalt", "Polished concrete", "Epoxy", "Painted concrete", "Smooth concrete", "Other / Custom"].map((surface) => <option key={surface} value={surface}>{surface || "Skip for now"}</option>)}
         </SelectField>
+        <div className="formSplit">
+          <SelectField label="Grip level" value={tune.grip} onChange={(event) => onChange({ ...tune, grip: event.target.value, values: { ...tune.values, grip: event.target.value }, updatedAt: new Date().toISOString() })}>
+            {["", "Not sure", "Low", "Low-medium", "Medium", "High", "Very high"].map((grip) => <option key={grip} value={grip}>{grip || "Skip for now"}</option>)}
+          </SelectField>
+          <SelectField label="Track condition" value={tune.trackConditionPreset ?? ""} onChange={(event) => onChange({ ...tune, trackConditionPreset: event.target.value, values: { ...tune.values, trackConditionPreset: event.target.value }, updatedAt: new Date().toISOString() })}>
+            {["", "Not sure", "Dusty", "Clean", "Cold", "Warm", "Fresh layout", "Grooved-in", "Competition day", "Practice day"].map((condition) => <option key={condition} value={condition}>{condition || "Skip for now"}</option>)}
+          </SelectField>
+        </div>
+        <div className="formSplit">
+          <TextField label="Track temperature" value={String(tune.values.trackTemperature ?? "")} placeholder="ex. 72F / 22C" onChange={(event) => patchValues({ trackTemperature: event.target.value })} />
+          <SelectField label="Layout speed" value={String(tune.values.layoutSpeed ?? "")} onChange={(event) => patchValues({ layoutSpeed: event.target.value })}>
+            {["", "Not sure", "Slow / technical", "Medium", "Fast", "Mixed"].map((speed) => <option key={speed} value={speed}>{speed || "Skip for now"}</option>)}
+          </SelectField>
+        </div>
+        <TextAreaField label="Track notes" value={String(tune.values.trackNotes ?? "")} placeholder="Dust, temp change, layout speed, surface prep, and traffic notes..." onChange={(event) => patchValues({ trackNotes: event.target.value })} />
       </BasicTuneSection>
       ) : null}
 
       {activeTabId === "tires" ? (
       <>
-      <BasicTuneSection title="Tires">
+      <BasicTuneSection title="Tires" defaultOpen>
         <PartSelector
           label="Front tire"
           category="tires"
@@ -2655,7 +2328,10 @@ function BasicTuneForm({
           emptyLabel="Select front tire"
           onChange={(part) => patchPartSelector("frontTire", "frontTireBrand", "tires", part)}
         />
-        <TextField label="Front Tire Compound" value={String(tune.values.frontTireCompound ?? "")} placeholder="ex. LF-4, LF-5, hard, soft" onChange={(event) => patchValues({ frontTireCompound: event.target.value })} />
+        <div className="formSplit">
+          <TextField label="Front tire compound" value={String(tune.values.frontTireCompound ?? "")} placeholder="ex. LF-4, LF-5, hard, soft" onChange={(event) => patchValues({ frontTireCompound: event.target.value })} />
+          <TextField label="Front tire diameter" value={String(tune.values.frontTireDiameter ?? "")} placeholder="ex. 62.5mm" inputMode="decimal" onChange={(event) => patchValues({ frontTireDiameter: event.target.value })} />
+        </div>
         <PartSelector
           label="Rear tire"
           category="tires"
@@ -2663,9 +2339,14 @@ function BasicTuneForm({
           emptyLabel="Select rear tire"
           onChange={(part) => patchPartSelector("rearTire", "rearTireBrand", "tires", part)}
         />
-        <TextField label="Rear Tire Compound" value={String(tune.values.rearTireCompound ?? "")} placeholder="ex. LF-4, LF-5, hard, soft" onChange={(event) => patchValues({ rearTireCompound: event.target.value })} />
+        <div className="formSplit">
+          <TextField label="Rear tire compound" value={String(tune.values.rearTireCompound ?? "")} placeholder="ex. LF-4, LF-5, hard, soft" onChange={(event) => patchValues({ rearTireCompound: event.target.value })} />
+          <TextField label="Rear tire diameter" value={String(tune.values.rearTireDiameter ?? "")} placeholder="ex. 63mm" inputMode="decimal" onChange={(event) => patchValues({ rearTireDiameter: event.target.value })} />
+        </div>
+        <TextAreaField label="Tire prep notes" value={String(tune.values.tirePrepNotes ?? "")} placeholder="Cleaner, sauce, sanding, break-in laps..." onChange={(event) => patchValues({ tirePrepNotes: event.target.value })} />
+        <TextAreaField label="Tire wear notes" value={String(tune.values.tireWearNotes ?? "")} placeholder="Fresh, worn edge, coned, heat cycle notes..." onChange={(event) => patchValues({ tireWearNotes: event.target.value })} />
       </BasicTuneSection>
-      <BasicTuneSection title="Wheels">
+      <BasicTuneSection title="Wheels" defaultOpen>
         <PartSelector
           label="Front wheel"
           category="frontWheels"
@@ -2675,7 +2356,7 @@ function BasicTuneForm({
         />
         <div className="formSplit">
           <BasicChoice fieldId="frontWheelOffset" ownerId={tune.ownerId} label="Front wheel offset" value={String(tune.values.frontWheelOffset ?? tune.chassisSetup?.front?.wheel?.offset ?? "")} options={basicTuneOptions.wheelOffset} onChange={(value) => patchValues({ frontWheelOffset: value })} />
-          <TextField label="Front Wheel Width" value={String(tune.values.frontWheelWidth ?? tune.chassisSetup?.front?.wheel?.width ?? "")} placeholder="ex. 26mm" onChange={(event) => patchValues({ frontWheelWidth: event.target.value })} />
+          <TextField label="Front wheel width" value={String(tune.values.frontWheelWidth ?? tune.chassisSetup?.front?.wheel?.width ?? "")} placeholder="ex. 26mm" onChange={(event) => patchValues({ frontWheelWidth: event.target.value })} />
         </div>
         <PartSelector
           label="Rear wheel"
@@ -2686,8 +2367,43 @@ function BasicTuneForm({
         />
         <div className="formSplit">
           <BasicChoice fieldId="rearWheelOffset" ownerId={tune.ownerId} label="Rear wheel offset" value={String(tune.values.rearWheelOffset ?? tune.chassisSetup?.rear?.wheel?.offset ?? "")} options={basicTuneOptions.wheelOffset} onChange={(value) => patchValues({ rearWheelOffset: value })} />
-          <TextField label="Rear Wheel Width" value={String(tune.values.rearWheelWidth ?? tune.chassisSetup?.rear?.wheel?.width ?? "")} placeholder="ex. 26mm" onChange={(event) => patchValues({ rearWheelWidth: event.target.value })} />
+          <TextField label="Rear wheel width" value={String(tune.values.rearWheelWidth ?? tune.chassisSetup?.rear?.wheel?.width ?? "")} placeholder="ex. 26mm" onChange={(event) => patchValues({ rearWheelWidth: event.target.value })} />
         </div>
+      </BasicTuneSection>
+      </>
+      ) : null}
+
+      {activeTabId === "body" ? (
+      <>
+      <BasicTuneSection title="Body / Weight" helper="Body shell, wing, battery position, and weight balance notes." defaultOpen>
+        <TuneSubcategory title="Body fitment" helper="Shell, wing, mount, and ride fitment details.">
+          <TextField label="Body shell" value={String(tune.values.bodyShell ?? tune.values.body ?? "")} placeholder="ex. GR86, S15, Mark II" onChange={(event) => patchValues({ bodyShell: event.target.value, body: event.target.value })} />
+          <div className="formSplit">
+            <TextField label="Body mount position" value={String(tune.values.bodyMountPosition ?? "")} placeholder="ex. front +2, rear stock" onChange={(event) => patchValues({ bodyMountPosition: event.target.value })} />
+            <TextField label="Body height" value={String(tune.values.bodyHeight ?? "")} placeholder="ex. 6mm gap / low" onChange={(event) => patchValues({ bodyHeight: event.target.value })} />
+          </div>
+          <div className="formSplit">
+            <TextField label="Wing" value={String(tune.values.aeroWing ?? tune.values.wing ?? "")} placeholder="ex. stock, high mount, none" onChange={(event) => patchValues({ aeroWing: event.target.value, wing: event.target.value })} />
+            <TextField label="Wing position" value={String(tune.values.wingPosition ?? "")} placeholder="ex. high / rearward / 10 deg" onChange={(event) => patchValues({ wingPosition: event.target.value })} />
+          </div>
+          <TextAreaField label="Aero notes" value={String(tune.values.aeroNotes ?? "")} placeholder="Body rubbing, wing angle, diffuser, bumper clearance..." onChange={(event) => patchValues({ aeroNotes: event.target.value })} />
+        </TuneSubcategory>
+        <TuneSubcategory title="Weight balance" helper="Battery location, added weight, and corner balance notes.">
+          <SelectField label="Battery position" value={String(tune.values.batteryPosition ?? "")} onChange={(event) => patchValues({ batteryPosition: event.target.value })}>
+            {["", "Not sure", "Front", "Middle", "Rear", "Left side", "Right side", "Transverse", "Longitudinal", "Stock"].map((option) => <option key={option} value={option}>{option || "Skip for now"}</option>)}
+          </SelectField>
+          <div className="formSplit">
+            <TextField label="Added weight" value={String(tune.values.addedWeight ?? "")} placeholder="ex. 20g" onChange={(event) => patchValues({ addedWeight: event.target.value })} />
+            <TextField label="Weight location" value={String(tune.values.weightLocation ?? "")} placeholder="ex. behind servo / rear left" onChange={(event) => patchValues({ weightLocation: event.target.value })} />
+          </div>
+          <TextField label="Body weight" value={String(tune.values.bodyWeight ?? "")} placeholder="ex. 145g painted" onChange={(event) => patchValues({ bodyWeight: event.target.value })} />
+          <div className="formSplit">
+            <TextField label="Front weight notes" value={String(tune.values.frontWeight ?? "")} placeholder="ex. 38%" onChange={(event) => patchValues({ frontWeight: event.target.value })} />
+            <TextField label="Rear weight notes" value={String(tune.values.rearWeight ?? "")} placeholder="ex. 62%" onChange={(event) => patchValues({ rearWeight: event.target.value })} />
+          </div>
+          <TextField label="Side weight notes" value={String(tune.values.sideWeight ?? "")} placeholder="ex. left 51% / right 49%" onChange={(event) => patchValues({ sideWeight: event.target.value })} />
+          <TextAreaField label="Weight balance notes" value={String(tune.values.weightBalanceNotes ?? "")} placeholder="Battery tray holes, brass location, scale readings, balance feel..." onChange={(event) => patchValues({ weightBalanceNotes: event.target.value })} />
+        </TuneSubcategory>
       </BasicTuneSection>
       </>
       ) : null}
@@ -2696,6 +2412,7 @@ function BasicTuneForm({
       <BasicTuneSection title={activeTabId === "front" ? "Front setup" : "Rear setup"} helper={activeTabId === "front" ? "Front suspension, steering, shock, and wheel parts only." : "Rear suspension, toe, hub, shock, and wheel parts only."}>
         {activeTabId === "front" ? (
         <>
+        <TuneSubcategory title="Core front parts" helper="The main pieces most drivers check first.">
         <PartSelector
           label="Front shock tower"
           category="frontShockTowers"
@@ -2712,6 +2429,24 @@ function BasicTuneForm({
           helper={beginnerHelpers.frontDamper}
           onChange={(part) => patchPartSelector("frontDamper", "frontDamperBrand", "dampers", part)}
         />
+        <PartSelector
+          label="Front lower arm"
+          category="frontLowerArms"
+          value={selectorValueFromFields("frontLowerArm", "frontLowerArmBrand", "frontLowerArms", String(tune.chassisSetup?.front?.lowerArm?.brand ?? ""), String(tune.chassisSetup?.front?.lowerArm?.model ?? ""))}
+          emptyLabel="Select front lower arm"
+          helper={beginnerHelpers.frontLowerArm}
+          onChange={(part) => patchPartSelector("frontLowerArm", "frontLowerArmBrand", "frontLowerArms", part)}
+        />
+        <PartSelector
+          label="Front upper arm"
+          category="frontUpperArms"
+          value={selectorValueFromFields("frontUpperArm", "frontUpperArmBrand", "frontUpperArms", String(tune.chassisSetup?.front?.upperArm?.brand ?? ""), String(tune.values.frontUpperLink ?? tune.chassisSetup?.front?.upperArm?.model ?? ""))}
+          emptyLabel="Select front upper arm"
+          helper={beginnerHelpers.frontUpperArm}
+          onChange={(part) => patchPartSelector("frontUpperArm", "frontUpperArmBrand", "frontUpperArms", part, { frontUpperLink: part.model || part.customName || "" })}
+        />
+        </TuneSubcategory>
+        <TuneSubcategory title="Front shock details" helper="Piston, shaft, and oil details for deeper shock notes." defaultOpen={false}>
         <PartSelector
           label="Front piston"
           category="shockPistons"
@@ -2733,22 +2468,8 @@ function BasicTuneForm({
           emptyLabel="Select front damper oil"
           onChange={(part) => patchPartSelector("frontShockOil", "frontDamperOilBrand", "damperOils", part)}
         />
-        <PartSelector
-          label="Front lower arm"
-          category="frontLowerArms"
-          value={selectorValueFromFields("frontLowerArm", "frontLowerArmBrand", "frontLowerArms", String(tune.chassisSetup?.front?.lowerArm?.brand ?? ""), String(tune.chassisSetup?.front?.lowerArm?.model ?? ""))}
-          emptyLabel="Select front lower arm"
-          helper={beginnerHelpers.frontLowerArm}
-          onChange={(part) => patchPartSelector("frontLowerArm", "frontLowerArmBrand", "frontLowerArms", part)}
-        />
-        <PartSelector
-          label="Front upper arm"
-          category="frontUpperArms"
-          value={selectorValueFromFields("frontUpperArm", "frontUpperArmBrand", "frontUpperArms", String(tune.chassisSetup?.front?.upperArm?.brand ?? ""), String(tune.values.frontUpperLink ?? tune.chassisSetup?.front?.upperArm?.model ?? ""))}
-          emptyLabel="Select front upper arm"
-          helper={beginnerHelpers.frontUpperArm}
-          onChange={(part) => patchPartSelector("frontUpperArm", "frontUpperArmBrand", "frontUpperArms", part, { frontUpperLink: part.model || part.customName || "" })}
-        />
+        </TuneSubcategory>
+        <TuneSubcategory title="Front suspension mounts" helper="FF/FR mount choices and insert position notes." defaultOpen={false}>
         <PartSelector
           label="FF suspension mount"
           category="frontToeBlocks"
@@ -2760,12 +2481,7 @@ function BasicTuneForm({
             ...(tune.values.frontToeBlockBrand ? {} : { frontToeBlockBrand: part.brand || "" })
           })}
         />
-        {renderSuspensionMountVisual({
-          helperId: "ffToeBlock",
-          label: "FF suspension mount",
-          partCategory: "frontToeBlocks",
-          partBrand: String(tune.values.ffToeBlockBrand ?? tune.values.frontToeBlockBrand ?? "")
-        })}
+        <TextAreaField label="FF mount insert / spacer notes" value={String(tune.values.ffToeBlockInsertNotes ?? tune.values.ffToeBlockPositionNotes ?? "")} placeholder="Describe insert marks, dot direction, shims, or spacer stack." rows={3} onChange={(event) => patchValues({ ffToeBlockInsertNotes: event.target.value, ffToeBlockPositionNotes: event.target.value })} />
         <PartSelector
           label="FR suspension mount"
           category="frontToeBlocks"
@@ -2777,15 +2493,12 @@ function BasicTuneForm({
             ...(tune.values.frontToeBlockBrand ? {} : { frontToeBlockBrand: part.brand || "" })
           })}
         />
-        {renderSuspensionMountVisual({
-          helperId: "frToeBlock",
-          label: "FR suspension mount",
-          partCategory: "frontToeBlocks",
-          partBrand: String(tune.values.frToeBlockBrand ?? tune.values.frontToeBlockBrand ?? "")
-        })}
+        <TextAreaField label="FR mount insert / spacer notes" value={String(tune.values.frToeBlockInsertNotes ?? tune.values.frToeBlockPositionNotes ?? "")} placeholder="Describe insert marks, dot direction, shims, or spacer stack." rows={3} onChange={(event) => patchValues({ frToeBlockInsertNotes: event.target.value, frToeBlockPositionNotes: event.target.value })} />
+        </TuneSubcategory>
         </>
         ) : (
         <>
+        <TuneSubcategory title="Core rear parts" helper="Rear shocks, arms, and hub carrier essentials.">
         <PartSelector
           label="Rear shock tower"
           category="rearShockTowers"
@@ -2802,6 +2515,41 @@ function BasicTuneForm({
           helper={beginnerHelpers.rearDamper}
           onChange={(part) => patchPartSelector("rearDamper", "rearDamperBrand", "dampers", part)}
         />
+        <PartSelector
+          label="Rear lower arm"
+          category="rearLowerArms"
+          value={selectorValueFromFields("rearLowerArm", "rearLowerArmBrand", "rearLowerArms", String(tune.chassisSetup?.rear?.lowerArm?.brand ?? ""), String(tune.chassisSetup?.rear?.lowerArm?.model ?? ""))}
+          emptyLabel="Select rear lower arm"
+          helper={beginnerHelpers.rearLowerArm}
+          onChange={(part) => patchPartSelector("rearLowerArm", "rearLowerArmBrand", "rearLowerArms", part)}
+        />
+        {isReveDRearLowerArm ? (
+          <fieldset className="wizardChoiceGroup fieldWide">
+            <legend>Reve D HT rear lower arm orientation</legend>
+            {["Straight position", "Down position"].map((option) => (
+              <label key={option}>
+                <input
+                  type="radio"
+                  name={`rear-lower-arm-side-${tune.id}`}
+                  checked={rearLowerArmOrientation === option}
+                  onChange={() => patchValues({ rearLowerArmSide: option })}
+                />
+                <span>{option}</span>
+              </label>
+            ))}
+            <small className="fieldHelper">Straight position improves traction performance during on-power driving. Down position can help improve sideway grip.</small>
+          </fieldset>
+        ) : null}
+        <PartSelector
+          label="Rear upper arm"
+          category="rearUpperArms"
+          value={selectorValueFromFields("rearUpperArm", "rearUpperArmBrand", "rearUpperArms", String(tune.chassisSetup?.rear?.upperArm?.brand ?? ""), String(tune.values.rearUpperLink ?? tune.chassisSetup?.rear?.upperArm?.model ?? ""))}
+          emptyLabel="Select rear upper arm"
+          helper={beginnerHelpers.rearUpperArm}
+          onChange={(part) => patchPartSelector("rearUpperArm", "rearUpperArmBrand", "rearUpperArms", part, { rearUpperLink: part.model || part.customName || "" })}
+        />
+        </TuneSubcategory>
+        <TuneSubcategory title="Rear shock details" helper="Mounting note, piston, shaft, and oil details." defaultOpen={false}>
         <PartSelector
           label="Rear piston"
           category="shockPistons"
@@ -2823,22 +2571,18 @@ function BasicTuneForm({
           emptyLabel="Select rear damper oil"
           onChange={(part) => patchPartSelector("rearShockOil", "rearDamperOilBrand", "damperOils", part)}
         />
-        <PartSelector
-          label="Rear lower arm"
-          category="rearLowerArms"
-          value={selectorValueFromFields("rearLowerArm", "rearLowerArmBrand", "rearLowerArms", String(tune.chassisSetup?.rear?.lowerArm?.brand ?? ""), String(tune.chassisSetup?.rear?.lowerArm?.model ?? ""))}
-          emptyLabel="Select rear lower arm"
-          helper={beginnerHelpers.rearLowerArm}
-          onChange={(part) => patchPartSelector("rearLowerArm", "rearLowerArmBrand", "rearLowerArms", part)}
-        />
-        <PartSelector
-          label="Rear upper arm"
-          category="rearUpperArms"
-          value={selectorValueFromFields("rearUpperArm", "rearUpperArmBrand", "rearUpperArms", String(tune.chassisSetup?.rear?.upperArm?.brand ?? ""), String(tune.values.rearUpperLink ?? tune.chassisSetup?.rear?.upperArm?.model ?? ""))}
-          emptyLabel="Select rear upper arm"
-          helper={beginnerHelpers.rearUpperArm}
-          onChange={(part) => patchPartSelector("rearUpperArm", "rearUpperArmBrand", "rearUpperArms", part, { rearUpperLink: part.model || part.customName || "" })}
-        />
+        <div className="builderField fieldWide">
+          <TextAreaField
+            label="Rear shock mounting location"
+            value={String(tune.values.rearShockMountingNotes ?? "")}
+            placeholder="ex. Lower arm 3rd hole from outside; top spaced 6mm from the shock tower"
+            rows={3}
+            onChange={(event) => patchValues({ rearShockMountingNotes: event.target.value })}
+          />
+          <small className="fieldHelper">{beginnerHelpers.rearShockMountingNotes}</small>
+        </div>
+        </TuneSubcategory>
+        <TuneSubcategory title="Rear suspension mounts" helper="RF/RR mount choices and insert position notes." defaultOpen={false}>
         <PartSelector
           label="RF suspension mount"
           category="rearToeBlocks"
@@ -2850,12 +2594,7 @@ function BasicTuneForm({
             ...(tune.values.rearToeBlockBrand ? {} : { rearToeBlockBrand: part.brand || "" })
           })}
         />
-        {renderSuspensionMountVisual({
-          helperId: "rfToeBlock",
-          label: "RF suspension mount",
-          partCategory: "rearToeBlocks",
-          partBrand: String(tune.values.rfToeBlockBrand ?? tune.values.rearToeBlockBrand ?? "")
-        })}
+        <TextAreaField label="RF mount insert / spacer notes" value={String(tune.values.rfToeBlockInsertNotes ?? tune.values.rfToeBlockPositionNotes ?? "")} placeholder="Describe insert marks, dot direction, shims, or spacer stack." rows={3} onChange={(event) => patchValues({ rfToeBlockInsertNotes: event.target.value, rfToeBlockPositionNotes: event.target.value })} />
         <PartSelector
           label="RR suspension mount"
           category="rearToeBlocks"
@@ -2867,12 +2606,24 @@ function BasicTuneForm({
             ...(tune.values.rearToeBlockBrand ? {} : { rearToeBlockBrand: part.brand || "" })
           })}
         />
-        {renderSuspensionMountVisual({
-          helperId: "rrToeBlock",
-          label: "RR suspension mount",
-          partCategory: "rearToeBlocks",
-          partBrand: String(tune.values.rrToeBlockBrand ?? tune.values.rearToeBlockBrand ?? "")
-        })}
+        <TextAreaField label="RR mount insert / spacer notes" value={String(tune.values.rrToeBlockInsertNotes ?? tune.values.rrToeBlockPositionNotes ?? "")} placeholder="Describe insert marks, dot direction, shims, or spacer stack." rows={3} onChange={(event) => patchValues({ rrToeBlockInsertNotes: event.target.value, rrToeBlockPositionNotes: event.target.value })} />
+        </TuneSubcategory>
+        <TuneSubcategory title="Miscellaneous" helper="Optional rear sway bar notes." defaultOpen={false}>
+          <div className="formSplit">
+            <TextField
+              label="Sway Bar"
+              value={String(tune.values.rearSwayBar ?? "")}
+              placeholder="ex. Yokomo rear sway bar, soft, none"
+              onChange={(event) => patchValues({ rearSwayBar: event.target.value })}
+            />
+            <TextField
+              label="Sway bar thickness"
+              value={String(tune.values.rearSwayBarThickness ?? "")}
+              placeholder="ex. 1.2mm"
+              onChange={(event) => patchValues({ rearSwayBarThickness: event.target.value })}
+            />
+          </div>
+        </TuneSubcategory>
         </>
         )}
       </BasicTuneSection>
@@ -2959,7 +2710,11 @@ function BasicTuneForm({
           <TextField label="Diff oil" value={String(tune.values.diffOil ?? tune.values.gearDiffOil ?? "")} placeholder="ex. 5000, 10000" onChange={(event) => patchValues({ diffOil: event.target.value, gearDiffOil: event.target.value })} />
           <TextField label="Diff grease" value={String(tune.values.diffGrease ?? "")} placeholder="Grease / lube notes" onChange={(event) => patchValues({ diffGrease: event.target.value })} />
         </div>
-        <TextAreaField label="Differential notes" value={String(tune.values.diffShimSetup ?? tune.values.lsdSetting ?? "")} placeholder="Shim setup, tightness, LSD plates, spool notes..." onChange={(event) => patchValues({ diffShimSetup: event.target.value, lsdSetting: event.target.value })} />
+        <div className="formSplit">
+          <TextField label="Ball diff setting" value={String(tune.values.ballDiffSetting ?? "")} placeholder="ex. loose / 1/8 turn tight" onChange={(event) => patchValues({ ballDiffSetting: event.target.value })} />
+          <TextField label="LSD setting" value={String(tune.values.lsdSetting ?? "")} placeholder="Plate, cam, spring, or oil notes" onChange={(event) => patchValues({ lsdSetting: event.target.value })} />
+        </div>
+        <TextAreaField label="Differential notes" value={String(tune.values.diffShimSetup ?? "")} placeholder="Shim setup, tightness, plates, spool notes..." onChange={(event) => patchValues({ diffShimSetup: event.target.value })} />
       </BasicTuneSection>
       ) : null}
 
@@ -3051,23 +2806,178 @@ function BasicTuneForm({
       </BasicTuneSection>
       ) : null}
 
-      {builderMode === "advanced" && (activeTabId === "front" || activeTabId === "rear") ? (
-      <BasicTuneSection title={activeTabId === "front" ? "Front alignment" : "Rear alignment"}>
-        {activeTabId === "front" ? (
-          <>
-            <div className="formSplit"><TextField label="Front camber (deg)" value={String(tune.values.frontCamber ?? "")} placeholder="ex. -6" onChange={(event) => patchValues({ frontCamber: event.target.value })} /><TextField label="Front toe (deg)" value={String(tune.values.frontToe ?? "")} placeholder="ex. out 1" onChange={(event) => patchValues({ frontToe: event.target.value })} /></div>
-            <TextField label="Trail" value={String(tune.values.trail ?? "")} placeholder="Trail / spacer notes" onChange={(event) => patchValues({ trail: event.target.value })} />
-            <div className="formSplit"><TextField label="FF toe block shim (mm)" value={String(tune.values.ffToeBlockShim ?? "")} placeholder="ex. 0.5" onChange={(event) => patchValues({ ffToeBlockShim: event.target.value })} /><TextField label="FR toe block shim (mm)" value={String(tune.values.frToeBlockShim ?? "")} placeholder="ex. 1.0" onChange={(event) => patchValues({ frToeBlockShim: event.target.value })} /></div>
-            <TextField label="Front anti-dive / kick-up notes" value={String(tune.values.frontAntiDiveNotes ?? "")} placeholder="What the FF/FR shim stack creates" onChange={(event) => patchValues({ frontAntiDiveNotes: event.target.value })} />
-          </>
-        ) : (
-          <>
-            <div className="formSplit"><TextField label="Rear camber (deg)" value={String(tune.values.rearCamber ?? "")} placeholder="ex. -3" onChange={(event) => patchValues({ rearCamber: event.target.value })} /><TextField label="Rear toe (deg)" value={String(tune.values.rearToe ?? "")} placeholder="ex. in 3" onChange={(event) => patchValues({ rearToe: event.target.value })} /></div>
-            <div className="formSplit"><TextField label="RF toe block shim (mm)" value={String(tune.values.rfToeBlockShim ?? "")} placeholder="ex. 1.0" onChange={(event) => patchValues({ rfToeBlockShim: event.target.value })} /><TextField label="RR toe block shim (mm)" value={String(tune.values.rrToeBlockShim ?? "")} placeholder="ex. 0.0" onChange={(event) => patchValues({ rrToeBlockShim: event.target.value })} /></div>
-            <TextField label="Rear pro-squat / anti-squat notes" value={String(tune.values.rearSquatNotes ?? "")} placeholder="What the RF/RR shim stack creates" onChange={(event) => patchValues({ rearSquatNotes: event.target.value })} />
-          </>
-        )}
+      {activeTabId === "geometry" ? (
+      <>
+      <BasicTuneSection title="Geometry details" helper="Spacer stacks, alignment, link positions, shock positions, and mounting notes." defaultOpen>
+        <TuneSubcategory title="Front callouts" helper="Front alignment, bellcrank, ball caps, spacers, hubs, and stopper settings.">
+          <div className="formSplit">
+            {renderSetupSelectField("Bell crank position", "bellcrankAckermanHole", ["Inner", "Outer"])}
+            {renderSetupSelectField("Front ball caps", "frontBallCaps", ["S", "M", "L"])}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Caster", "caster", "ex. 8 deg")}
+            {renderSetupTextField("KPI", "kpi", "ex. stock / 8 deg")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Ackerman", "ackerman", "ex. inner / outer / 0 Ackerman")}
+            {renderSetupTextField("Steering angle", "steeringAngle", "ex. 65 deg")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front track width (mm)", "frontTrackWidth", "ex. 198", "decimal")}
+            {renderSetupTextField("Trail / steering notes", "trail", "Spacer or trail notes")}
+          </div>
+          <div className="setupZoneTitle">Front upper arm spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Front upper arm outer spacer (mm)", "frontUpperArmSpacer", "ex. 3", "decimal")}
+            {renderSetupTextField("Front upper arm inner front spacer (mm)", "frontUpperArmInnerFrontSpacer", "ex. 1", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front upper arm inner rear spacer (mm)", "frontUpperArmInnerRearSpacer", "ex. 0", "decimal")}
+            {renderSetupTextField("Front upper ball stud", "frontUpperBallStud", "Stock", "text", ["Stock", "Custom"])}
+          </div>
+          <div className="setupZoneTitle">Front lower arm spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Front lower arm outer spacer (mm)", "frontLowerArmSpacer", "ex. 2", "decimal")}
+            {renderSetupTextField("Front lower arm inner front spacer (mm)", "frontLowerArmInnerFrontSpacer", "ex. 2", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front lower arm inner rear spacer (mm)", "frontLowerArmInnerRearSpacer", "ex. 1", "decimal")}
+            {renderSetupTextField("Front lower ball stud", "frontLowerBallStud", "Stock", "text", ["Stock", "Custom"])}
+          </div>
+          <div className="setupZoneTitle">Front shock spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Front shock upper spacer (mm)", "frontShockTowerSpacer", "ex. 2", "decimal")}
+            {renderSetupTextField("Front shock lower spacer (mm)", "frontLowerShockSpacer", "ex. 1", "decimal")}
+          </div>
+          <div className="setupZoneTitle">Front knuckle spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("Front knuckle upper spacer (mm)", "frontKnuckleTopSpacer", "ex. 4", "decimal")}
+            {renderSetupTextField("Front knuckle steering spacer (mm)", "frontKnuckleSteeringLinkSpacer", "ex. 2", "decimal")}
+          </div>
+          {renderSetupTextField("Front knuckle lower spacer (mm)", "frontKnuckleBottomSpacer", "ex. 0", "decimal")}
+          <div className="formSplit">
+            {renderSetupSelectField("Lower sus-mount side", "frontLowerSusMountSide", ["Positive side", "Negative side", "Stock"])}
+            {renderSetupSelectField("Front wheel hubs", "frontWheelHubType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front wheel hub spacer (mm)", "frontWheelHubSpacer", "ex. 2", "decimal")}
+            {renderSetupTextField("Knuckle stopper", "frontKnuckleStopper", "ex. 3.0mm")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front ride height (mm)", "frontRideHeight", "ex. 8", "decimal")}
+            {renderSetupTextField("Front camber (deg)", "frontCamber", "ex. -8", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front toe", "frontToe", "ex. 0.3d")}
+            {renderSetupTextField("Front upper arm / link position", "frontUpperLink", "ex. inner high / outer low")}
+          </div>
+          {renderSetupTextField("Front lower arm position", "frontLowerArm", "ex. stock / outer shimmed")}
+          {renderSetupTextarea("Bump steer notes", "bumpSteerNotes", "Tie-rod angle, link spacer, and bump steer behavior")}
+          {renderSetupTextarea("Front mounting notes", "frontDamperMountingNotes", "Shock hole, steering link, spacer stack, or IFS notes")}
+        </TuneSubcategory>
+        <TuneSubcategory title="Front shock" helper="Shock package, position, spring, piston, oil, droop, preload, and rebound.">
+          <PartSelector label="Front shock" category="dampers" value={selectorValueFromFields("frontDamper", "frontDamperBrand", "dampers")} emptyLabel="Select front shock" onChange={(part) => patchPartSelector("frontDamper", "frontDamperBrand", "dampers", part)} />
+          <div className="formSplit">
+            {renderSetupTextField("Front shock / shaft", "frontShockShaft", "ex. Overdose HG4 full extension stroke")}
+            {renderSetupTextField("Front spring", "frontSpring", "ex. Yokomo Hard")}
+          </div>
+          {renderSetupTextField("Front shock position upper / lower", "frontShockPosition", "ex. tower 3 / arm outer")}
+          <div className="formSplit">
+            {renderSetupTextField("Front piston holes", "frontPistonHoles", "ex. 6", "numeric")}
+            {renderSetupTextField("Front piston diameter (mm)", "frontPistonDiameter", "ex. 0.8", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Front droop", "frontDroop", "ex. 1mm gap")}
+            {renderSetupTextField("Front preload", "frontPreload", "ex. 0 turns")}
+          </div>
+          {renderSetupTextField("Front rebound", "frontRebound", "ex. 0mm / full extension")}
+          <div className="formSplit">
+            {renderSetupTextField("Front oil", "frontShockOil", "ex. #100")}
+            {renderSetupTextField("Front O-ring", "frontOring", "O-ring notes")}
+          </div>
+          {renderSetupSelectField("Front retainer", "frontRetainer", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+        </TuneSubcategory>
       </BasicTuneSection>
+      <BasicTuneSection title="Rear geometry" helper="Rear suspension mounts, arm, hub, shock, and spacer descriptions." defaultOpen>
+        <TuneSubcategory title="Rear callouts" helper="Rear suspension mount, arm, hub, and alignment values." defaultOpen>
+          <div className="formSplit">
+            {renderSetupSelectField("RF sus mount bushing", "rfSusMountType", rfRearSusMountBushingOptions)}
+            {renderSetupTextField("RF sus mount part / number", "rearSusMountNumber", "ex. #7 / aluminum mount")}
+          </div>
+          <div className="formSplit">
+            {renderSetupSelectField("RF sus mount flipped", "rearSusMountFlipped", ["No", "Yes", "Flipped"])}
+            {renderSetupSelectField("RR sus mount bushing", "rrSusMountType", rrRearSusMountBushingOptions)}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("RR sus mount part / number", "rrSusMountNumber", "ex. #7 / aluminum mount")}
+            {renderSetupSelectField("RF bushing position", "rfSusMountPosition", ["In", "Out"])}
+          </div>
+          <div className="formSplit">
+            {renderSetupSelectField("RR bushing position", "rrSusMountPosition", ["In", "Out"])}
+            {renderSetupTextField("Rear roll center", "rearRollCenter", "ex. low / middle / high")}
+          </div>
+          <div className="setupZoneTitle">Rear suspension mount spacer zone</div>
+          <div className="formSplit">
+            {renderSetupTextField("RF spacer under sus mount (mm)", "spacerUnderSusMountRF", "ex. 6", "decimal")}
+            {renderSetupTextField("RR spacer under sus mount (mm)", "spacerUnderSusMountRR", "ex. 6.5", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupSelectField("Rear lower arm", "rearSusArm", ["Straight", "Gull Arm", "42mm 0.0d", "42mm 2.6d", "45mm", "48mm", "51mm", "Custom / Other"])}
+            {renderSetupSelectField("Rear hub carrier", "rearHubCarrierType", ["Normal", "Aluminum", "RD-012", "A-Arm", "Custom / Other"])}
+          </div>
+          <div className="setupZoneTitle">Rear hub spacer zone</div>
+          <div className="formSplit">
+            {renderSetupSelectField("Rear wheel hubs", "rearWheelHubType", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+            {renderSetupTextField("Rear wheel hub spacer (mm)", "rearWheelHubSpacer", "ex. 5", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupSelectField("Lower sus hole position", "lowerSusHolePosition", ["Upper Hole", "Lower Hole"])}
+            {renderSetupTextField("Rear axle height / hole notes", "rearAxleHeightNotes", "ex. lower axle hole / high axle")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear hub upper link hole", "rearHubCarrierUpperLinkHole", "ex. upper outer / row 3")}
+            {renderSetupTextField("Rear hub lower / axle hole", "rearHubCarrierLowerLinkHole", "ex. lower tab / axle low")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear hub upper link spacer (mm)", "rearHubCarrierUpperLinkSpacer", "ex. 4", "decimal")}
+            {renderSetupTextField("Rear hub lower / axle spacer (mm)", "rearHubCarrierLowerLinkSpacer", "ex. 0", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear ride height (mm)", "rearRideHeight", "ex. 5", "decimal")}
+            {renderSetupTextField("Rear camber (deg)", "rearCamber", "ex. -5", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear skid / camber angle", "rearSkidAngle", "ex. -5")}
+            {renderSetupTextField("Rear toe", "rearToe", "ex. 0")}
+          </div>
+          {renderSetupTextarea("Rear anti-squat / skid notes", "rearAntiSquatNotes", "Skid angle, inserts, shims, or anti-squat notes")}
+          {renderSetupTextarea("Rear hub and damper notes", "rearGeometryNotes", "RD-012 hole marks, upper/lower link spacers, axle height, damper notes")}
+        </TuneSubcategory>
+        <TuneSubcategory title="Rear shock" helper="Shock package, position, spring, piston, oil, droop, preload, and rebound.">
+          <PartSelector label="Rear shock" category="dampers" value={selectorValueFromFields("rearDamper", "rearDamperBrand", "dampers")} emptyLabel="Select rear shock" onChange={(part) => patchPartSelector("rearDamper", "rearDamperBrand", "dampers", part)} />
+          <div className="formSplit">
+            {renderSetupTextField("Rear shock / shaft", "rearShockShaft", "ex. Overdose HG4 5mm rebound")}
+            {renderSetupTextField("Rear spring", "rearSpring", "ex. Barrel V2")}
+          </div>
+          {renderSetupTextField("Rear shock position upper / lower", "rearShockPosition", "ex. tower 2 / arm inner")}
+          <div className="formSplit">
+            {renderSetupTextField("Rear piston holes", "rearPistonHoles", "ex. 6", "numeric")}
+            {renderSetupTextField("Rear piston diameter (mm)", "rearPistonDiameter", "ex. 0.8", "decimal")}
+          </div>
+          <div className="formSplit">
+            {renderSetupTextField("Rear droop", "rearDroop", "ex. 2mm gap")}
+            {renderSetupTextField("Rear preload", "rearPreload", "ex. 1 turn")}
+          </div>
+          {renderSetupTextField("Rear rebound", "rearRebound", "ex. 5mm")}
+          <div className="formSplit">
+            {renderSetupTextField("Rear oil", "rearShockOil", "ex. #300")}
+            {renderSetupTextField("Rear O-ring", "rearOring", "O-ring notes")}
+          </div>
+          {renderSetupSelectField("Rear retainer", "rearRetainer", ["Normal", "Aluminum", "Stock", "Custom / Other"])}
+        </TuneSubcategory>
+      </BasicTuneSection>
+
+      </>
       ) : null}
 
       {activeTabId === "front" || activeTabId === "rear" ? (
@@ -3126,6 +3036,14 @@ function BasicTuneForm({
       <BasicTuneSection title={activeTabId === "notes" ? "Notes" : activeTabId === "front" ? "Front hubs and axles" : "Rear hubs and axles"}>
         {activeTabId === "front" ? (
         <>
+        <PartSelector
+          label="Steering rack"
+          category="steeringRacks"
+          value={selectorValueFromFields("steeringRackProduct", "steeringRackBrand", "steeringRacks")}
+          emptyLabel="Select steering rack"
+          helper="Steering rack, steering bridge, or rack-style steering unit used on this chassis."
+          onChange={(part) => patchPartSelector("steeringRackProduct", "steeringRackBrand", "steeringRacks", part)}
+        />
         <PartSelector
           label="Front knuckle"
           category="frontKnuckles"
@@ -3295,30 +3213,38 @@ function AdvancedTuneDetails({
               </span>
               <ChevronDown size={18} aria-hidden="true" />
             </button>
-            {isOpen ? (
-              <div className="builderFieldGrid">
-                {section.profileType ? (
-                  <ElectronicsProfileTools
-                    section={section}
-                    profiles={electronicsProfiles.filter((profile) => profile.type === section.profileType)}
-                    onApply={onApplyElectronicsProfile}
-                    onSave={() => onSaveElectronicsProfile(section)}
-                  />
-                ) : null}
-                {section.fields.map((field) => (
-                  <BuilderField
-                    key={field.id}
-                    field={field}
-                    tune={activeTune}
-                    tunes={tunes}
-                    builderMode="advanced"
-                    onChange={(value) => onFieldChange(field, value)}
-                    onPartChange={(part, customName) => onPartChange(field, part, customName)}
-                    onElectronicsSettingChange={onElectronicsSettingChange}
-                  />
-                ))}
-              </div>
-            ) : null}
+            <AnimatePresence initial={false}>
+              {isOpen ? (
+                <motion.div
+                  className="builderFieldGrid"
+                  initial={{ height: 0, opacity: 0, y: -8 }}
+                  animate={{ height: "auto", opacity: 1, y: 0 }}
+                  exit={{ height: 0, opacity: 0, y: -8 }}
+                  transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
+                >
+                  {section.profileType ? (
+                    <ElectronicsProfileTools
+                      section={section}
+                      profiles={electronicsProfiles.filter((profile) => profile.type === section.profileType)}
+                      onApply={onApplyElectronicsProfile}
+                      onSave={() => onSaveElectronicsProfile(section)}
+                    />
+                  ) : null}
+                  {section.fields.map((field) => (
+                    <BuilderField
+                      key={field.id}
+                      field={field}
+                      tune={activeTune}
+                      tunes={tunes}
+                      builderMode="advanced"
+                      onChange={(value) => onFieldChange(field, value)}
+                      onPartChange={(part, customName) => onPartChange(field, part, customName)}
+                      onElectronicsSettingChange={onElectronicsSettingChange}
+                    />
+                  ))}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </article>
         );
       })}
@@ -3344,19 +3270,47 @@ function BasicTuneSection({ title, helper = "Skip anything you do not know yet."
         </span>
         <ChevronDown size={18} aria-hidden="true" />
       </button>
-      {open ? <div className="builderFieldGrid">{children}</div> : null}
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.div
+            className="builderFieldGrid"
+            initial={{ height: 0, opacity: 0, y: -8 }}
+            animate={{ height: "auto", opacity: 1, y: 0 }}
+            exit={{ height: 0, opacity: 0, y: -8 }}
+            transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            {children}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </article>
   );
 }
 
-function TuneSubcategory({ title, helper, children }: { title: string; helper?: string; children: ReactNode }) {
+function TuneSubcategory({ title, helper, children, defaultOpen = true }: { title: string; helper?: string; children: ReactNode; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
-    <section className="tuneSubcategory">
-      <header>
-        <strong>{title}</strong>
-        {helper ? <span>{helper}</span> : null}
-      </header>
-      <div className="tuneSubcategoryBody">{children}</div>
+    <section className={`tuneSubcategory ${open ? "isOpen" : ""}`}>
+      <button className="tuneSubcategoryHeader" type="button" aria-expanded={open} onClick={() => setOpen((current) => !current)}>
+        <span>
+          <strong>{title}</strong>
+          {helper ? <em>{helper}</em> : null}
+        </span>
+        <ChevronDown size={17} aria-hidden="true" />
+      </button>
+      <AnimatePresence initial={false}>
+        {open ? (
+          <motion.div
+            className="tuneSubcategoryBody"
+            initial={{ height: 0, opacity: 0, y: -6 }}
+            animate={{ height: "auto", opacity: 1, y: 0 }}
+            exit={{ height: 0, opacity: 0, y: -6 }}
+            transition={{ duration: 0.2, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            {children}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
     </section>
   );
 }
@@ -3514,19 +3468,23 @@ function ElectronicsTuneEntryChoice({
           </label>
           {photos.length ? (
             <div className="electronicsTunePhotoGrid">
-              {photos.map((photo) => (
-                <figure key={photo.id}>
-                  <button className="photoPreviewButton" type="button" onClick={() => setViewerPhoto(photo)} aria-label={`Open ${photo.label}`}>
-                    <img src={displayPhotoUrl(photo)} alt={photo.label} />
-                  </button>
-                  <button className="photoDeleteX" type="button" aria-label={`Remove ${photo.label}`} title="Remove photo" onClick={() => setDeletePhotoTarget(photo)}>
-                    <Trash2 size={15} />
-                  </button>
-                  <figcaption>
-                    <input value={photo.label} onChange={(event) => onPhotosChange(category, photos.map((itemPhoto) => (itemPhoto.id === photo.id ? { ...itemPhoto, label: event.target.value } : itemPhoto)))} />
-                  </figcaption>
-                </figure>
-              ))}
+              {photos.map((photo) => {
+                const photoUrl = displayPhotoUrl(photo);
+                if (!photoUrl) return null;
+                return (
+                  <figure key={photo.id}>
+                    <button className="photoPreviewButton" type="button" onClick={() => setViewerPhoto(photo)} aria-label={`Open ${photo.label}`}>
+                      <img src={photoUrl} alt={photo.label} />
+                    </button>
+                    <button className="photoDeleteX" type="button" aria-label={`Remove ${photo.label}`} title="Remove photo" onClick={() => setDeletePhotoTarget(photo)}>
+                      <Trash2 size={15} />
+                    </button>
+                    <figcaption>
+                      <input value={photo.label} onChange={(event) => onPhotosChange(category, photos.map((itemPhoto) => (itemPhoto.id === photo.id ? { ...itemPhoto, label: event.target.value } : itemPhoto)))} />
+                    </figcaption>
+                  </figure>
+                );
+              })}
             </div>
           ) : (
             <p className="mutedText">No {label.toLowerCase()} tune photos yet.</p>
@@ -4180,7 +4138,9 @@ function BuilderField({
         <div className="inputWithUnit">
           <input
             type="text"
-            inputMode={field.type === "number" ? "decimal" : "text"}
+            inputMode={field.type === "number" && !signedSetupValueKeys.has(field.id) ? "decimal" : "text"}
+            data-signed-number={signedSetupValueKeys.has(field.id) ? "true" : undefined}
+            autoComplete="off"
             value={String(value)}
             disabled={isNotApplicable}
             placeholder={field.placeholder || "Skip for now"}

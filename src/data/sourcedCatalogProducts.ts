@@ -154,13 +154,33 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     id: "chassis-shibata-grk5-r-conversion-purple",
     category: "chassis",
     brand: "Shibata",
-    productName: "GRK5-R Conversion Set / Purple",
-    simplifiedName: "GRK5-R Conversion Set Purple",
-    displayName: "GRK5-R Conversion Set Purple (GRK5RCVPU)",
-    modelNumber: "GRK5RCVPU",
+    productName: "GRK5-R Conversion Set",
+    simplifiedName: "GRK5-R Conversion Set",
+    displayName: "GRK5-R Conversion Set",
+    modelNumber: "GRK5RCV",
+    variants: [
+      {
+        id: "purple-grk5rcvpu",
+        color: "Purple",
+        sku: "GRK5RCVPU",
+        displayName: "Purple"
+      },
+      {
+        id: "red-grk5rcvrd",
+        color: "Red",
+        sku: "GRK5RCVRD",
+        displayName: "Red"
+      },
+      {
+        id: "black-grk5rcvbk",
+        color: "Black",
+        sku: "GRK5RCVBK",
+        displayName: "Black"
+      }
+    ],
     productType: "conversion kit",
     compatibleChassis: ["GRK5", "GRK5-R"],
-    notes: "Official SHIBATA GRK shop chassis collection item.",
+    notes: "Official SHIBATA GRK shop chassis collection item. Color SKUs are collapsed into this single selector option: GRK5RCVBK, GRK5RCVPU, GRK5RCVRD.",
     tunableParameters: ["platform", "motor layout", "battery position", "notes"],
     sourceUrl: "https://www.drgrk.com/collections/chassi",
     sourceName: "SHIBATA GRK",
@@ -169,7 +189,9 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     confidence: "high",
     needsReview: false,
     categorizationReason: "Official SHIBATA GRK shop CHASSIS collection lists this as a chassis conversion set.",
-    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"]
+    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"],
+    aliases: ["GRK5-R Conversion Set Purple", "GRK5-R Conversion Set Red", "GRK5-R Conversion Set Black", "GRK5RCVPU", "GRK5RCVRD", "GRK5RCVBK"],
+    legacyIds: ["chassis-shibata-grk5-r-conversion-purple", "chassis-shibata-grk5-r-conversion-red", "chassis-shibata-grk5-r-conversion-black"]
   },
   {
     id: "chassis-shibata-grk5-r-conversion-red",
@@ -190,7 +212,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     confidence: "high",
     needsReview: false,
     categorizationReason: "Official SHIBATA GRK shop CHASSIS collection lists this as a chassis conversion set.",
-    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"]
+    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"],
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the single GRK5-R Conversion Set chassis option."
   },
   {
     id: "chassis-shibata-grk5-r-conversion-black",
@@ -211,7 +236,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     confidence: "high",
     needsReview: false,
     categorizationReason: "Official SHIBATA GRK shop CHASSIS collection lists this as a chassis conversion set.",
-    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"]
+    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"],
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the single GRK5-R Conversion Set chassis option."
   },
   {
     id: "chassis-shibata-gs2evo-competition-conversion-r31s060",
@@ -238,13 +266,33 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     id: "chassis-shibata-hrp-conversion-red",
     category: "chassis",
     brand: "Shibata",
-    productName: "HRP Conversion Chassis Kit (Red)",
-    simplifiedName: "HRP Conversion Chassis Kit Red",
-    displayName: "HRP Conversion Chassis Kit Red (HRPCVRD)",
-    modelNumber: "HRPCVRD",
+    productName: "HRP Conversion Chassis Kit",
+    simplifiedName: "HRP Conversion Chassis Kit",
+    displayName: "HRP Conversion Chassis Kit",
+    modelNumber: "HRPCV",
+    variants: [
+      {
+        id: "red-hrpcvrd",
+        color: "Red",
+        sku: "HRPCVRD",
+        displayName: "Red"
+      },
+      {
+        id: "purple-hrpcvpu",
+        color: "Purple",
+        sku: "HRPCVPU",
+        displayName: "Purple"
+      },
+      {
+        id: "black-hrpcvbk",
+        color: "Black",
+        sku: "HRPCVBK",
+        displayName: "Black"
+      }
+    ],
     productType: "conversion chassis",
     compatibleChassis: ["GRK"],
-    notes: "Official SHIBATA GRK shop chassis collection item.",
+    notes: "Official SHIBATA GRK shop chassis collection item. Color SKUs are collapsed into this single selector option: HRPCVBK, HRPCVPU, HRPCVRD.",
     tunableParameters: ["platform", "motor layout", "battery position", "notes"],
     sourceUrl: "https://www.drgrk.com/collections/chassi",
     sourceName: "SHIBATA GRK",
@@ -253,7 +301,9 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     confidence: "high",
     needsReview: false,
     categorizationReason: "Official SHIBATA GRK shop CHASSIS collection lists this as a conversion chassis kit.",
-    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"]
+    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"],
+    aliases: ["HRP Conversion Chassis Kit Red", "HRP Conversion Chassis Kit Purple", "HRP Conversion Chassis Kit Black", "HRPCVRD", "HRPCVPU", "HRPCVBK"],
+    legacyIds: ["chassis-shibata-hrp-conversion-red", "chassis-shibata-hrp-conversion-purple", "chassis-shibata-hrp-conversion-black"]
   },
   {
     id: "chassis-shibata-hrp-conversion-purple",
@@ -274,7 +324,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     confidence: "high",
     needsReview: false,
     categorizationReason: "Official SHIBATA GRK shop CHASSIS collection lists this as a conversion chassis kit.",
-    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"]
+    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"],
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the single HRP Conversion Chassis Kit option."
   },
   {
     id: "chassis-shibata-hrp-conversion-black",
@@ -295,7 +348,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     confidence: "high",
     needsReview: false,
     categorizationReason: "Official SHIBATA GRK shop CHASSIS collection lists this as a conversion chassis kit.",
-    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"]
+    excludedCategories: ["gyros", "escs", "motors", "servos", "frontWheels", "tires"],
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the single HRP Conversion Chassis Kit option."
   },
   {
     id: "chassis-shibata-evo-r-conversion-r31s119",
@@ -441,7 +497,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["platform","motor layout","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/1-24-rts-silver-carbon-fiber-chassis-kit-rhino-racing-rts-620",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the main chassis selector because it is a 1/24 platform."
   },
   {
     id: "chassis-rhino-racing-limited-edition-rts-1-24-rwd-drift-chassis-kit-assembled-full-option-limited-color-rhino-racing-rts",
@@ -454,7 +513,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["platform","motor layout","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/limited-edition-rts-1-24-rwd-drift-chassis-kit-assembled-full-option-limited-color-rhino-racing-rts-2401-0-le",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the main chassis selector because it is a 1/24 platform."
   },
   {
     id: "chassis-rhino-racing-shark-final-form-factory-assembled-chassis-kit-ifs-1-10-premium-rwd-drift-car-red-purple-black-rhin",
@@ -493,7 +555,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["platform","motor layout","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shark-fixed-chassis-kit-ddss-fits-rmx-2-5-shark-trans-rhino-racing-rr-806",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the main chassis selector by catalog review."
   },
   {
     id: "chassis-team-associated-dc10-carbon-fiber-ft-flex-lower-2-0mm-deck-chassis-kit-associated-asc72286",
@@ -506,7 +571,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["platform","motor layout","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/dc10-carbon-fiber-flex-lower-deck-chassis-kit-associated-asc72286",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "team-associated-dc10-carbon-lower-deck-series",
+    canonicalVariantId: "ft-flex-20mm-asc72286",
+    reasonHidden: "Lower deck/chassis plate item; removed from the main chassis selector."
   },
   {
     id: "dampers-mst-rmx-4-rear-damper-set-gearbox-connector-mst-230179",
@@ -519,20 +589,30 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-4-rear-damper-set-gearbox-connector-mst-230179",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear damper plus gearbox connector bundle, not a clean standalone damper selector item."
   },
   {
     id: "dampers-mst-tda-aluminum-drift-shock-set-black-fxx-rmx-rrx-kmw-mst-820150bk",
     category: "dampers",
     brand: "MST",
     productName: "TDA Aluminum Drift Shock Set (BLACK) FXX RMX RRX KMW [MST] 820150BK",
-    modelNumber: "820150BK",
+    simplifiedName: "TDA Aluminum Drift Shock Set",
+    displayName: "TDA Aluminum Drift Shock Set",
+    modelNumber: "820150BK / 820150R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "MST TDA aluminum drift shock set collapsed by color.",
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/tda-aluminum-drift-shock-set-black-fxx-rmx-rrx-kmw-mst-820150bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-820150bk", color: "Black", sku: "820150BK", displayName: "Black" },
+      { id: "red-820150r", color: "Red", sku: "820150R", displayName: "Red", sourceUrl: "https://supergdrift.com/collections/vendors/products/tda-aluminum-drift-shock-set-red-fxx-rmx-rrx-kmw-mst-820150r" }
+    ],
+    aliases: ["TDA Aluminum Drift Shock Set Red", "TDA Aluminum Drift Shock Set Black", "820150R", "820150BK"]
   },
   {
     id: "dampers-mst-tda-aluminum-drift-shock-set-red-fxx-rmx-rrx-kmw-mst-820150r",
@@ -545,20 +625,32 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/tda-aluminum-drift-shock-set-red-fxx-rmx-rrx-kmw-mst-820150r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "dampers-mst-tda-aluminum-drift-shock-set-black-fxx-rmx-rrx-kmw-mst-820150bk",
+    canonicalVariantId: "red-820150r",
+    reasonHidden: "Collapsed into the MST TDA Aluminum Drift Shock Set variant family."
   },
   {
     id: "dampers-mst-tr56-shock-set-black-rmx-fxx-mrx-fmx-mst-820120bk",
     category: "dampers",
     brand: "MST",
     productName: "TR56 Shock Set (BLACK) RMX FXX MRX FMX [MST] 820120BK",
-    modelNumber: "820120BK",
+    simplifiedName: "TR56 Shock Set",
+    displayName: "TR56 Shock Set",
+    modelNumber: "820120BK / 820120R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "MST TR56 shock set collapsed by color.",
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/tr56-shock-set-black-rmx-fxx-mrx-fmx-mst-820120bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-820120bk", color: "Black", sku: "820120BK", displayName: "Black" },
+      { id: "red-820120r", color: "Red", sku: "820120R", displayName: "Red", sourceUrl: "https://supergdrift.com/collections/vendors/products/tr56-shock-set-red-mst-820120r" }
+    ],
+    aliases: ["TR56 Shock Set Red", "TR56 Shock Set Black", "820120R", "820120BK"]
   },
   {
     id: "dampers-mst-tr56-shock-set-red-mst-820120r",
@@ -571,20 +663,32 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/tr56-shock-set-red-mst-820120r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "dampers-mst-tr56-shock-set-black-rmx-fxx-mrx-fmx-mst-820120bk",
+    canonicalVariantId: "red-820120r",
+    reasonHidden: "Collapsed into the MST TR56 Shock Set variant family."
   },
   {
     id: "dampers-mst-tr60-shock-set-black-fxx-rmx-rrx-kmw-mst-820121bk",
     category: "dampers",
     brand: "MST",
     productName: "TR60 Shock Set (BLACK) FXX RMX RRX KMW [MST] 820121BK",
-    modelNumber: "820121BK",
+    simplifiedName: "TR60 Shock Set",
+    displayName: "TR60 Shock Set",
+    modelNumber: "820121BK / 820121R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "MST TR60 shock set collapsed by color.",
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/tr60-shock-set-black-fxx-rmx-rrx-kmw-mst-820121bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-820121bk", color: "Black", sku: "820121BK", displayName: "Black" },
+      { id: "red-820121r", color: "Red", sku: "820121R", displayName: "Red", sourceUrl: "https://supergdrift.com/collections/vendors/products/tr60-shock-set-red-fxx-rmx-rrx-kmw-mst-820121r" }
+    ],
+    aliases: ["TR60 Shock Set Red", "TR60 Shock Set Black", "820121R", "820121BK"]
   },
   {
     id: "dampers-mst-tr60-shock-set-red-fxx-rmx-rrx-kmw-mst-820121r",
@@ -597,18 +701,47 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/tr60-shock-set-red-fxx-rmx-rrx-kmw-mst-820121r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "dampers-mst-tr60-shock-set-black-fxx-rmx-rrx-kmw-mst-820121bk",
+    canonicalVariantId: "red-820121r",
+    reasonHidden: "Collapsed into the MST TR60 Shock Set variant family."
   },
   {
     id: "dampers-overdose-hg4-purple-od3900",
     category: "dampers",
     brand: "Overdose",
-    productName: "Overdose HG4 - Purple",
-    modelNumber: "OD3900",
+    productName: "Overdose HG4 Shock Set",
+    simplifiedName: "HG4 Shock Set",
+    displayName: "HG4 Shock Set",
+    modelNumber: "OD3900 OD3901 OD3902",
+    variants: [
+      {
+        id: "purple-od3900",
+        color: "Purple",
+        sku: "OD3900",
+        displayName: "Purple"
+      },
+      {
+        id: "red-od3901",
+        color: "Red",
+        sku: "OD3901",
+        displayName: "Red"
+      },
+      {
+        id: "black-od3902",
+        color: "Black",
+        sku: "OD3902",
+        displayName: "Black"
+      }
+    ],
     compatibleChassis: ["Universal"],
-    notes: "High Grade Shock Set Spec.4 full adjustable 4-piece set in purple.",
+    notes: "High Grade Shock Set Spec.4 full adjustable 4-piece set. Color SKUs are grouped as selectable variants.",
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/high-grade-shock-set-spec-4-full-adjustable-4-set-black-purple-red-overdose-od3900-od3901-od3902",
+    aliases: ["Overdose HG4 Purple", "Overdose HG4 Red", "Overdose HG4 Black", "OD3900", "OD3901", "OD3902"],
+    legacyIds: ["dampers-overdose-hg4-purple-od3900", "dampers-overdose-hg4-red-od3901", "dampers-overdose-hg4-black-od3902"],
     userAdded: false,
     verified: true
   },
@@ -623,7 +756,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/high-grade-shock-set-spec-4-full-adjustable-4-set-black-purple-red-overdose-od3900-od3901-od3902",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the single Overdose HG4 Shock Set option."
   },
   {
     id: "dampers-overdose-hg4-black-od3902",
@@ -636,7 +772,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/high-grade-shock-set-spec-4-full-adjustable-4-set-black-purple-red-overdose-od3900-od3901-od3902",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the single Overdose HG4 Shock Set option."
   },
   {
     id: "dampers-team-associated-rc28r-ft-center-shock-set-rc28-associated-21641",
@@ -649,7 +788,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rc28r-ft-center-shock-set-rc28-associated-21641",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "RC28R micro-scale center shock set; hidden from the primary 1/10 damper selector."
   },
   {
     id: "dampers-yokomo-black-slf-big-bore-shock-set-yd2-rd-sd-md-yokomo-y2-sbbsa",
@@ -662,7 +804,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yd-2-slf-big-bore-shock-set-yokomo-y2-sbbsa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-y2-sbbspa-slf-aluminum-big-bore-shock-set",
+    canonicalVariantId: "black-y2-sbbsa",
+    reasonHidden: "Collapsed into the Yokomo SLF Aluminum Big Bore Shock Set variant family."
   },
   {
     id: "dampers-yokomo-blue-slf-big-bore-shock-set-yd2-rd-sd-md-yokomo-y2-sbbsbl",
@@ -675,7 +822,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/blue-yd-2-slf-big-bore-shock-set-yokomo-y2-sbbsbl",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-y2-sbbspa-slf-aluminum-big-bore-shock-set",
+    canonicalVariantId: "blue-y2-sbbsbl",
+    reasonHidden: "Collapsed into the Yokomo SLF Aluminum Big Bore Shock Set variant family."
   },
   {
     id: "dampers-yokomo-pair-of-slf-big-bore-shock-set-yd2-rd-sd-md-2-shocks-only-yokomo-y2-sbbs-half",
@@ -688,7 +840,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/pair-of-slf-big-bore-shock-set-yd2-rd-sd-md-2-shocks-only-yokomo-y2-sbbs",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from damper selector by catalog review; duplicate pair-only SLF shock listing."
   },
   {
     id: "dampers-yokomo-purple-slf-big-bore-shock-set-yd2-rd-sd-md-yokomo-y2-sbbspa",
@@ -701,7 +856,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/purple-yd-2-slf-big-bore-shock-set-yokomo-y2-sbbspa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-y2-sbbspa-slf-aluminum-big-bore-shock-set",
+    canonicalVariantId: "purple-y2-sbbspa",
+    reasonHidden: "Collapsed into the Yokomo SLF Aluminum Big Bore Shock Set variant family."
   },
   {
     id: "dampers-yokomo-red-slf-big-bore-shock-set-yd2-rd-sd-md-yokomo-y2-sbbsra",
@@ -714,7 +874,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["shock length","piston","oil","spring cup","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/red-yd-2-slf-big-bore-shock-set-yokomo-y2-sbbsra",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-y2-sbbspa-slf-aluminum-big-bore-shock-set",
+    canonicalVariantId: "red-y2-sbbsra",
+    reasonHidden: "Collapsed into the Yokomo SLF Aluminum Big Bore Shock Set variant family."
   },
   {
     id: "decks-mst-aluminum-integrated-upper-deck-connector-red-mst-210640r",
@@ -727,7 +892,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-integrated-upper-deck-connector-red-mst-210640r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; upper deck connector/support hardware."
   },
   {
     id: "decks-mst-frx-carbon-upper-deck-set-mst-210714",
@@ -766,7 +934,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rear-aluminum-connector-upper-deck-red-rmxmst-210602r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; upper deck connector/support hardware."
   },
   {
     id: "decks-mst-rmx-2-0-aluminum-rear-upper-deck-support-red-mst-210584r",
@@ -779,33 +950,42 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-2-0-aluminum-rear-upper-deck-support-red-mst-210584r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; upper deck support hardware."
   },
   {
     id: "decks-overdose-preorder-transrange-anti-twist-main-chassis-main-chassis-1pc-sub-chassis-1pc-for-galm-overdose-od3847",
     category: "decks",
     brand: "Overdose",
-    productName: "PREORDER: Transrange Anti-Twist Main Chassis (Main Chassis 1pc, Sub Chassis 1pc) for GALM [Overdose] OD3847",
+    productName: "Transrange Anti-Twist Main Chassis for GALM",
+    simplifiedName: "Transrange Anti-Twist Main Chassis",
+    displayName: "Transrange Anti-Twist Main Chassis",
     modelNumber: "OD3847",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced GALM main/sub chassis plate set. Retail preorder wording removed from selector display.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/transrange-anti-twist-main-chassis-main-chassis-1pc-sub-chassis-1pc-for-galm-overdose-od3847",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["PREORDER: Transrange Anti-Twist Main Chassis (Main Chassis 1pc, Sub Chassis 1pc) for GALM [Overdose] OD3847"]
   },
   {
     id: "decks-overdose-tc-flex-transrange-main-chassis-set-for-galm-overdose-od3899",
     category: "decks",
     brand: "Overdose",
-    productName: "TC Flex Transrange Main Chassis Set for GALM [Overdose] OD3899",
+    productName: "TC Flex Transrange Main Chassis for GALM",
+    simplifiedName: "TC Flex Transrange Main Chassis",
+    displayName: "TC Flex Transrange Main Chassis",
     modelNumber: "OD3899",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced GALM main chassis plate. Set wording removed from selector display.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/tc-flex-transrange-main-chassis-set-overdose-od3899",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["TC Flex Transrange Main Chassis Set for GALM [Overdose] OD3899"]
   },
   {
     id: "decks-reve-d-mc-iii-aluminum-upper-deck-mount-rdx-mc3-reve-d-d1-m3-03m",
@@ -818,33 +998,42 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mc-iii-aluminum-upper-deck-mount-rdx-mc3-reve-d-d1-m3-03m",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; upper deck mount hardware."
   },
   {
     id: "decks-reve-d-mc-iii-carbon-fiber-main-chassis-rdx-mc3-reve-d-d1-m3-02",
     category: "decks",
     brand: "Reve D",
-    productName: "MC-III Carbon Fiber Main Chassis - RDX MC3 [Reve D] D1-M3-02",
+    productName: "MC-III Carbon Fiber Main Chassis",
+    simplifiedName: "MC-III Carbon Fiber Main Chassis",
+    displayName: "MC-III Carbon Fiber Main Chassis",
     modelNumber: "D1-M3-02",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced RDX MC3 carbon fiber main chassis.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mc-iii-carbon-fiber-main-chassis-rdx-mc3-reve-d-d1-m3-02",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["MC-III Carbon Fiber Main Chassis - RDX MC3 [Reve D] D1-M3-02"]
   },
   {
     id: "decks-reve-d-mc-iii-carbon-fiber-upper-deck-rdx-mc3-reve-d-d1-m3-03",
     category: "decks",
     brand: "Reve D",
-    productName: "MC-III Carbon Fiber Upper Deck - RDX MC3 [Reve D] D1-M3-03",
+    productName: "MC-III Carbon Fiber Upper Deck",
+    simplifiedName: "MC-III Carbon Fiber Upper Deck",
+    displayName: "MC-III Carbon Fiber Upper Deck",
     modelNumber: "D1-M3-03",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced RDX MC3 carbon fiber upper deck.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mc-iii-carbon-fiber-upper-deck-rdx-mc3-reve-d-d1-m3-03",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["MC-III Carbon Fiber Upper Deck - RDX MC3 [Reve D] D1-M3-03"]
   },
   {
     id: "decks-reve-d-mc-iii-rdx-conversion-upgrade-chassis-kit-reve-d-rkd-mc3",
@@ -857,33 +1046,42 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mc-iii-rdx-conversion-upgrade-chassis-kit-reve-d",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; full conversion kit belongs outside deck selection."
   },
   {
     id: "decks-reve-d-rdx-black-frp-main-chassis-side-deck-set-2-reve-d-d1-bfs2",
     category: "decks",
     brand: "Reve D",
-    productName: "RDX Black FRP Main Chassis - Side Deck Set 2 [Reve D] D1-BFS2",
+    productName: "RDX Black FRP Main Chassis & Side Deck 2",
+    simplifiedName: "RDX Black FRP Main Chassis & Side Deck 2",
+    displayName: "RDX Black FRP Main Chassis & Side Deck 2",
     modelNumber: "D1-BFS2",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced RDX black FRP main chassis and side deck option.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-black-frp-main-chassis-side-deck-set-2-reve-d-d1-bfs2",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["RDX Black FRP Main Chassis - Side Deck Set 2 [Reve D] D1-BFS2"]
   },
   {
     id: "decks-reve-d-rdx-black-frp-main-chassis-side-deck-set-reve-d-d1-bfs01",
     category: "decks",
     brand: "Reve D",
-    productName: "RDX Black FRP Main Chassis & Side Deck Set [Reve D] D1-BFS01",
+    productName: "RDX Black FRP Main Chassis & Side Deck",
+    simplifiedName: "RDX Black FRP Main Chassis & Side Deck",
+    displayName: "RDX Black FRP Main Chassis & Side Deck",
     modelNumber: "D1-BFS01",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced RDX black FRP main chassis and side deck option.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-black-frp-main-chassis-side-deck-set-reve-d-d1-bfs01",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["RDX Black FRP Main Chassis & Side Deck Set [Reve D] D1-BFS01"]
   },
   {
     id: "decks-rhino-racing-carbon-fixed-upper-deck-for-ddss-yd-2-rhino-racing-rr-847",
@@ -909,7 +1107,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/carbon-upper-deck-side-plate-for-ddss-sd3-0-installation-kit-rhino-racing-rr-849",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; installation kit/side plate bundle."
   },
   {
     id: "decks-rhino-racing-shark-mst-rmx-upper-deck-only-rhino-racing-rr-rmx-shark-cfup",
@@ -935,7 +1136,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shark-transmission-gear-box-with-upper-deck-and-shock-tower-red-purple-black-yd-2-rd-sd-rmx-rdx-rhino-racing-rr-820",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; gearbox assembly rather than a standalone deck."
   },
   {
     id: "decks-team-associated-carbon-fiber-chassis-kit-for-dc10-lower-deck-associated-asc72200",
@@ -948,7 +1152,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/carbon-fiber-chassis-kit-for-dc10-lower-deck-associated-asc72200",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "team-associated-dc10-carbon-lower-deck-series",
+    canonicalVariantId: "standard-asc72200",
+    reasonHidden: "Collapsed into the DC10 Carbon Lower Deck Series lower-deck variant family."
   },
   {
     id: "decks-team-associated-sr27-main-chassis-set-associated-21800",
@@ -961,7 +1170,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sr27-main-chassis-set-associated-21800",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; not an RC drift setup deck."
   },
   {
     id: "decks-yokomo-aluminum-rear-upper-deck-mount-tensioner-for-md3-0-yokomo-md-003m-3",
@@ -974,7 +1186,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-rear-upper-deck-mount-tensioner-for-md3-0-yokomo-md-003m-3",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Upper deck mount/tensioner support part, not a standalone upper deck plate."
   },
   {
     id: "decks-yokomo-aluminum-upper-deck-posts-for-md3-0-yokomo-md-003p-3",
@@ -987,85 +1202,106 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-upper-deck-posts-for-md3-0-yokomo-md-003p-3",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Upper deck post support hardware, not a standalone deck tuning selection."
   },
   {
     id: "decks-yokomo-graphite-rear-upper-deck-for-md3-0-yokomo-md-003r-3",
     category: "decks",
     brand: "Yokomo",
-    productName: "Graphite Rear Upper Deck for MD3.0 [Yokomo] MD-003R-3",
+    productName: "MD3.0 Graphite Rear Upper Deck",
+    simplifiedName: "MD3.0 Graphite Rear Upper Deck",
+    displayName: "MD3.0 Graphite Rear Upper Deck",
     modelNumber: "MD-003R-3",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced graphite rear upper deck for MD3.0.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/graphite-rear-upper-deck-for-md3-0-yokomo-md-003r-3",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["Graphite Rear Upper Deck for MD3.0 [Yokomo] MD-003R-3"]
   },
   {
     id: "decks-yokomo-mat-graphite-main-chassis-2-4mm-for-rd2-0-lower-deck-set-yokomo-rd-002g",
     category: "decks",
     brand: "Yokomo",
-    productName: "MAT GRAPHITE MAIN CHASSIS 2.4mm FOR RD2.0 Lower Deck Set [Yokomo] RD-002G",
+    productName: "RD2.0 Matte Graphite Main Chassis 2.4mm",
+    simplifiedName: "RD2.0 Matte Graphite Main Chassis 2.4mm",
+    displayName: "RD2.0 Matte Graphite Main Chassis 2.4mm",
     modelNumber: "RD-002G",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced RD2.0 matte graphite lower deck/main chassis plate.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mat-graphite-main-chassis-2-4mm-for-rd2-0-yokomo-rd-002g",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["MAT GRAPHITE MAIN CHASSIS 2.4mm FOR RD2.0 Lower Deck Set [Yokomo] RD-002G"]
   },
   {
     id: "decks-yokomo-mat-graphite-main-chassis-2-4mm-for-sd3-0-lower-deck-set-yokomo-sd-002s3",
     category: "decks",
     brand: "Yokomo",
-    productName: "MAT GRAPHITE MAIN CHASSIS 2.4mm FOR SD3.0 Lower Deck Set [Yokomo] SD-002S3",
+    productName: "SD3.0 Matte Graphite Main Chassis 2.4mm",
+    simplifiedName: "SD3.0 Matte Graphite Main Chassis 2.4mm",
+    displayName: "SD3.0 Matte Graphite Main Chassis 2.4mm",
     modelNumber: "SD-002S3",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced SD3.0 matte graphite lower deck/main chassis plate.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mat-graphite-main-chassis-2-4mm-for-sd3-0-lower-deck-set-yokomo-sd-002s3",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["MAT GRAPHITE MAIN CHASSIS 2.4mm FOR SD3.0 Lower Deck Set [Yokomo] SD-002S3"]
   },
   {
     id: "decks-yokomo-mat-graphite-upper-deck-2-2mm-for-rd2-0-yokomo-rd-003g",
     category: "decks",
     brand: "Yokomo",
-    productName: "MAT GRAPHITE UPPER DECK 2.2mm FOR RD2.0 [Yokomo] RD-003G",
+    productName: "RD2.0 Matte Graphite Upper Deck 2.2mm",
+    simplifiedName: "RD2.0 Matte Graphite Upper Deck 2.2mm",
+    displayName: "RD2.0 Matte Graphite Upper Deck 2.2mm",
     modelNumber: "RD-003G",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced RD2.0 matte graphite upper deck.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mat-graphite-upper-deck-2-2mm-for-rd2-0-yokomo-rd-003g",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["MAT GRAPHITE UPPER DECK 2.2mm FOR RD2.0 [Yokomo] RD-003G"]
   },
   {
     id: "decks-yokomo-mat-graphite-upper-deck-2-2mm-for-sd3-0-yokomo-sd-003s3",
     category: "decks",
     brand: "Yokomo",
-    productName: "MAT GRAPHITE UPPER DECK 2.2mm FOR SD3.0 [Yokomo] SD-003S3",
+    productName: "SD3.0 Matte Graphite Upper Deck 2.2mm",
+    simplifiedName: "SD3.0 Matte Graphite Upper Deck 2.2mm",
+    displayName: "SD3.0 Matte Graphite Upper Deck 2.2mm",
     modelNumber: "SD-003S3",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced SD3.0 matte graphite upper deck.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mat-graphite-upper-deck-2-2mm-for-sd3-0-yokomo-sd-002s3",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["MAT GRAPHITE UPPER DECK 2.2mm FOR SD3.0 [Yokomo] SD-003S3"]
   },
   {
     id: "decks-yokomo-matte-graphite-upper-deck-for-md3-0-yokomo-md-003-3",
     category: "decks",
     brand: "Yokomo",
-    productName: "Matte Graphite Upper Deck for MD3.0 [Yokomo] MD-003-3",
+    productName: "MD3.0 Matte Graphite Upper Deck",
+    simplifiedName: "MD3.0 Matte Graphite Upper Deck",
+    displayName: "MD3.0 Matte Graphite Upper Deck",
     modelNumber: "MD-003-3",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced MD3.0 matte graphite upper deck.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/matte-graphite-upper-deck-for-md3-0-yokomo-md-003-3",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["Matte Graphite Upper Deck for MD3.0 [Yokomo] MD-003-3"]
   },
   {
     id: "decks-yokomo-rear-upper-deck-adaptor-for-yd-2-zx-yokomo-y2-003zar",
@@ -1078,33 +1314,42 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rear-upper-deck-adaptor-for-yd-2-zx-yokomo-y2-003zar",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; upper deck adapter/support hardware."
   },
   {
     id: "decks-yokomo-sd-1-0-aluminum-chassis-2-0mm-deck-for-yd-2z-zs-yd-2-s-z-yokomo-y2-002al",
     category: "decks",
     brand: "Yokomo",
-    productName: "SD 1.0 Aluminum Chassis (2.0mm) Deck for YD-2Z-ZS YD-2 S Z [Yokomo] Y2-002AL",
+    productName: "SD 1.0 Aluminum Main Chassis 2.0mm",
+    simplifiedName: "SD 1.0 Aluminum Main Chassis 2.0mm",
+    displayName: "SD 1.0 Aluminum Main Chassis 2.0mm",
     modelNumber: "Y2-002AL",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced SD 1.0 aluminum lower deck/main chassis plate for YD-2Z/ZS and YD-2 S/Z platforms.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sd-1-0-aluminum-chassis-2-0mm-deck-for-yd-2z-zs-yd-2-s-z-yokomo-y2-002al",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["SD 1.0 Aluminum Chassis (2.0mm) Deck for YD-2Z-ZS YD-2 S Z [Yokomo] Y2-002AL"]
   },
   {
     id: "decks-yokomo-sd-2-0-graphite-carbon-fiber-cf-main-chassis-2-4mm-deck-for-yd-2z-zs-yd-2-s-z-yokomo-y2-002s2",
     category: "decks",
     brand: "Yokomo",
-    productName: "SD 2.0 GRAPHITE CARBON FIBER CF MAIN CHASSIS(2.4mm) Deck for YD-2Z-ZS YD-2 S Z [Yokomo] Y2-002S2",
+    productName: "SD 2.0 Graphite Main Chassis 2.4mm",
+    simplifiedName: "SD 2.0 Graphite Main Chassis 2.4mm",
+    displayName: "SD 2.0 Graphite Main Chassis 2.4mm",
     modelNumber: "Y2-002S2",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced SD 2.0 graphite lower deck/main chassis plate for YD-2Z/ZS and YD-2 S/Z platforms.",
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sd-2-0-graphite-carbon-fiber-cf-main-chassis2-4mm-deck-for-yd-2z-zs-yd-2-s-z-yokomo-y2-002s2",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["SD 2.0 GRAPHITE CARBON FIBER CF MAIN CHASSIS(2.4mm) Deck for YD-2Z-ZS YD-2 S Z [Yokomo] Y2-002S2"]
   },
   {
     id: "decks-yokomo-sd-3-0-chamfered-aluminum-upper-deck-post-for-sd3-0-yokomo-sd-303s3",
@@ -1117,7 +1362,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sd-3-0-chamfered-aluminum-upper-deck-post-for-sd3-0-yokomo-sd-303s3",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; upper deck post hardware."
   },
   {
     id: "decks-yokomo-upper-deck-upper-deck-post-rear-brace-support-for-yd-2z-yokomo-y2-003z",
@@ -1130,7 +1378,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/upper-deck-upper-deck-post-rear-brace-support-for-yd-2z-yokomo-y2-003z",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; mixed upper deck support hardware."
   },
   {
     id: "decks-yokomo-upper-deck-adapter-for-yd2z-yd-2z-yokomo-y2-003aza",
@@ -1143,7 +1394,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/upper-deck-adapter-for-yd2z-yd-2z-yokomo-y2-003aza",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; upper deck adapter/support hardware."
   },
   {
     id: "decks-yokomo-upper-deck-adaptor-for-rd2-0-yokomo-rd-003",
@@ -1156,7 +1410,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/upper-deck-adaptor-for-rd2-0-yokomo-rd-003",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; upper deck adapter/support hardware."
   },
   {
     id: "decks-yokomo-yd-2z-aluminum-rear-upper-deck-adapter-yokomo-y2-003az",
@@ -1169,7 +1426,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["deck material","brace position","battery position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yd-2z-aluminum-rear-upper-deck-adapter-yokomo-y2-003az",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from the deck selector by catalog review; rear upper deck adapter/support hardware."
   },
   {
     id: "escs-reve-d-breve-rd-spec-brushless-esc-1-10-drift-electronic-speed-control-32-bit-w-bluetooth-black-purple-red-reve-d-r",
@@ -1208,7 +1468,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/1-28-blackbox-300r-competition-micro-esc-brushless-rc28-associated-27045",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "RC28 micro-scale ESC; hidden from the primary 1/10 drift ESC selector."
   },
   {
     id: "escs-yokomo-bl-ep6-60a-2s-3s-sensored-sensorless-brushless-electronic-speed-control-esc-yokomo-bl-ep6a",
@@ -1260,7 +1523,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/esc-programmer-for-bl-pro4-rs4-sp4-box-yokomo-bl-ybp4",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "ESC programmer/accessory, not an ESC."
   },
   {
     id: "escs-yokomo-esc-programmer-for-bl-rpx2-rpx-ii-tuner-yokomo-bl-rpxp2",
@@ -1273,7 +1539,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/esc-programmer-for-bl-rpx2-rpx-ii-tuner-yokomo-bl-rpxp2",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "ESC programmer/accessory, not an ESC."
   },
   {
     id: "escs-yokomo-programmer-for-rpx-iii-brushless-electronic-speed-control-esc-rpx3-yokomo-bl-r26p3",
@@ -1286,7 +1555,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/programmer-for-rpx-iii-brushless-electronic-speed-control-esc-rpx3-yokomo-bl-r26p3",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "ESC programmer/accessory, not an ESC."
   },
   {
     id: "escs-yokomo-programmer-for-rpx4-rpx3-rpxs-brushless-electronic-speed-control-esc-rpx3-yokomo-bl-r26p4",
@@ -1299,7 +1571,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/programmer-for-rpx-4-brushless-electronic-speed-control-esc-rpx3-yokomo-bl-r26p4",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "ESC programmer/accessory, not an ESC."
   },
   {
     id: "escs-yokomo-rpx-4-rpx4-black-brushless-electronic-speed-control-esc-yokomo-bl-rpx4",
@@ -1351,7 +1626,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rpx-ii-d-drift-spec-brushless-electronic-speed-control-esc-yokomo-bl-rpx2d",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Racing Performer RPXII Drift Spec ESC color variants.",
+    canonicalProductId: "yokomo-rpx-ii-drift-spec-esc",
+    canonicalVariantId: "black-bl-rpx2d"
   },
   {
     id: "escs-yokomo-rpx-ii-d-blue-drift-spec-brushless-electronic-speed-control-esc-yokomo-bl-rpx2dbl",
@@ -1364,7 +1644,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rpx-ii-d-blue-drift-spec-brushless-electronic-speed-control-esc-yokomo-bl-rpx2dbl",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Racing Performer RPXII Drift Spec ESC color variants.",
+    canonicalProductId: "yokomo-rpx-ii-drift-spec-esc",
+    canonicalVariantId: "blue-bl-rpx2dbl"
   },
   {
     id: "escs-yokomo-rpx-ii-d-purple-drift-spec-brushless-electronic-speed-control-esc-yokomo-bl-rpx2dp",
@@ -1377,7 +1662,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rpx-ii-d-purple-drift-spec-brushless-electronic-speed-control-esc-yokomo-bl-rpx2dp",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Racing Performer RPXII Drift Spec ESC color variants.",
+    canonicalProductId: "yokomo-rpx-ii-drift-spec-esc",
+    canonicalVariantId: "purple-bl-rpx2dp"
   },
   {
     id: "escs-yokomo-rpx-ii-d-red-drift-spec-brushless-electronic-speed-control-esc-yokomo-bl-rpx2dr",
@@ -1390,7 +1680,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["profile name","throttle curve","brake strength","drag brake","boost","turbo","PWM / drive frequency","BEC voltage","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rpx-ii-d-red-drift-spec-brushless-electronic-speed-control-esc-yokomo-bl-rpx2dr",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Racing Performer RPXII Drift Spec ESC color variants.",
+    canonicalProductId: "yokomo-rpx-ii-drift-spec-esc",
+    canonicalVariantId: "red-bl-rpx2dr"
   },
   {
     id: "escs-yokomo-rpx-iii-brushless-electronic-speed-control-esc-rpx3-yokomo-bl-rpx3",
@@ -1435,14 +1730,17 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     id: "frontaxles-reve-d-asl-front-axle-set-for-rwd-drift-set-of-2-reve-d-rd-005",
     category: "frontAxles",
     brand: "Reve D",
-    productName: "ASL Front Axle Set for RWD Drift (SET of 2) [Reve D] RD-005",
+    productName: "ASL Front Axle Set",
+    simplifiedName: "ASL Front Axle Set",
+    displayName: "ASL Front Axle Set",
     modelNumber: "RD-005",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced RWD drift front axle set. Retail set wording removed from selector display.",
     tunableParameters: ["length","wheel hub offset","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/asl-front-axle-set-for-rwd-drift-set-of-2-reve-d-rd-005",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["ASL Front Axle Set for RWD Drift (SET of 2) [Reve D] RD-005"]
   },
   {
     id: "frontaxles-reve-d-rdx-aluminum-front-axle-for-d1-mk-b2-2-0mm-type-set-of-2-reve-d-d1-010fa2",
@@ -1455,7 +1753,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["length","wheel hub offset","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-aluminum-front-axle-for-d1-mk-b2-2-0mm-type-set-of-2-reve-d-d1-010fa2",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rdx-front-axle-series",
+    canonicalVariantId: "d1-010fa2-aluminum-2mm",
+    reasonHidden: "Collapsed into the Reve D RDX Front Axle Series variant family."
   },
   {
     id: "frontaxles-reve-d-rdx-steel-front-axle-reve-d-d1-010f",
@@ -1468,7 +1771,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["length","wheel hub offset","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-steel-front-axle-reve-d-d1-010f",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rdx-front-axle-series",
+    canonicalVariantId: "d1-010f-steel",
+    reasonHidden: "Collapsed into the Reve D RDX Front Axle Series variant family."
   },
   {
     id: "frontaxles-rhinomax-front-axles-stub-shafts-rhinomax",
@@ -1533,7 +1841,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["length","wheel hub offset","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/5x7x1mm-aluminum-shim-for-y2-010fha-front-axle-yokomo-zc-a5710ba",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Front axle shim support hardware, not a standalone front axle."
   },
   {
     id: "frontaxles-yokomo-double-bearing-front-axle-set-hub-for-drift-rd-sd-md-yokomo-rd-010fds",
@@ -1585,7 +1896,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["length","wheel hub offset","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yd-2-aluminum-ul-front-axle-adjustable-range-5mm-9mm-yokomo-y2-010fha",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-y2-010fha-aluminum-ul-front-axle",
+    reasonHidden: "Duplicate sourced row collapsed into the canonical Yokomo Y2-010FHA Aluminum UL Front Axle."
   },
   {
     id: "frontaxles-yokomo-yd2-upgrade-option-2-kit-aluminum-kpi-knuckles-front-axles-yd2-yd-2-yokomo-y2-op2a",
@@ -1598,20 +1913,30 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["length","wheel hub offset","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yd2-upgrade-option-2-kit-aluminum-kpi-knuckles-front-axles-yd2-yd-2-yokomo-y2-op2a",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Bundled knuckle/front axle upgrade kit, not a standalone front axle selector item."
   },
   {
     id: "frontknuckles-mst-aluminum-atk-v2-front-knuckles-rwd-black-set-rmx-frx-mrx-rrx-fmx-mst-820158bk",
     category: "frontKnuckles",
     brand: "MST",
-    productName: "Aluminum ATK v2 Front Knuckles RWD (BLACK) Set (RMX, FRX, MRX, RRX, FMX) [MST] 820158BK",
-    modelNumber: "820158BK",
+    productName: "Aluminum ATK V2 Front Knuckles RWD",
+    simplifiedName: "Aluminum ATK V2 Front Knuckles RWD",
+    displayName: "Aluminum ATK V2 Front Knuckles RWD",
+    modelNumber: "820158BK / 820158R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "MST ATK V2 front knuckle family collapsed by color.",
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-atk-v2-front-knuckles-rwd-black-set-rmx-frx-mrx-rrx-fmx-mst-820158bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-820158bk", color: "Black", sku: "820158BK", displayName: "Black" },
+      { id: "red-820158r", color: "Red", sku: "820158R", displayName: "Red", sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-atk-v2-front-knuckles-rwd-red-set-mst-820158r" }
+    ],
+    aliases: ["ATK V2 Front Knuckles Black", "ATK V2 Front Knuckles Red", "820158BK", "820158R"]
   },
   {
     id: "frontknuckles-mst-aluminum-atk-v2-front-knuckles-rwd-red-set-rmx-frx-mrx-rrx-fmx-mst-820158r",
@@ -1624,7 +1949,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-atk-v2-front-knuckles-rwd-red-set-mst-820158r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the MST ATK V2 Front Knuckles RWD color variants.",
+    canonicalProductId: "frontknuckles-mst-aluminum-atk-v2-front-knuckles-rwd-black-set-rmx-frx-mrx-rrx-fmx-mst-820158bk",
+    canonicalVariantId: "red-820158r"
   },
   {
     id: "frontknuckles-mst-aluminum-atk-v3-front-knuckles-rwd-uprights-black-red-rmx-frx-mrx-rrx-fmx-rmx4-mst-820162r-820162bk",
@@ -1637,7 +1967,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-atk-v3-front-knuckles-rwd-red-set-rmx-frx-mrx-rrx-fmx-mst-820162r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the MST ATK V3 Aluminum Front Upright color variants.",
+    canonicalProductId: "mst-820162-atk-v3-aluminum-front-upright"
   },
   {
     id: "frontknuckles-reve-d-aluminum-multi-select-front-knuckle-for-rdx-2-0mm-offset-base-component-reve-d-d1-mk-b2",
@@ -1650,7 +1984,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-multi-select-front-knuckle-for-rdx-2-0mm-offset-base-component-reve-d-d1-mk-b2",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Reve D D1-MK-B2 front knuckle base row.",
+    canonicalProductId: "reve-d-d1-mk-b2-rdx-multi-front-knuckle-offset-base"
   },
   {
     id: "frontknuckles-reve-d-aluminum-sg-front-knuckle-for-rwd-drift-reve-d-rd-001sg",
@@ -1663,7 +2001,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-sg-front-knuckle-for-rwd-drift-reve-d-rd-001sg",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Reve D RD-001SG front knuckle row.",
+    canonicalProductId: "reve-d-rd-001sg-sg-front-knuckle"
   },
   {
     id: "frontknuckles-reve-d-graphite-front-knuckle-set-for-rwd-drift-rdx-reve-d-d1-415fg",
@@ -1676,7 +2018,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/graphite-front-knuckle-set-for-rwd-drift-rdx-reve-d-d1-415fg",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Reve D D1-415FG front knuckle row.",
+    canonicalProductId: "reve-d-d1-415fg-rdx-graphite-front-knuckle"
   },
   {
     id: "frontknuckles-reve-d-multi-select-knuckle-plate-akira-hikaru-us-for-aluminum-multi-select-front-knuckle-for-rdx-reve-d-d",
@@ -1689,7 +2035,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/multi-select-knuckle-plate-hikaru-us-for-aluminum-multi-select-front-knuckle-for-rdxreve-d-d1-mk-pa-d1-mk-pu",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from front knuckle selector by catalog review; this belongs in knuckle plate selection."
   },
   {
     id: "frontknuckles-reve-d-rdx-molded-front-knuckles-l-r-reve-d-d1-415fm",
@@ -1702,7 +2051,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-molded-front-knuckles-l-r-reve-d-d1-415fm",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Reve D D1-415FM front knuckle row.",
+    canonicalProductId: "reve-d-d1-415fm-rdx-molded-front-knuckle"
   },
   {
     id: "frontknuckles-reve-d-rdx-multi-select-front-knuckle-base-for-rwd-1-10-drift-reve-d-d1-mk-b",
@@ -1715,7 +2068,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-multi-select-front-knuckle-base-for-rwd-1-10-drift-reve-d-d1-mk-b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Reve D D1-MK-B front knuckle base row.",
+    canonicalProductId: "reve-d-d1-mk-b-rdx-multi-select-front-knuckle-base"
   },
   {
     id: "frontknuckles-reve-d-silver-edge-aluminum-front-knuckle-set-for-rwd-drift-rdx-reve-d-d1-415fa",
@@ -1728,7 +2085,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/silver-edge-aluminum-front-knuckle-set-for-rwd-drift-rdx-reve-d-d1-415fa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Reve D D1-415FA aluminum front knuckle row.",
+    canonicalProductId: "reve-d-d1-415fa-rdx-aluminum-front-knuckle"
   },
   {
     id: "frontknuckles-team-associated-dc10-ft-aluminum-steering-blocks-front-knuckles-associated-asc72277",
@@ -1741,7 +2102,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/dc10-ft-aluminum-steering-blocks-associated-asc-72277",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Team Associated 72277 DC10 FT Aluminum Steering Blocks row.",
+    canonicalProductId: "team-associated-72277-dc10-ft-aluminum-steering-blocks"
   },
   {
     id: "frontknuckles-team-associated-dc10-ft-aluminum-trailing-blocks-1-75m-for-front-knuckles-associated-asc72289",
@@ -1754,7 +2119,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/dc10-ft-aluminum-trailing-blocks-1-75m-for-front-knuckles-associated-asc72289",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from front knuckle selector by catalog review; trailing block support part for the knuckle."
   },
   {
     id: "frontknuckles-team-associated-rc28r-axles-steering-block-and-servo-horn-set-rc28-associated-21636",
@@ -1767,7 +2135,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rc28r-axles-steering-block-and-servo-horn-setrc28-associated-21636",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from front knuckle selector by catalog review; RC28 bundle includes axle and servo horn parts."
   },
   {
     id: "frontknuckles-team-associated-sr27-steering-block-set-associated-21805",
@@ -1780,7 +2151,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sr27-steering-block-set-associated-21805",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "SR27 micro-scale steering block; hidden from the primary 1/10 front knuckle selector."
   },
   {
     id: "frontknuckles-yokomo-aluminum-lightweight-front-steering-block-variable-kingpin-angle-knuckles-yd2-yd-2-yokomo-y2-415sal",
@@ -1793,7 +2167,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-lightweight-front-steering-block-variable-kingpin-angle-knuckles-yd2-yd-2-yokomo-y2-415sala",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Yokomo Y2-415SALA steering block row.",
+    canonicalProductId: "yokomo-y2-415sala-lightweight-steering-block"
   },
   {
     id: "frontknuckles-yokomo-button-head-king-pin-ball-for-aluminum-steering-block-1-or-2-iso-3mm-screw-yokomo-ib-414kb1-ib-414k",
@@ -1806,7 +2184,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/button-head-king-pin-ball-for-aluminum-steering-block-1-or-2-iso-3mm-screw-yokomo-ib-414kb1-ib-414kb2",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from front knuckle selector by catalog review; king pin ball hardware, not a steering block."
   },
   {
     id: "frontknuckles-yokomo-lts-sd1-0-load-transfer-high-aluminum-lightweight-front-steering-block-variable-kingpin-angle-knuck",
@@ -1814,8 +2195,8 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     brand: "Yokomo",
     productName: "LTS SD1.0 LOAD TRANSFER HIGH Aluminum Lightweight Front Steering Block (Variable Kingpin Angle) Knuckles YD2 YD-2 [Yokomo] Y2-415SALL",
     modelNumber: "Y2-415SALL",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["YD-2", "SD 1.0 LTS"],
+    notes: "Sourced catalog product. Load Transfer System high front steering block for SD1.0 LTS / YD-2 fitment.",
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/lts-sd1-0-load-transfer-high-aluminum-lightweight-front-steering-block-variable-kingpin-angle-knuckles-yd2-yd-2-yokomo-y2-415sall",
     userAdded: false,
@@ -1825,23 +2206,31 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     id: "frontknuckles-yokomo-rwd-aluminum-light-weight-sp-steering-block-for-rd-sd-series-knuckles-black-blue-red-purple-yokomo-",
     category: "frontKnuckles",
     brand: "Yokomo",
-    productName: "RWD Aluminum Light Weight SP Steering Block for RD/SD series KNUCKLES BLACK BLUE RED PURPLE [Yokomo] Y2-415SAA Y2-415SABL Y2-415SAP Y2-415SAR",
+    productName: "RWD Aluminum Light Weight SP Steering Block for RD/SD series KNUCKLES BLACK BLUE PURPLE RED [Yokomo] Y2-415SAA Y2-415SABL Y2-415SAP Y2-415SAR",
+    simplifiedName: "RD/SD RWD Aluminum Light Weight SP Steering Block",
+    displayName: "RD/SD RWD Aluminum Light Weight SP Steering Block",
     modelNumber: "Y2-415SAA Y2-415SABL Y2-415SAP Y2-415SAR",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["RD 1.0", "RD 2.0", "SD 1.0", "SD 2.0", "SD 3.0"],
+    notes: "Sourced catalog product. RD/SD-series front steering block; color SKUs are collapsed as variants.",
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yd2-rwd-knuckles-with-adjustable-king-pin-angle-yokomo-y2-415sa",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-y2-415saa", color: "Black", sku: "Y2-415SAA", displayName: "Black" },
+      { id: "blue-y2-415sabl", color: "Blue", sku: "Y2-415SABL", displayName: "Blue" },
+      { id: "purple-y2-415sap", color: "Purple", sku: "Y2-415SAP", displayName: "Purple" },
+      { id: "red-y2-415sar", color: "Red", sku: "Y2-415SAR", displayName: "Red" }
+    ]
   },
   {
     id: "frontknuckles-yokomo-sd-2-0-steering-block-rear-hub-carrier-yokomo-y2-415fr",
     category: "frontKnuckles",
     brand: "Yokomo",
-    productName: "SD 2.0 STEERING BLOCK & REAR HUB CARRIER [Yokomo] Y2-415FR",
+    productName: "SD 2.0 Steering Block [Yokomo] Y2-415FR",
     modelNumber: "Y2-415FR",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["SD 2.0"],
+    notes: "Sourced catalog product. Cleaned by catalog review from a combined steering block/rear hub carrier listing; shown as the SD 2.0 front steering block in the front knuckle selector.",
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sd-2-0-steering-block-rear-hub-carrier-yokomo-y2-415fr",
     userAdded: false,
@@ -1871,7 +2260,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper arm hole","lower arm hole","spacer position","trail if applicable","steering stop","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yokomo-steering-block-for-caliper-for-rd-yd-2-knuckle-yokomo-y2-415cpfa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Yokomo Y2-415CPFA steering block row.",
+    canonicalProductId: "yokomo-y2-415cpfa-front-steering-block-dummy-brake"
   },
   {
     id: "frontlowerarms-mst-aluminum-front-lower-arm-set-red-rmx-fmx-fxx-mst-820117r",
@@ -1891,13 +2284,20 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     category: "frontLowerArms",
     brand: "Overdose",
     productName: "Adjustable Aluminum Front Suspension Arm Type-3 for GALM PURPLE RED BLACK [OVERDOSE] OD2862 OD2863 OD2864",
+    simplifiedName: "GALM Adjustable Front Suspension Arm Type-3",
+    displayName: "GALM Adjustable Front Suspension Arm Type-3",
     modelNumber: "OD2862 OD2863 OD2864",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Color SKUs are collapsed as variants.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/adjustable-aluminum-front-suspension-arm-type-3-for-galm-purple-red-black-overdose-od2862-od2863-od2864",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "purple-od2862", color: "Purple", sku: "OD2862", displayName: "Purple" },
+      { id: "red-od2863", color: "Red", sku: "OD2863", displayName: "Red" },
+      { id: "black-od2864", color: "Black", sku: "OD2864", displayName: "Black" }
+    ]
   },
   {
     id: "frontlowerarms-team-associated-dc10-ft-aluminum-front-lower-arms-associated-asc72281",
@@ -1923,7 +2323,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/3mm-bd9-rd2-0-suspension-arm-hinge-pin-yokomo-b9-009afa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Suspension hinge pin support hardware, not a standalone front lower arm."
   },
   {
     id: "frontlowerarms-yokomo-aluminum-27mm-rod-end-adapter-for-front-lower-a-arm-2-pack-yokomo-d-156-27aa",
@@ -1936,7 +2339,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-27mm-rod-end-adapter-for-front-lower-a-arm-2-pack-yokomo-d-156-27aa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rod end adapter support item, not a standalone front lower arm."
   },
   {
     id: "frontlowerarms-yokomo-aluminum-30mm-rod-end-adapter-for-front-lower-a-arm-2-pack-yokomo-d-156-30aa",
@@ -1949,7 +2355,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-30mm-rod-end-adapter-for-front-lower-a-arm-2-pack-yokomo-d-156-30aa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rod end adapter support item, not a standalone front lower arm."
   },
   {
     id: "frontlowerarms-yokomo-rod-end-adaptor-for-front-lower-a-arm-2-pack-yokomo-ib-008ra",
@@ -1962,7 +2371,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rod-end-adaptor-for-front-lower-a-arm-2-pack-yokomo-ib-008ra",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rod end adapter support item, not a standalone front lower arm."
   },
   {
     id: "gyros-reve-d-purple-reve-d-steering-gyro-revox-for-rwd-drift-car-3ch-only-reve-d-rg-rvxp-vibrant-purple",
@@ -1975,7 +2387,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["gain","mode","curve","endpoint","direction","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/purple-reve-d-steering-gyro-revox-for-rwd-drift-car-3ch-only-reve-d-rg-rvxp-vibrant-purple",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Reve D REVOX Steering Gyro color variants.",
+    canonicalProductId: "gyros-reve-d-reve-d-steering-gyro-revox-for-rwd-drift-car-3ch-only-reve-d-rg-rvxb",
+    canonicalVariantId: "purple-rg-rvxp"
   },
   {
     id: "gyros-reve-d-red-reve-d-steering-gyro-revox-for-rwd-drift-car-3ch-only-reve-d-rg-rvxr-striking-red",
@@ -1988,20 +2405,33 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["gain","mode","curve","endpoint","direction","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/red-reve-d-steering-gyro-revox-for-rwd-drift-car-3ch-only-reve-d-rg-rvxr-striking-red",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Reve D REVOX Steering Gyro color variants.",
+    canonicalProductId: "gyros-reve-d-reve-d-steering-gyro-revox-for-rwd-drift-car-3ch-only-reve-d-rg-rvxb",
+    canonicalVariantId: "red-rg-rvxr"
   },
   {
     id: "gyros-reve-d-reve-d-steering-gyro-revox-for-rwd-drift-car-3ch-only-reve-d-rg-rvxb",
     category: "gyros",
     brand: "Reve D",
-    productName: "REVE-D Steering Gyro REVOX for RWD Drift Car (3ch only) [Reve D] RG-RVXB",
-    modelNumber: "RG-RVXB",
+    productName: "REVOX Steering Gyro",
+    simplifiedName: "REVOX Steering Gyro",
+    displayName: "REVOX Steering Gyro",
+    modelNumber: "RG-RVXB / RG-RVXP / RG-RVXR",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Reve D RWD drift steering gyro; color SKUs are grouped as variants.",
     tunableParameters: ["gain","mode","curve","endpoint","direction","notes"],
-    sourceUrl: "https://supergdrift.com/collections/vendors/products/reve-d-steering-gyro-revox-for-rwd-drift-car-3ch-only-reve-d-rg-rvxa",
+    sourceUrl: "https://teamreved.com/product/rg-rvx",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-rg-rvxb", color: "Black", sku: "RG-RVXB", displayName: "Black" },
+      { id: "purple-rg-rvxp", color: "Purple", sku: "RG-RVXP", displayName: "Purple" },
+      { id: "red-rg-rvxr", color: "Red", sku: "RG-RVXR", displayName: "Red" }
+    ],
+    aliases: ["REVOX", "REVE-D REVOX", "RG-RVXB", "RG-RVXP", "RG-RVXR"]
   },
   {
     id: "gyros-yokomo-rd-2-0-rookie-drift-rwd-1-10-rc-drift-car-kit-w-yg-302v2-gyro-combo-rd2-0-yokomo-rdr-020g",
@@ -2014,7 +2444,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["gain","mode","curve","endpoint","direction","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rd-2-0-rookie-drift-rwd-1-10-rc-drift-car-kit-w-yg-302-gyro-combo-rd2-0-yokomo-rdr-020g",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Chassis/gyro combo kit; removed from product selectors in favor of the standalone RD2.0 chassis and gyro entries."
   },
   {
     id: "gyros-yokomo-v4-dp-302-drift-steering-gyro-blue-black-red-purple-1-10-drift-yokomo-dpp-302v4b-dpp-302v4rb-dpp-302v4pb",
@@ -2027,7 +2460,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["gain","mode","curve","endpoint","direction","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/v4-dp-302-drift-steering-gyro-black-1-10-drift-yokomo-dpp-302v4",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo DP-302 V4 Steering Gyro color variants.",
+    canonicalProductId: "gyros-yokomo-dp-302-v4-blue-dpp-302v4b"
   },
   {
     id: "gyros-yokomo-yg-302v2-2023-steering-gyro-for-1-10-drift-yokomo-yg-302v2",
@@ -2040,7 +2477,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["gain","mode","curve","endpoint","direction","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yg-302v2-2023-steering-gyro-for-1-10-drift-yokomo-yg-302v2",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Yokomo YG-302V2 Steering Gyro electronics row.",
+    canonicalProductId: "gyros-yokomo-yg-302v2"
   },
   {
     id: "motors-mst-rmx-2-0-s-rear-motor-conversion-rrx-mst-210579",
@@ -2053,7 +2494,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-2-0-s-rear-motor-conversion-rrx-mst-210579",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear motor conversion kit, not a standalone motor."
   },
   {
     id: "motors-racing-performer-titanium-screw-set-for-rp-motor-racing-performer-rp-090a",
@@ -2066,7 +2510,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/titanium-screw-set-for-rp-motor-yokomo-rp-090",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Motor screw support hardware, not a motor."
   },
   {
     id: "motors-reve-d-absolute-1-rwd-drift-motor-13-5-10-5-reve-d-rm-a-105-135",
@@ -2105,7 +2552,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/1-28-reedy-4500kv-sensored-brushless-motor-blackbox-associated-27505",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "RC28 micro-scale motor; hidden from the primary 1/10 drift motor selector."
   },
   {
     id: "motors-team-associated-sr27-spare-motor-associated-21828",
@@ -2118,7 +2568,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sr27-spare-motor-associated-21829",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "SR27 spare motor, not a 1/10 drift tuning motor selector item."
   },
   {
     id: "motors-yokomo-3-5mm-female-connectors-for-brushless-motors-3pcs-yokomo-rp-108",
@@ -2131,7 +2584,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/3-5mm-female-connectors-for-brushless-motors-3pcs-yokomo-rp-108",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Motor connector accessory, not a standalone motor."
   },
   {
     id: "motors-yokomo-dx1-type-r-brushless-motor-10-5t-purple-brushless-motor-rp-yokomo-rpm-dx105rp",
@@ -2144,7 +2600,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/dx1-type-r-brushless-motor-10-5t-purple-brushless-motor-rp-yokomo-rpm-dx105rp",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the base Yokomo DX1 Type-R Titanium Shaft 10.5T motor row.",
+    canonicalProductId: "yokomo-dx1-type-r-titanium-10-5t",
+    canonicalVariantId: "purple-rpm-dx105rp"
   },
   {
     id: "motors-yokomo-dx1-type-r-brushless-motor-10-5t-red-brushless-motor-rp-yokomo-rpm-dx105rr",
@@ -2157,7 +2618,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/dx1-type-r-brushless-motor-10-5t-red-brushless-motor-rp-yokomo-rpm-dx105rr",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the base Yokomo DX1 Type-R Titanium Shaft 10.5T motor row.",
+    canonicalProductId: "yokomo-dx1-type-r-titanium-10-5t",
+    canonicalVariantId: "red-rpm-dx105rr"
   },
   {
     id: "motors-yokomo-racing-performer-dx1-type-r-type-t-brushless-motor-rp-yokomo-rpm-dx1r-rpm-dx1t",
@@ -2170,7 +2636,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/racing-performer-dx1-type-r-type-t-brushless-motor-rp-yokomo-rpm-dx1r-rpm-dx1t",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Bundled DX1 family listing; use the turn-specific DX1 motor rows instead."
   },
   {
     id: "motors-yokomo-racing-performer-dx2-type-r-brushless-motor-rp-11-5-13-5-15-5-black-red-purple-blue-yokomo-rpm-d2115r-rpm-",
@@ -2183,7 +2652,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/racing-performer-dx2-type-r-brushless-motor-rp-11-5-13-5-yokomo-rpm-d2115rb-rpm-d2135rb",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Bundled DX2 family listing; use the turn-specific DX2 motor rows instead."
   },
   {
     id: "motors-yokomo-yd2-rear-motor-conversion-rr-yokomo-y2-rmc",
@@ -2196,7 +2668,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yd2-rear-motor-conversion-rr-yokomo-y2-rmc",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear motor conversion kit, not a standalone motor."
   },
   {
     id: "motors-yokomo-zero-s-drift-sensored-brushless-motor-10-5t-13-5t-red-purple-black-yokomo-ym-s105db-s105dr-s105dp-s135db-s",
@@ -2209,20 +2684,31 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","timing","rotor","fan","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/zero-s-drift-sensored-brushless-motor-10-5t-13-5t-red-purple-blackyokomo-ym-s105db-s105dr-s105dp-s135db-s135dr-s135dp",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Bundled ZERO-S family listing; use the turn-specific ZERO-S motor rows instead."
   },
   {
     id: "rearaxles-overdose-preorder-light-weight-aluminum-rear-axle-shaft-for-galm-ver2-red-purple-black-overdose-od3982-od3981-",
     category: "rearAxles",
     brand: "Overdose",
-    productName: "PREORDER: Light Weight Aluminum Rear Axle Shaft (For Galm ver2) (RED PURPLE BLACK) [Overdose] OD3982 OD3981 OD3980",
+    productName: "GALM Ver.2 Lightweight Aluminum Rear Axle Shaft",
+    simplifiedName: "GALM Ver.2 Lightweight Aluminum Rear Axle Shaft",
+    displayName: "GALM Ver.2 Lightweight Aluminum Rear Axle Shaft",
     modelNumber: "OD3982 OD3981 OD3980",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced GALM Ver.2 lightweight rear axle shaft family. Retail preorder wording removed from selector display.",
     tunableParameters: ["length","wheel hub offset","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/light-weight-aluminum-rear-axle-shaft-for-galm-red-purple-black-overdose-od3982-od3981-od3980",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["PREORDER: Light Weight Aluminum Rear Axle Shaft (For Galm ver2) (RED PURPLE BLACK) [Overdose] OD3982 OD3981 OD3980"],
+    variants: [
+      { id: "red-od3982", color: "Red", sku: "OD3982", displayName: "Red" },
+      { id: "purple-od3981", color: "Purple", sku: "OD3981", displayName: "Purple" },
+      { id: "black-od3980", color: "Black", sku: "OD3980", displayName: "Black" }
+    ]
   },
   {
     id: "rearaxles-reve-d-universal-drive-shaft-completed-47-0mm-2pcs-rdx-reve-d-us-s470s",
@@ -2242,9 +2728,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     category: "rearAxles",
     brand: "Yokomo",
     productName: "Offset Rear Universal Joint Set for RD/SD/MD (RD-415AR only) CVD AXLES [Yokomo] RD-010ROS",
+    simplifiedName: "RD/SD/MD Offset Rear Universal Joint Set 45.5mm",
+    displayName: "RD/SD/MD Offset Rear Universal Joint Set 45.5mm",
     modelNumber: "RD-010ROS",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["RD", "SD", "MD"],
+    notes: "45.5mm offset rear universal joint set for Yokomo RD/SD/MD builds using RD-415AR aluminum rear hub carriers.",
     tunableParameters: ["length","wheel hub offset","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/offset-rear-universal-joint-set-for-rd-sd-md-rd-415ar-only-cvd-axles-yokomo-rd-010ros",
     userAdded: false,
@@ -2267,14 +2755,21 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     id: "rearhubcarriers-mst-aluminum-tha-rear-upright-rear-knuckle-set-black-mst-210695bk",
     category: "rearHubCarriers",
     brand: "MST",
-    productName: "Aluminum THA Rear UPRIGHT (Rear Knuckle) Set (BLACK) [MST] 210695BK",
-    modelNumber: "210695BK",
+    productName: "Aluminum THA Rear Upright",
+    simplifiedName: "Aluminum THA Rear Upright",
+    displayName: "Aluminum THA Rear Upright",
+    modelNumber: "210695BK / 210695R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "MST THA rear upright/rear knuckle family collapsed by color.",
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-tha-rear-upright-rear-knuckle-set-black-mst-210695bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-210695bk", color: "Black", sku: "210695BK", displayName: "Black" },
+      { id: "red-210695r", color: "Red", sku: "210695R", displayName: "Red", sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-tha-rear-upright-rear-knuckle-set-red-mst-210695r" }
+    ],
+    aliases: ["Aluminum THA Rear Upright Black", "Aluminum THA Rear Upright Red", "210695BK", "210695R"]
   },
   {
     id: "rearhubcarriers-mst-aluminum-tha-rear-upright-rear-knuckle-set-red-mst-210695r",
@@ -2287,20 +2782,32 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-tha-rear-upright-rear-knuckle-set-red-mst-210695r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the MST Aluminum THA Rear Upright color variants.",
+    canonicalProductId: "rearhubcarriers-mst-aluminum-tha-rear-upright-rear-knuckle-set-black-mst-210695bk",
+    canonicalVariantId: "red-210695r"
   },
   {
     id: "rearhubcarriers-mst-aluminum-thb-rear-upright-rear-knuckle-set-and-suspension-mount-black-mst-210719bk",
     category: "rearHubCarriers",
     brand: "MST",
-    productName: "Aluminum THB Rear UPRIGHT (Rear Knuckle) Set and Suspension Mount (BLACK) [MST] 210719BK",
-    modelNumber: "210719BK",
+    productName: "Aluminum THB Rear Upright",
+    simplifiedName: "Aluminum THB Rear Upright",
+    displayName: "Aluminum THB Rear Upright",
+    modelNumber: "210719BK / 210719R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "MST THB rear upright/rear knuckle family collapsed by color.",
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-thb-rear-upright-rear-knuckle-set-black-mst-210719bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-210719bk", color: "Black", sku: "210719BK", displayName: "Black" },
+      { id: "red-210719r", color: "Red", sku: "210719R", displayName: "Red", sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-thb-rear-upright-rear-knuckle-set-and-suspension-mount-red-mst-210719r" }
+    ],
+    aliases: ["Aluminum THB Rear Upright Black", "Aluminum THB Rear Upright Red", "210719BK", "210719R"]
   },
   {
     id: "rearhubcarriers-mst-aluminum-thb-rear-upright-rear-knuckle-set-and-suspension-mount-red-mst-210719r",
@@ -2313,33 +2820,53 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-thb-rear-upright-rear-knuckle-set-and-suspension-mount-red-mst-210719r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the MST Aluminum THB Rear Upright color variants.",
+    canonicalProductId: "rearhubcarriers-mst-aluminum-thb-rear-upright-rear-knuckle-set-and-suspension-mount-black-mst-210719bk",
+    canonicalVariantId: "red-210719r"
   },
   {
     id: "rearhubcarriers-mst-rmx-4-aluminum-tmb-rear-hub-set-red-black-mst-210740bk-210740r",
     category: "rearHubCarriers",
     brand: "MST",
-    productName: "RMX 4 Aluminum TMB rear hub set - Red Black [MST] 210740BK 210740R",
+    productName: "RMX 4 Aluminum TMB Rear Hub",
+    simplifiedName: "RMX 4 Aluminum TMB Rear Hub",
+    displayName: "RMX 4 Aluminum TMB Rear Hub",
     modelNumber: "210740BK 210740R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "MST RMX 4 TMB rear hub family collapsed by color.",
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-4-aluminum-tmb-rear-hub-set-red-black-mst-210740bk-210740r",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-210740bk", color: "Black", sku: "210740BK", displayName: "Black" },
+      { id: "red-210740r", color: "Red", sku: "210740R", displayName: "Red" }
+    ],
+    aliases: ["RMX 4 Aluminum TMB Rear Hub Black", "RMX 4 Aluminum TMB Rear Hub Red", "210740BK", "210740R"]
   },
   {
     id: "rearhubcarriers-overdose-es-aluminum-rear-upright-rear-knuckles-for-galm-series-red-purple-black-overdose-od2897-od2898-",
     category: "rearHubCarriers",
     brand: "Overdose",
-    productName: "ES Aluminum Rear Upright (Rear Knuckles) (For GALM series) RED PURPLE BLACK [Overdose] OD2897 OD2898 OD2899",
+    productName: "ES Aluminum Rear Upright for GALM",
+    simplifiedName: "ES Aluminum Rear Upright for GALM",
+    displayName: "ES Aluminum Rear Upright for GALM",
     modelNumber: "OD2897 OD2898 OD2899",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Overdose ES aluminum rear upright for GALM, collapsed by color.",
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/es-aluminum-rear-upright-rear-knuckles-for-galm-series-red-purple-black-overdose-od2897-od2898-od2899",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "red-od2897", color: "Red", sku: "OD2897", displayName: "Red" },
+      { id: "purple-od2898", color: "Purple", sku: "OD2898", displayName: "Purple" },
+      { id: "black-od2899", color: "Black", sku: "OD2899", displayName: "Black" }
+    ],
+    aliases: ["ES Aluminum Rear Upright Red", "ES Aluminum Rear Upright Purple", "ES Aluminum Rear Upright Black", "OD2897", "OD2898", "OD2899"]
   },
   {
     id: "rearhubcarriers-reve-d-aluminum-plate-for-rd-012-rear-hub-carrier-knuckle-set-for-rwd-drift-yd-2-mc-1-reve-d-rd-012p1",
@@ -2352,7 +2879,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-plate-for-rd-012-rear-hub-carrier-knuckle-set-for-rwd-drift-yd-2-mc-1-reve-d-rd-012p1",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear hub carrier plate accessory, not the complete rear hub carrier/upright."
   },
   {
     id: "rearhubcarriers-reve-d-aluminum-plate-for-rd-012s-rear-hub-carrier-rear-hub-carrier-plate-stabilizer-lever-ratio-1-reve-",
@@ -2365,7 +2895,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-plate-for-rd-012s-rear-hub-carrier-rear-hub-carrier-plate-stabilizer-lever-ratio-1-reve-d-rd-012psb",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear hub carrier plate accessory, not the complete rear hub carrier/upright."
   },
   {
     id: "rearhubcarriers-reve-d-aluminum-plate-for-rd-012s-rear-hub-carrier-se-processing-reve-d-rd-012p1s",
@@ -2378,7 +2911,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-plate-for-rd-012-rear-hub-carrier-se-processing-reve-d-rd-012p1s",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear hub carrier plate accessory, not the complete rear hub carrier/upright."
   },
   {
     id: "rearhubcarriers-reve-d-rdx-molded-rear-hub-carrier-uprights-reve-d-d1-415rm",
@@ -2391,7 +2927,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-molded-rear-hub-carrier-uprights-reve-d-d1-415rm",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Reve D D1-415RM rear hub carrier row.",
+    canonicalProductId: "reve-d-d1-415rm-rdx-molded-rear-hub-carrier"
   },
   {
     id: "rearhubcarriers-reve-d-silver-edge-aluminum-rear-hub-carrier-knuckle-set-for-rwd-drift-yd-2-mc-1-rdx-reve-d-rd-012s",
@@ -2404,7 +2944,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/silver-edge-aluminum-rear-hub-carrier-knuckle-set-for-rwd-drift-yd-2-mc-1-rdx-reve-d-rd-012s",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the official Reve D RD-012S rear hub carrier row.",
+    canonicalProductId: "reve-d-rd-012s-rdx-aluminum-rear-hub-carrier"
   },
   {
     id: "rearhubcarriers-yokomo-yd2-rear-hub-carrier-caliper-weights-set-yokomo-y2-415rwa",
@@ -2417,46 +2961,66 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper hole","lower hole","hub spacer","axle height","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/yd2-rear-hub-carrier-caliper-weights-set-yokomo-y2-415rw",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Caliper weight add-on, not a rear hub carrier."
   },
   {
     id: "rearlowerarms-mst-aluminum-mb-suspension-lower-arm-active-toe-mst-210616b-210616r-red-black",
     category: "rearLowerArms",
     brand: "MST",
-    productName: "ALUMINUM MB Suspension Lower Arm Active Toe [MST] 210616B 210616R RED BLACK",
-    modelNumber: "210616B 210616R RED BLACK",
+    productName: "Aluminum MB Suspension Lower Arm Active Toe [MST]",
+    modelNumber: "210616B / 210616R",
     compatibleChassis: ["Universal"],
     notes: "Sourced catalog product. Verify exact fitment before ordering.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-mb-suspension-lower-arm-active-toe-mst-210616b-210616r-red-black",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-210616b", color: "Black", sku: "210616B", displayName: "Black" },
+      { id: "red-210616r", color: "Red", sku: "210616R", displayName: "Red" }
+    ]
   },
   {
     id: "rearlowerarms-mst-aluminum-tha-rear-suspension-lower-arm-set-black-mst-210696bk",
     category: "rearLowerArms",
     brand: "MST",
-    productName: "Aluminum THA Rear Suspension LOWER Arm Set (BLACK) [MST] 210696BK",
-    modelNumber: "210696BK",
+    productName: "Aluminum THA Rear Suspension Lower Arm [MST]",
+    modelNumber: "210696BK / 210696R",
     compatibleChassis: ["Universal"],
     notes: "Sourced catalog product. Verify exact fitment before ordering.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-tha-rear-suspension-lower-arm-set-black-mst-210696bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-210696bk", color: "Black", sku: "210696BK", displayName: "Black" },
+      { id: "red-210696r", color: "Red", sku: "210696R", displayName: "Red" }
+    ]
   },
   {
     id: "rearlowerarms-mst-aluminum-tha-rear-suspension-lower-arm-set-red-mst-210696r",
     category: "rearLowerArms",
     brand: "MST",
-    productName: "Aluminum THA Rear Suspension LOWER Arm Set (RED) [MST] 210696R",
-    modelNumber: "210696R",
+    productName: "Aluminum THA Rear Suspension Lower Arm [MST]",
+    modelNumber: "210696BK / 210696R",
     compatibleChassis: ["Universal"],
     notes: "Sourced catalog product. Verify exact fitment before ordering.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-tha-rear-suspension-arm-set-red-mst-210696r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "rearlowerarms-mst-aluminum-tha-rear-suspension-lower-arm-set-black-mst-210696bk",
+    canonicalVariantId: "red-210696r",
+    reasonHidden: "Collapsed into the MST Aluminum THA Rear Suspension Lower Arm color-variant family.",
+    variants: [
+      { id: "black-210696bk", color: "Black", sku: "210696BK", displayName: "Black" },
+      { id: "red-210696r", color: "Red", sku: "210696R", displayName: "Red" }
+    ]
   },
   {
     id: "rearlowerarms-mst-fmx-fxx-mrx-lower-arm-suspension-pins-2-6x22-2-6x25-mst-310035",
@@ -2469,7 +3033,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/lower-arm-suspension-pins-2-6x22-2-6x25-mst-310035",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Lower arm pin support hardware, not a rear lower arm."
   },
   {
     id: "rearlowerarms-mst-rmx-4-aluminum-adjustable-lower-arm-mount-set-11-5-13-0-red-black-mst-210731r-210731bk",
@@ -2482,7 +3049,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-4-aluminum-adjustable-lower-arm-mount-set-11-5-13-0red-mst-210731r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Lower arm mount set, not a standalone rear lower arm."
   },
   {
     id: "rearlowerarms-overdose-3-x-46mm-shaft-suspension-pin-for-galm-lower-arm-inner-overdose-od1520b",
@@ -2495,33 +3065,50 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/3-x-46mm-shaft-suspension-pin-for-galm-lower-arm-inner-overdose-od1520b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Lower arm suspension pin support hardware, not a rear lower arm."
   },
   {
     id: "rearlowerarms-overdose-adjustable-aluminum-rear-suspension-arm-type-3-for-od-red-purple-black-overdose-od2855-od2856-od2",
     category: "rearLowerArms",
     brand: "Overdose",
     productName: "Adjustable Aluminum Rear Suspension Arm Type-3 (For OD ) (RED PURPLE BLACK) [Overdose] OD2855 OD2856 OD2857",
+    simplifiedName: "GALM Adjustable Rear Suspension Arm Type-3",
+    displayName: "GALM Adjustable Rear Suspension Arm Type-3",
     modelNumber: "OD2855 OD2856 OD2857",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Color SKUs are collapsed as variants.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/adjustable-aluminum-rear-suspension-arm-type-3-for-od-red-purple-black-overdose-od2855-od2856-od2857",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "red-od2855", color: "Red", sku: "OD2855", displayName: "Red" },
+      { id: "purple-od2856", color: "Purple", sku: "OD2856", displayName: "Purple" },
+      { id: "black-od2857", color: "Black", sku: "OD2857", displayName: "Black" }
+    ]
   },
   {
     id: "rearlowerarms-overdose-es-aluminum-lower-arms-for-galm-series-red-purple-black-overdose-od2865-od2866-od2867",
     category: "rearLowerArms",
     brand: "Overdose",
     productName: "ES Aluminum Lower Arms (For GALM series) RED PURPLE BLACK [Overdose] OD2865 OD2866 OD2867",
+    simplifiedName: "GALM ES Aluminum Lower Arms",
+    displayName: "GALM ES Aluminum Lower Arms",
     modelNumber: "OD2865 OD2866 OD2867",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Color SKUs are collapsed as variants.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/es-aluminum-lower-arms-for-galm-series-red-purple-black-overdose-od2865-od2866-od2867",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "red-od2865", color: "Red", sku: "OD2865", displayName: "Red" },
+      { id: "purple-od2866", color: "Purple", sku: "OD2866", displayName: "Purple" },
+      { id: "black-od2867", color: "Black", sku: "OD2867", displayName: "Black" }
+    ]
   },
   {
     id: "rearlowerarms-overdose-galm-ver-2-rear-suspension-arm-upright-set-overdose-od2746b",
@@ -2534,33 +3121,52 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/galm-ver-2-rear-suspension-arm-upright-set-overdose-od2746b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Bundled rear suspension arm/upright set, not a clean rear lower arm selector item."
   },
   {
     id: "rearlowerarms-reve-d-ht-rear-lower-arm-42mm-42mm-2-6d-45mm-rdx-reve-d-rd-020-26-rd-020-0-rd-021-0",
     category: "rearLowerArms",
     brand: "Reve D",
-    productName: "HT Rear Lower Arm (42mm - 42mm 2.6D - 45mm) (RDX) [Reve D] RD-020-26 RD-020-0 RD-021-0",
+    productName: "RDX HT Rear Lower Arm Series",
+    simplifiedName: "RDX HT Rear Lower Arm Series",
+    displayName: "RDX HT Rear Lower Arm Series",
     modelNumber: "RD-020-26 RD-020-0 RD-021-0",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["Reve D RDX", "RDX"],
+    notes: "RDX HT rear lower arm length/caster family collapsed as selectable variants.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/ht-rear-lower-arm-42mm-42mm-2-6d-45mm-rdx-reve-d-rd-020-26-rd-020-0-rd-021-0",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["HT Rear Lower Arm (42mm - 42mm 2.6D - 45mm) (RDX) [Reve D] RD-020-26 RD-020-0 RD-021-0"],
+    variants: [
+      { id: "42mm-2-6d-rd-020-26", sku: "RD-020-26", size: "42mm", displayName: "42mm / 2.6 deg" },
+      { id: "42mm-rd-020-0", sku: "RD-020-0", size: "42mm", displayName: "42mm" },
+      { id: "45mm-rd-021-0", sku: "RD-021-0", size: "45mm", displayName: "45mm" }
+    ]
   },
   {
     id: "rearlowerarms-reve-d-ht-rear-lower-arm-45mm-48mm-51mm-yd-2-reve-d-rd-009-45-rd-009-48-rd-009-51",
     category: "rearLowerArms",
     brand: "Reve D",
-    productName: "HT Rear Lower Arm (45mm - 48mm - 51mm) (YD-2) [Reve D] RD-009-45 RD-009-48 RD-009-51",
+    productName: "YD-2 HT Rear Lower Arm Series",
+    simplifiedName: "YD-2 HT Rear Lower Arm Series",
+    displayName: "YD-2 HT Rear Lower Arm Series",
     modelNumber: "RD-009-45 RD-009-48 RD-009-51",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["Yokomo YD-2", "YD-2"],
+    notes: "YD-2 HT rear lower arm length family collapsed as selectable variants.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/ht-rear-lower-arm-45mm-48mm-51mm-yd-2-reve-d-rd-009-45-rd-009-48-rd-009-51",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["HT Rear Lower Arm (45mm - 48mm - 51mm) (YD-2) [Reve D] RD-009-45 RD-009-48 RD-009-51"],
+    variants: [
+      { id: "45mm-rd-009-45", sku: "RD-009-45", size: "45mm", displayName: "45mm" },
+      { id: "48mm-rd-009-48", sku: "RD-009-48", size: "48mm", displayName: "48mm" },
+      { id: "51mm-rd-009-51", sku: "RD-009-51", size: "51mm", displayName: "51mm" }
+    ]
   },
   {
     id: "rearlowerarms-reve-d-ht-rear-lower-arm-2-6-deg-caster-sway-compatible-42mm-rdx-reve-d-rd-022-26",
@@ -2599,7 +3205,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/1-24-rts-tc4-titanium-lower-arms-set-upgrade-rhino-racing-rts-600",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "1/24 RTS mini-platform part; hidden from primary 1/10 rear lower arm selectors."
   },
   {
     id: "rearlowerarms-rhino-racing-3x6x2-5mm-bearing-3mm-6mm-2-5mm-for-upper-lower-arms-4-pack-rhino-racing-rr-3x6x2-5",
@@ -2612,7 +3221,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/3x6x2-5mm-bearing-3mm-6mm-2-5mm-for-upper-lower-arms-4-pack-rhino-racing-rr-3x6x2-5",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Arm bearing support hardware, not a rear lower arm."
   },
   {
     id: "rearlowerarms-rhino-racing-shark-upper-or-lower-arm-2-5mm-bearing-kit-for-yd-2-rmx-stock-pin-rhino-racing-rr-2-5-bearing",
@@ -2625,7 +3237,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shark-upper-or-lower-arm-2-5mm-bearing-kit-for-yd-2-rmx-stock-pin-rhino-racing-rr-2-5-bearingkit",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Arm bearing kit support hardware, not a rear lower arm."
   },
   {
     id: "rearlowerarms-usukani-rear-lower-arms-set-for-pds-usukani-pdsp-61",
@@ -2651,7 +3266,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rod-end-adapter-19mm-4-5-for-rd2-0-yokomo-rd-008f19",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rod end adapter support item, not a standalone rear lower arm."
   },
   {
     id: "rearlowerarms-yokomo-brass-rear-suspension-arm-weight-for-y2-008raw-5g-10g-20g-yokomo-y2-008rw10-y2-008rw5-y2-008rw20",
@@ -2664,20 +3282,31 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/brass-rear-suspension-arm-weight-for-y2-008raw-5g-10g-20g-yokomo-y2-008rw10-y2-008rw5-y2-008rw20",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear arm weight accessory, not a standalone rear lower arm."
   },
   {
     id: "rearlowerarms-yokomo-chamfered-rear-short-h-arm-for-rd2-0-sd2-0-lower-arms-set-black-red-purple-blue-yokomo-y2-008raw-y2",
     category: "rearLowerArms",
     brand: "Yokomo",
     productName: "CHAMFERED REAR SHORT H-ARM FOR RD2.0-SD2.0 - Lower Arms Set BLACK RED PURPLE BLUE [Yokomo] Y2-008RAW Y2-BL8RAW Y2-P08RAW Y2-R08RAW",
+    simplifiedName: "RD/SD Chamfered Rear Short H-Arm",
+    displayName: "RD/SD Chamfered Rear Short H-Arm",
     modelNumber: "Y2-008RAW Y2-BL8RAW Y2-P08RAW Y2-R08RAW",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["RD 2.0", "SD 2.0"],
+    notes: "Sourced catalog product. Color SKUs are collapsed as variants.",
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/chamfered-rear-short-h-arm-for-rd2-0-sd2-0-lower-arms-set-yokomo-y2-008raw",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-y2-008raw", color: "Black", sku: "Y2-008RAW", displayName: "Black" },
+      { id: "blue-y2-bl8raw", color: "Blue", sku: "Y2-BL8RAW", displayName: "Blue" },
+      { id: "purple-y2-p08raw", color: "Purple", sku: "Y2-P08RAW", displayName: "Purple" },
+      { id: "red-y2-r08raw", color: "Red", sku: "Y2-R08RAW", displayName: "Red" }
+    ]
   },
   {
     id: "rearlowerarms-yokomo-lower-arm-rod-end-ball-stud-shock-end-yokomo-y2-rac7",
@@ -2690,20 +3319,30 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner shim","outer shim","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/lower-arm-rod-end-ball-stud-shock-end-yokomo-y2-rac7",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Ball stud/rod end support item, not a standalone rear lower arm."
   },
   {
     id: "reartoeblocks-mst-adjustable-aluminum-suspension-mount-3-5-5-0-black-mst-820143bk",
     category: "rearToeBlocks",
     brand: "MST",
-    productName: "Adjustable Aluminum Suspension Mount (+3.5~+5.0) (BLACK) [MST] 820143BK",
-    modelNumber: "820143BK",
+    productName: "RMX Adjustable Aluminum Suspension Mount +3.5/+5.0",
+    simplifiedName: "RMX Adjustable Aluminum Suspension Mount +3.5/+5.0",
+    displayName: "RMX Adjustable Aluminum Suspension Mount +3.5/+5.0",
+    modelNumber: "820143BK / 820143R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Black and red color SKUs are collapsed as variants.",
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/adjustable-alum-suspension-mount-3-5-5-0-black-mst-820143bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["Adjustable Aluminum Suspension Mount (+3.5~+5.0) (BLACK) [MST] 820143BK", "MST RMX Adjustable Aluminum Suspension Mount (+3.5/+5.0) (Red)[MST] 820143R"],
+    variants: [
+      { id: "black-820143bk", color: "Black", sku: "820143BK", displayName: "Black" },
+      { id: "red-820143r", color: "Red", sku: "820143R", displayName: "Red" }
+    ]
   },
   {
     id: "reartoeblocks-mst-adjustable-aluminum-suspension-mount-red-0-5-1-0-mst-820057r",
@@ -2729,20 +3368,31 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mst-rmx-2-0-suspension-mount-set-1-0-2-0-mst-230069",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "mst-230069-suspension-mount-set",
+    reasonHidden: "Duplicate sourced row collapsed into the canonical MST 230069 suspension mount set."
   },
   {
     id: "reartoeblocks-mst-mst-rmx-adjustable-aluminum-suspension-mount-1-5-3-0-black-mst-820058bk",
     category: "rearToeBlocks",
     brand: "MST",
-    productName: "MST RMX Adjustable Aluminum Suspension Mount (+1.5/+3.0) (Black) [MST] 820058BK",
-    modelNumber: "820058BK",
+    productName: "RMX Adjustable Aluminum Suspension Mount +1.5/+3.0",
+    simplifiedName: "RMX Adjustable Aluminum Suspension Mount +1.5/+3.0",
+    displayName: "RMX Adjustable Aluminum Suspension Mount +1.5/+3.0",
+    modelNumber: "820058BK / 820058R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Black and red color SKUs are collapsed as variants.",
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mst-rmx-adjustable-aluminum-suspension-mount-1-5-3-0-black-mst-820058bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["MST RMX Adjustable Aluminum Suspension Mount (+1.5/+3.0) (Black) [MST] 820058BK", "MST RMX Adjustable Aluminum Suspension Mount (+1.5/+3.0) (Red) [MST] 820058R"],
+    variants: [
+      { id: "black-820058bk", color: "Black", sku: "820058BK", displayName: "Black" },
+      { id: "red-820058r", color: "Red", sku: "820058R", displayName: "Red" }
+    ]
   },
   {
     id: "reartoeblocks-mst-mst-rmx-adjustable-aluminum-suspension-mount-1-5-3-0-red-mst-820058r",
@@ -2755,7 +3405,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mst-rmx-adjustable-aluminum-suspension-mount-1-5-3-0-red-mst-820058r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reartoeblocks-mst-mst-rmx-adjustable-aluminum-suspension-mount-1-5-3-0-black-mst-820058bk",
+    canonicalVariantId: "red-820058r",
+    reasonHidden: "Collapsed into the RMX Adjustable Aluminum Suspension Mount +1.5/+3.0 color-variant family."
   },
   {
     id: "reartoeblocks-mst-mst-rmx-adjustable-aluminum-suspension-mount-3-5-5-0-red-mst-820143r",
@@ -2768,20 +3423,32 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mst-rmx-adjustable-aluminum-suspension-mount-3-5-5-0-redmst-820143r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reartoeblocks-mst-adjustable-aluminum-suspension-mount-3-5-5-0-black-mst-820143bk",
+    canonicalVariantId: "red-820143r",
+    reasonHidden: "Collapsed into the RMX Adjustable Aluminum Suspension Mount +3.5/+5.0 color-variant family."
   },
   {
     id: "reartoeblocks-mst-rmx-mrx-aluminum-adjustment-suspension-mount-3-0-4-5-black-red-set-rmx-frx-mrx-rrx-fmx-mst-820159r-820",
     category: "rearToeBlocks",
     brand: "MST",
-    productName: "RMX / MRX Aluminum Adjustment Suspension Mount (-3.0~-4.5) (BLACK - RED) Set (RMX, FRX, MRX, RRX, FMX) [MST] 820159R 820159BK",
-    modelNumber: "820159R 820159BK",
+    productName: "RMX/MRX Aluminum Adjustable Suspension Mount -3.0/-4.5",
+    simplifiedName: "RMX/MRX Aluminum Adjustable Suspension Mount -3.0/-4.5",
+    displayName: "RMX/MRX Aluminum Adjustable Suspension Mount -3.0/-4.5",
+    modelNumber: "820159BK / 820159R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product for RMX, FRX, MRX, RRX, and FMX platforms. Color SKUs are collapsed as variants.",
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-mrx-aluminum-adjustment-suspension-mount-set-black-red-set-rmx-frx-mrx-rrx-fmx-mst-820159r",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["RMX / MRX Aluminum Adjustment Suspension Mount (-3.0~-4.5) (BLACK - RED) Set (RMX, FRX, MRX, RRX, FMX) [MST] 820159R 820159BK"],
+    variants: [
+      { id: "black-820159bk", color: "Black", sku: "820159BK", displayName: "Black" },
+      { id: "red-820159r", color: "Red", sku: "820159R", displayName: "Red" }
+    ]
   },
   {
     id: "reartoeblocks-mst-rmx-2-0-2-5-aluminum-suspension-mount-set-toe-red-mst-210576r",
@@ -2807,7 +3474,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-4-aluminum-suspension-mount-brace-black-mst-210730bk",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Suspension mount brace support part, not a selectable suspension mount/toe block."
   },
   {
     id: "reartoeblocks-overdose-pivot-ball-ball-for-suspension-mount-4-pcs-overdose-od1519b",
@@ -2820,7 +3490,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/pivot-ball-ball-for-suspension-mount-4-pcs-overdose-od1519b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Pivot ball support hardware, not a selectable suspension mount/toe block."
   },
   {
     id: "reartoeblocks-overdose-suspension-mount-set-for-galm-overdose-od2407b",
@@ -2839,14 +3512,35 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     id: "reartoeblocks-overdose-tc-aluminum-low-mount-suspension-mounts-toe-blocks-43-7mm-48-2mm-52-7mm-57-2mm-61-7mm-red-purple-",
     category: "rearToeBlocks",
     brand: "Overdose",
-    productName: "TC ALUMINUM LOW MOUNT SUSPENSION MOUNTS - TOE BLOCKS 43.7mm 48.2mm 52.7mm 57.2mm 61.7mm RED PURPLE BLACK [Overdose]",
-    modelNumber: "",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    productName: "TC Aluminum Low Mount Suspension Mount for GALM [Overdose]",
+    modelNumber: "OD2920 / OD2921 / OD2922 / OD2923 / OD2924 / OD2925 / OD2926 / OD2927 / OD2928 / OD2965 / OD2966 / OD2967 / OD2968 / OD2969 / OD2970",
+    compatibleChassis: ["GALM", "GALM Ver.2"],
+    notes: "Overdose TC low-mount GALM suspension mount lineup with 43.7mm, 48.2mm, 52.7mm, 57.2mm, and 61.7mm width variants in purple, red, and black.",
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
-    sourceUrl: "https://supergdrift.com/collections/vendors/products/tc-aluminum-low-mount-suspension-mounts-toe-blocks-43-7mm-48-2mm-52-7mm-57-2mm-61-7mm-red-purple-black-overdose",
+    sourceUrl: "https://supergdrift.com/products/tc-aluminum-low-mount-suspension-mounts-toe-blocks-43-7mm-48-2mm-52-7mm-57-2mm-61-7mm-red-purple-black-overdose",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "overdose-tc-aluminum-low-mount-suspension-mount-galm",
+    reasonHidden: "Collapsed into the cleaner Overdose TC Aluminum Low Mount Suspension Mount for GALM variant family.",
+    variants: [
+      { id: "43-7mm-purple-od2920", color: "Purple", size: "43.7mm", sku: "OD2920", displayName: "43.7mm / Purple" },
+      { id: "43-7mm-red-od2921", color: "Red", size: "43.7mm", sku: "OD2921", displayName: "43.7mm / Red" },
+      { id: "43-7mm-black-od2922", color: "Black", size: "43.7mm", sku: "OD2922", displayName: "43.7mm / Black" },
+      { id: "48-2mm-purple-od2923", color: "Purple", size: "48.2mm", sku: "OD2923", displayName: "48.2mm / Purple" },
+      { id: "48-2mm-red-od2924", color: "Red", size: "48.2mm", sku: "OD2924", displayName: "48.2mm / Red" },
+      { id: "48-2mm-black-od2925", color: "Black", size: "48.2mm", sku: "OD2925", displayName: "48.2mm / Black" },
+      { id: "52-7mm-purple-od2926", color: "Purple", size: "52.7mm", sku: "OD2926", displayName: "52.7mm / Purple" },
+      { id: "52-7mm-red-od2927", color: "Red", size: "52.7mm", sku: "OD2927", displayName: "52.7mm / Red" },
+      { id: "52-7mm-black-od2928", color: "Black", size: "52.7mm", sku: "OD2928", displayName: "52.7mm / Black" },
+      { id: "57-2mm-purple-od2965", color: "Purple", size: "57.2mm", sku: "OD2965", displayName: "57.2mm / Purple" },
+      { id: "57-2mm-red-od2966", color: "Red", size: "57.2mm", sku: "OD2966", displayName: "57.2mm / Red" },
+      { id: "57-2mm-black-od2967", color: "Black", size: "57.2mm", sku: "OD2967", displayName: "57.2mm / Black" },
+      { id: "61-7mm-purple-od2968", color: "Purple", size: "61.7mm", sku: "OD2968", displayName: "61.7mm / Purple" },
+      { id: "61-7mm-red-od2969", color: "Red", size: "61.7mm", sku: "OD2969", displayName: "61.7mm / Red" },
+      { id: "61-7mm-black-od2970", color: "Black", size: "61.7mm", sku: "OD2970", displayName: "61.7mm / Black" }
+    ]
   },
   {
     id: "reartoeblocks-reve-d-aluminum-suspension-mount-rf-type-3-46-4-49-6mm-for-d1-rac-reve-d-rd-301rf3",
@@ -2859,7 +3553,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-suspension-mount-rf-type-3-46-4-49-6mm-reve-d-rd-301rf3",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "reve-d-rd-301rf3-aluminum-rf-sus-mount",
+    reasonHidden: "Duplicate sourced row collapsed into the canonical Reve D RD-301RF3 RF suspension mount."
   },
   {
     id: "reartoeblocks-reve-d-aluminum-suspension-mount-1-2-3-4-5-6-7-8-9-se-toe-block-reve-d-rd-301",
@@ -2911,7 +3609,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-a-arm-conversion-set-rear-arms-uprights-upper-arms-sus-mounts-reve-d-d1-rac",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear A-arm conversion kit, not a single suspension mount/toe block selector item."
   },
   {
     id: "reartoeblocks-reve-d-rdx-molded-rear-suspension-mount-set-reve-d-d1-300rm",
@@ -2937,7 +3638,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rts-1-24-arm-and-suspension-mounts-2-pack-rhino-racing-rts-446",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "1/24 RTS mini-platform suspension mount; hidden from primary 1/10 suspension mount selectors."
   },
   {
     id: "reartoeblocks-rhino-racing-rts-1-24-servo-horn-and-suspension-mount-set-rhino-racing-rts-445",
@@ -2950,7 +3654,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rts-1-24-servo-horn-and-suspension-mount-set-rhino-racing-rts-445",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "1/24 RTS mini-platform servo horn/mount set; hidden from primary 1/10 suspension mount selectors."
   },
   {
     id: "reartoeblocks-yokomo-adjustable-aluminum-suspension-mount-set-purple-for-yd-2-toe-blocks-yokomo-y2-301apa",
@@ -2963,7 +3670,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/adjustable-aluminum-suspension-mount-set-purple-for-yd-2-toe-blocks-yokomo-y2-301apa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-y2-301ara-adjustable-suspension-mount-set",
+    canonicalVariantId: "purple-y2-301apa",
+    reasonHidden: "Collapsed into the Y2-301A Aluminum Adjustable Suspension Mount Set color-variant family."
   },
   {
     id: "reartoeblocks-yokomo-adjustable-aluminum-suspension-mount-set-red-for-yd-2-toe-blocks-yokomo-y2-301ara",
@@ -2976,7 +3688,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/adjustable-aluminum-suspension-mount-set-red-for-yd-2-toe-blocks-yokomo-y2-301ara",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-y2-301ara-adjustable-suspension-mount-set",
+    canonicalVariantId: "red-y2-301ara",
+    reasonHidden: "Duplicate sourced row collapsed into the Y2-301A Aluminum Adjustable Suspension Mount Set color-variant family."
   },
   {
     id: "reartoeblocks-yokomo-aluminum-suspension-mount-d-for-rd-yokomo-rd-301ad",
@@ -3009,13 +3726,21 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     category: "rearToeBlocks",
     brand: "Yokomo",
     productName: "RD2.0 Aluminium Suspension Mount Set (Black, Red, Purple, Blue) [Yokomo] RD-301AS RD-301ASBL RD-301ASP RD-301ASR",
+    simplifiedName: "RD2.0 Aluminum Suspension Mount Set",
+    displayName: "RD2.0 Aluminum Suspension Mount Set",
     modelNumber: "RD-301AS RD-301ASBL RD-301ASP RD-301ASR",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["RD 2.0"],
+    notes: "Sourced catalog product. Color SKUs are collapsed as variants.",
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rd2-0-aluminium-suspension-mount-set-yokomo-rd-301as",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-rd-301as", color: "Black", sku: "RD-301AS", displayName: "Black" },
+      { id: "blue-rd-301asbl", color: "Blue", sku: "RD-301ASBL", displayName: "Blue" },
+      { id: "purple-rd-301asp", color: "Purple", sku: "RD-301ASP", displayName: "Purple" },
+      { id: "red-rd-301asr", color: "Red", sku: "RD-301ASR", displayName: "Red" }
+    ]
   },
   {
     id: "reartoeblocks-yokomo-suspension-mount-servo-mount-spring-retainers-hex-hubs-for-yd-sd-rd-yokomo-y2-301a",
@@ -3028,7 +3753,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/suspension-mount-servo-mount-hex-hubs-for-yd-sd-rd-yokomo-y2-301a",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Mixed suspension mount, servo mount, spring retainer, and hex hub bundle; not a clean suspension mount selector item."
   },
   {
     id: "reartoeblocks-yokomo-suspension-mount-servo-horn-for-rd2-0-yokomo-rd-301",
@@ -3041,7 +3769,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["toe angle","bushing","shim","position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/suspension-mount-servo-horn-for-rd2-0-yokomo-rd-301",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Mixed suspension mount and servo horn bundle; not a clean suspension mount selector item."
   },
   {
     id: "reartoeblocks-yokomo-yd2-bd8-aluminum-suspension-toe-block-a-39-5-of-42-7-mm-yokomo-b8-301aa",
@@ -3083,17 +3814,55 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     verified: true
   },
   {
+    id: "reartoeblocks-yokomo-yd2-bd8-aluminum-suspension-toe-block-c-yokomo-b8-301ca",
+    category: "rearToeBlocks",
+    brand: "Yokomo",
+    productName: "YD2 BD8 Aluminum Suspension Toe Block C [Yokomo] B8-301CA",
+    modelNumber: "B8-301CA",
+    compatibleChassis: ["Yokomo YD-2", "Yokomo RD2.0", "Yokomo SD", "Yokomo BD8"],
+    notes: "Research-added Yokomo adjustable suspension toe block. Verify exact platform fitment before ordering.",
+    tunableParameters: ["toe angle","bushing","shim","position","notes"],
+    sourceUrl: "https://rcpitlane.com/products/b8-301ca-yokomo-aluminum-suspension-mount-c-46-4-49-6mm",
+    sourceName: "RC Pit Lane",
+    userAdded: false,
+    verified: true,
+    confidence: "medium"
+  },
+  {
+    id: "reartoeblocks-yokomo-yd2-bd8-separate-aluminum-suspension-toe-block-c-yokomo-b8-301sc",
+    category: "rearToeBlocks",
+    brand: "Yokomo",
+    productName: "YD2 BD8 Separate Aluminum Suspension Toe Block C [Yokomo] B8-301SC",
+    modelNumber: "B8-301SC",
+    compatibleChassis: ["Yokomo YD-2", "Yokomo RD2.0", "Yokomo SD", "Yokomo BD8"],
+    notes: "Research-added Yokomo separate adjustable suspension toe block. Verify exact platform fitment before ordering.",
+    tunableParameters: ["toe angle","bushing","shim","position","notes"],
+    sourceUrl: "https://www.rcjaz.co.uk/yokomo-b8301sc-aluminium-separate-suspension-mount-464496mm-pro-grade-fit-p-10720.html",
+    sourceName: "RCJaz",
+    userAdded: false,
+    verified: true,
+    confidence: "medium"
+  },
+  {
     id: "servos-reve-d-rs-st-pro-aluminum-servo-cls-motor-reve-d-rs-stpk-rs-stpr-rs-rstpp",
     category: "servos",
     brand: "Reve D",
     productName: "RS-ST PRO Aluminum Servo (CLS Motor) [Reve D] RS-STPK RS-STPR RS-RSTPP",
+    simplifiedName: "RS-ST PRO Aluminum Servo",
+    displayName: "RS-ST PRO Aluminum Servo",
     modelNumber: "RS-STPK RS-STPR RS-RSTPP",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Reve D RS-ST PRO aluminum servo with CLS motor. Color SKUs are collapsed as variants.",
     tunableParameters: ["speed","torque","dead band","damper","endpoints","mode","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rs-st-pro-aluminum-servo-cls-motor-reve-d-rs-stpk-rs-stpr-rs-rstpp",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-rs-stpk", color: "Black", sku: "RS-STPK", displayName: "Black" },
+      { id: "red-rs-stpr", color: "Red", sku: "RS-STPR", displayName: "Red" },
+      { id: "purple-rs-rstpp", color: "Purple", sku: "RS-RSTPP", displayName: "Purple" }
+    ],
+    aliases: ["RS-STPK", "RS-STPR", "RS-RSTPP", "RS-ST PRO CLS Motor Servo"]
   },
   {
     id: "servos-reve-d-servo-rs-stm-rs-st-high-torque-digital-servo-for-drift-reve-d-rs-stm",
@@ -3119,20 +3888,27 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["speed","torque","dead band","damper","endpoints","mode","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/spm-titanium-servo-screw-2-pieces-reve-d-rt-001a",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Servo screw support hardware, not a servo."
   },
   {
     id: "servos-rhino-racing-ddss-shark-bulkhead-steering-kit-direct-drive-servo-steering-v2-yd2-blue-black-red-purple-rhino-raci",
     category: "servos",
     brand: "Rhino Racing",
-    productName: "DDSS � SHARK Bulkhead - Steering Kit � Direct Drive Servo Steering (V2) YD2 BLUE BLACK RED PURPLE [Rhino Racing] RR-750R RR-750P RR-750B",
+    productName: "DDSS - SHARK Bulkhead - Steering Kit - Direct Drive Servo Steering (V2) YD2 BLUE BLACK RED PURPLE [Rhino Racing] RR-750R RR-750P RR-750B",
     modelNumber: "RR-750R RR-750P RR-750B",
     compatibleChassis: ["Universal"],
     notes: "Sourced catalog product. Verify exact fitment before ordering.",
     tunableParameters: ["speed","torque","dead band","damper","endpoints","mode","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/ddss-shark-bulkhead-steering-kit-direct-drive-servo-steering-v2-yd2-black-red-purple-rhino-racing-rr-750r-rr-750p-rr-750b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "verified-rhino-rr-750-ddss-shark-steering-kit",
+    reasonHidden: "Direct-drive steering kit belongs in steering rack selection, not the servo selector."
   },
   {
     id: "servos-team-associated-rs0305a-micro-hi-speed-steering-servo-rc28-rc28r-associated-27175",
@@ -3145,7 +3921,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["speed","torque","dead band","damper","endpoints","mode","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rs0305a-micro-hi-speed-steering-servo-rc28-rc28r-associated-27175",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "RC28/RC28R micro-scale servo; hidden from the primary 1/10 drift servo selector."
   },
   {
     id: "servos-team-associated-sr27-steering-servo-associated-21830",
@@ -3158,7 +3937,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["speed","torque","dead band","damper","endpoints","mode","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sr27-steering-servo-associated-21830",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "SR27 1/27-scale steering servo; hidden from the primary 1/10 drift servo selector."
   },
   {
     id: "servos-yokomo-sp-02bts-rwd-drift-spec-servo-coreless-titanium-low-profile-size-015-6-8kg-yokomo-sp-02bts",
@@ -3178,13 +3960,20 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     category: "servos",
     brand: "Yokomo",
     productName: "SP-02D V2 RWD Drift Spec Servo Coreless PROGRAMMABLE (Low profile size) .093@12kg SP02DV2 [Yokomo]",
-    modelNumber: "",
+    simplifiedName: "SP-02D V2 RWD Drift Spec Servo",
+    displayName: "SP-02D V2 RWD Drift Spec Servo",
+    modelNumber: "SP-02DV2R / SP-02DV2P",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Yokomo SP-02D V2 programmable drift servo. Color SKUs are collapsed as variants.",
     tunableParameters: ["speed","torque","dead band","damper","endpoints","mode","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/red-purple-sp-02d-v2-rwd-drift-spec-servo-coreless-programmable-low-profile-size-093-12kg-sp02d-yokomo-sp-02dv2r-sp-02dv2p",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "red-sp-02dv2r", color: "Red", sku: "SP-02DV2R", displayName: "Red" },
+      { id: "purple-sp-02dv2p", color: "Purple", sku: "SP-02DV2P", displayName: "Purple" }
+    ],
+    aliases: ["SP02DV2", "SP-02D V2", "SP-02DV2R", "SP-02DV2P"]
   },
   {
     id: "servos-yokomo-sp03d-v2-rwd-drift-spec-servo-brushless-programmable-digital-blue-red-black-purple-low-profile-size-13kg-y",
@@ -3197,7 +3986,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["speed","torque","dead band","damper","endpoints","mode","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sp03d-v2-rwd-drift-spec-servo-brushless-programmable-digital-red-black-purple-low-profile-size-13kg-yokomo-sp-03dv2-sp-03dv2r-sp-03dv2p-sp-03",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-sp-03d-v2-drift-servo",
+    reasonHidden: "Duplicate sourced SP-03D V2 servo row; canonical official Yokomo entry remains visible."
   },
   {
     id: "servos-yokomo-yokomo-rtr-digital-servo-for-ready-to-run-factory-take-off-yokomo-yok-rtr-e2",
@@ -3223,7 +4016,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/32mm-coil-hard-drift-springs-set-mst-820106",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "mst-820103-820112-suspension-coil-spring-set",
+    canonicalVariantId: "32mm-hard-820106",
+    reasonHidden: "Collapsed into the MST Suspension Coil Spring Set variant family."
   },
   {
     id: "springs-mst-32mm-coil-medium-drift-springs-set-mst-820107",
@@ -3236,7 +4034,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/32mm-coil-medium-drift-springs-set-mst-820107",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "mst-820103-820112-suspension-coil-spring-set",
+    canonicalVariantId: "32mm-medium-820107",
+    reasonHidden: "Collapsed into the MST Suspension Coil Spring Set variant family."
   },
   {
     id: "springs-mst-32mm-extreme-soft-drift-springs-set-mst-820110",
@@ -3249,7 +4052,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/32mm-extreme-soft-drift-springs-set-mst-820110",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "mst-820103-820112-suspension-coil-spring-set",
+    canonicalVariantId: "32mm-extreme-soft-820110",
+    reasonHidden: "Collapsed into the MST Suspension Coil Spring Set variant family."
   },
   {
     id: "springs-mst-32mm-soft-drift-springs-set-for-1-10-drift-car-mst-820108",
@@ -3262,7 +4070,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/32mm-soft-drift-springs-set-mst-820108",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "mst-820103-820112-suspension-coil-spring-set",
+    canonicalVariantId: "32mm-soft-820108",
+    reasonHidden: "Collapsed into the MST Suspension Coil Spring Set variant family."
   },
   {
     id: "springs-mst-32mm-super-soft-drift-springs-set-mst-820109",
@@ -3275,7 +4088,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/32mm-super-soft-drift-springs-set-mst-820109",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "mst-820103-820112-suspension-coil-spring-set",
+    canonicalVariantId: "32mm-super-soft-820109",
+    reasonHidden: "Collapsed into the MST Suspension Coil Spring Set variant family."
   },
   {
     id: "springs-mst-dk-rwd-drift-springs-set-f26-r28-6-6-mst-820157",
@@ -3327,59 +4145,93 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-adjustment-nut-and-spring-end-set-purple-overdose-od1722b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Spring adjustment nut/end hardware, not a shock spring."
   },
   {
     id: "springs-overdose-od-25mm-high-performance-twin-spring-1-2mm-5-6-7-coils-overdose-od3822-od3821-od3820",
     category: "springs",
     brand: "Overdose",
-    productName: "OD 25mm High Performance Twin Spring (1.2mm) 5, 6, 7 COILS [OVERDOSE] OD3822 OD3821 OD3820",
+    productName: "OD 25mm High Performance Twin Spring (1.2mm) 7 Coils [OVERDOSE] OD3820",
+    simplifiedName: "OD 25mm High Performance Twin Spring 1.2mm",
+    displayName: "OD 25mm High Performance Twin Spring 1.2mm",
     modelNumber: "OD3822 OD3821 OD3820",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Collapsed by catalog review from the 5/6/7 coil multi-SKU listing.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/od-25mm-high-performance-twin-spring-1-2mm-5-6-7-coils-overdose-od3822-od3821-od3820",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "5-coils-od3822", displayName: "5 coils", sku: "OD3822", size: "25mm / 1.2mm", sourceProductName: "OD 25mm High Performance Twin Spring 5 Coils" },
+      { id: "6-coils-od3821", displayName: "6 coils", sku: "OD3821", size: "25mm / 1.2mm", sourceProductName: "OD 25mm High Performance Twin Spring 6 Coils" },
+      { id: "7-coils-od3820", displayName: "7 coils", sku: "OD3820", size: "25mm / 1.2mm", sourceProductName: "OD 25mm High Performance Twin Spring 7 Coils" }
+    ],
+    aliases: ["OD3822", "OD3821", "OD 25mm High Performance Twin Spring (1.2mm) 5, 6, 7 COILS"]
   },
   {
     id: "springs-overdose-od-high-performance-twin-spring-1-2mm-2045-4-5-coils-w-helper-black-red-purple-overdose-od3831-od3828-o",
     category: "springs",
     brand: "Overdose",
     productName: "OD High Performance Twin Spring ( 1.2mm-2045 ) 4.5 COILS w- HELPER (BLACK RED PURPLE) [OVERDOSE] OD3831 OD3828 OD3825",
+    simplifiedName: "OD High Performance Twin Spring 1.2mm 20mm 4.5 Coils w/Helper",
+    displayName: "OD High Performance Twin Spring 1.2mm 20mm 4.5 Coils w/Helper",
     modelNumber: "OD3831 OD3828 OD3825",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Helper seat color SKUs are collapsed as variants.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/od-high-performance-twin-spring-1-2mm-2045-4-5-coils-w-helper-black-red-purple-overdose-od3831-od3828-od3825",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-od3831", color: "Black", sku: "OD3831", displayName: "Black helper", size: "20mm / 1.2mm / 4.5 coils" },
+      { id: "red-od3828", color: "Red", sku: "OD3828", displayName: "Red helper", size: "20mm / 1.2mm / 4.5 coils" },
+      { id: "purple-od3825", color: "Purple", sku: "OD3825", displayName: "Purple helper", size: "20mm / 1.2mm / 4.5 coils" }
+    ]
   },
   {
     id: "springs-overdose-od-high-performance-twin-spring-purple-helper-1-2mm-x-20mm-5-6-7-coils-w-helper-overdose-od3718-od3719-",
     category: "springs",
     brand: "Overdose",
-    productName: "OD High Performance Twin Spring PURPLE HELPER ( 1.2mm x 20mm ) 5, 6, 7 COILS w- HELPER [OVERDOSE] OD3718 OD3719 OD3720",
+    productName: "OD High Performance Twin Spring Purple Helper (1.2mm x 20mm) 7 Coils w/ Helper [OVERDOSE] OD3720",
+    simplifiedName: "OD High Performance Twin Spring Purple Helper 1.2mm 20mm",
+    displayName: "OD High Performance Twin Spring Purple Helper 1.2mm 20mm",
     modelNumber: "OD3718 OD3719 OD3720",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Collapsed by catalog review from the 5/6/7 coil purple helper multi-SKU listing.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/od-high-performance-twin-spring-purple-helper-1-2mm-x-20mm-5-6-7-coils-w-helper-overdose-od3718-od3719-od3720",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "5-coils-od3718", color: "Purple", sku: "OD3718", displayName: "5 coils / Purple helper", size: "20mm / 1.2mm" },
+      { id: "6-coils-od3719", color: "Purple", sku: "OD3719", displayName: "6 coils / Purple helper", size: "20mm / 1.2mm" },
+      { id: "7-coils-od3720", color: "Purple", sku: "OD3720", displayName: "7 coils / Purple helper", size: "20mm / 1.2mm" }
+    ],
+    aliases: ["OD3718", "OD3719", "OD High Performance Twin Spring PURPLE HELPER (1.2mm x 20mm) 5, 6, 7 COILS"]
   },
   {
     id: "springs-overdose-od-high-performance-twin-spring-red-helper-1-2mm-x-20mm-5-6-7-coils-w-helper-overdose-od3721-od3722-od3",
     category: "springs",
     brand: "Overdose",
-    productName: "OD High Performance Twin Spring RED HELPER ( 1.2mm x 20mm ) 5, 6, 7 COILS w- HELPER [OVERDOSE] OD3721 OD3722 OD3723",
+    productName: "OD High Performance Twin Spring Red Helper (1.2mm x 20mm) 7 Coils w/ Helper [OVERDOSE] OD3723",
+    simplifiedName: "OD High Performance Twin Spring Red Helper 1.2mm 20mm",
+    displayName: "OD High Performance Twin Spring Red Helper 1.2mm 20mm",
     modelNumber: "OD3721 OD3722 OD3723",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced catalog product. Collapsed by catalog review from the 5/6/7 coil red helper multi-SKU listing.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/od-high-performance-twin-spring-red-helper-1-2mm-x-20mm-5-6-7-coils-w-helper-overdose-od3721-od3722-od3723",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "5-coils-od3721", color: "Red", sku: "OD3721", displayName: "5 coils / Red helper", size: "20mm / 1.2mm" },
+      { id: "6-coils-od3722", color: "Red", sku: "OD3722", displayName: "6 coils / Red helper", size: "20mm / 1.2mm" },
+      { id: "7-coils-od3723", color: "Red", sku: "OD3723", displayName: "7 coils / Red helper", size: "20mm / 1.2mm" }
+    ],
+    aliases: ["OD3721", "OD3722", "OD High Performance Twin Spring RED HELPER (1.2mm x 20mm) 5, 6, 7 COILS"]
   },
   {
     id: "springs-reve-d-2ws-front-spring-for-rwd-drift-26mm-2pcs-2-way-short-reve-d-rd-006f",
@@ -3476,14 +4328,26 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     id: "springs-reve-d-pc-rear-spring-hard-for-rwd-drift-red-32mm-9-5t-reve-d-rd-010rh",
     category: "springs",
     brand: "Reve D",
-    productName: "PC Rear Spring Hard for RWD Drift - RED - 32mm 9.5T [Reve D] RD-010RH",
-    modelNumber: "RD-010RH",
+    productName: "PC Rear Spring",
+    simplifiedName: "PC Rear Spring",
+    displayName: "PC Rear Spring",
+    modelNumber: "RD-010RM / RD-010RH / RD-010RMH",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Reve D PC rear spring family collapsed by rate/color.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/pc-rear-spring-hard-for-rwd-drift-red-32mm-9-5t-reve-d-rd-010rh",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: [
+      "PC Rear Spring Hard for RWD Drift - RED - 32mm 9.5T [Reve D] RD-010RH",
+      "PC Rear Spring Medium for RWD Drift - BLACK - 32mm 9.5T [Reve D] RD-010RM",
+      "PC Rear Spring Medium Hard for RWD Drift - YELLOW - 32mm 10T [Reve D] RD-010RMH"
+    ],
+    variants: [
+      { id: "medium-rd-010rm", displayName: "Medium / Black / 32mm 9.5T", sku: "RD-010RM", color: "Black", size: "32mm 9.5T" },
+      { id: "hard-rd-010rh", displayName: "Hard / Red / 32mm 9.5T", sku: "RD-010RH", color: "Red", size: "32mm 9.5T" },
+      { id: "medium-hard-rd-010rmh", displayName: "Medium Hard / Yellow / 32mm 10T", sku: "RD-010RMH", color: "Yellow", size: "32mm 10T" }
+    ]
   },
   {
     id: "springs-reve-d-pc-rear-spring-medium-for-rwd-drift-black-32mm-9-5t-reve-d-rd-010rm",
@@ -3496,7 +4360,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/pc-rear-spring-medium-for-rwd-drift-black-32mm-9-5t-reve-d-rd-010rm",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Reve D PC Rear Spring rate/color variants.",
+    canonicalProductId: "springs-reve-d-pc-rear-spring-hard-for-rwd-drift-red-32mm-9-5t-reve-d-rd-010rh",
+    canonicalVariantId: "medium-rd-010rm"
   },
   {
     id: "springs-reve-d-pc-rear-spring-medium-hard-for-rwd-drift-yellow-32mm-10t-reve-d-rd-010rmh",
@@ -3509,7 +4378,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/pc-rear-spring-medium-hard-for-rwd-drift-yellow-32mm-10t-reve-d-rd-010rmh",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Reve D PC Rear Spring rate/color variants.",
+    canonicalProductId: "springs-reve-d-pc-rear-spring-hard-for-rwd-drift-red-32mm-9-5t-reve-d-rd-010rh",
+    canonicalVariantId: "medium-hard-rd-010rmh"
   },
   {
     id: "springs-reve-d-r-tune-2-way-pc-rear-spring-all-set-3sets-reve-d-rd-016as",
@@ -3522,20 +4396,41 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/r-tune-2-way-pc-rear-spring-all-set-3sets-reve-d-rd-016as",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from spring selector by catalog review; multi-set bundle."
   },
   {
     id: "springs-reve-d-r-tune-2ws-front-springs-hard-2-springs-reve-d-rd-011fh",
     category: "springs",
     brand: "Reve D",
     productName: "R-Tune 2WS Front Springs (HARD) 2 SPRINGS [Reve D] RD-011FH",
+    simplifiedName: "R-Tune 2WS Front Spring",
+    displayName: "R-Tune 2WS Front Spring",
     modelNumber: "RD-011FH",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "R-Tune 2WS front spring family collapsed by rate.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/r-tune-2ws-front-springs-hard-2-springs-reve-d-rd-011fh",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      {
+        id: "hard-rd-011fh",
+        displayName: "Hard",
+        sku: "RD-011FH",
+        sourceProductName: "R-Tune 2WS Front Springs Hard"
+      },
+      {
+        id: "soft-rd-011fs",
+        displayName: "Soft",
+        sku: "RD-011FS",
+        sourceProductName: "R-Tune 2WS Front Springs Soft",
+        sourceUrl: "https://supergdrift.com/collections/vendors/products/r-tune-2ws-front-springs-soft-2-springs-reve-d-rd-011fs"
+      }
+    ],
+    aliases: ["RD-011FS R-tune 2WS Front Spring Soft", "RD-011FH R-tune 2WS Front Spring Hard"]
   },
   {
     id: "springs-reve-d-r-tune-2ws-front-springs-soft-2-springs-reve-d-rd-011fs",
@@ -3548,20 +4443,33 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/r-tune-2ws-front-springs-soft-2-springs-reve-d-rd-011fs",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "springs-reve-d-r-tune-2ws-front-springs-hard-2-springs-reve-d-rd-011fh",
+    canonicalVariantId: "soft-rd-011fs",
+    reasonHidden: "Collapsed into the R-Tune 2WS Front Spring variant family."
   },
   {
     id: "springs-reve-d-rdx-r-tune-spring-soft-medium-hard-or-hard-pair-of-springs-reve-d-d1-ss1s-d1-ss1mh-d1-ss1h",
     category: "springs",
     brand: "Reve D",
     productName: "RDX R-Tune Spring (SOFT, MEDIUM HARD or HARD) PAIR OF SPRINGS [Reve D] D1-SS1S D1-SS1MH D1-SS1H",
+    simplifiedName: "RDX R-Tune Spring",
+    displayName: "RDX R-Tune Spring",
     modelNumber: "D1-SS1S D1-SS1MH D1-SS1H",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    compatibleChassis: ["Reve D RDX"],
+    notes: "RDX R-Tune spring family collapsed by rate.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-r-tune-spring-soft-medium-hard-or-hard-pair-of-springs-reve-d-d1-ss1s-d1-ss1mh-d1-ss1h",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "soft-d1-ss1s", displayName: "Soft", sku: "D1-SS1S", sourceProductName: "RDX R-Tune Spring Soft" },
+      { id: "medium-hard-d1-ss1mh", displayName: "Medium Hard", sku: "D1-SS1MH", sourceProductName: "RDX R-Tune Spring Medium Hard" },
+      { id: "hard-d1-ss1h", displayName: "Hard", sku: "D1-SS1H", sourceProductName: "RDX R-Tune Spring Hard" }
+    ],
+    aliases: ["D1-SS1S RDX R-tune Spring Soft", "D1-SS1MH RDX R-tune Spring Medium Hard", "D1-SS1H RDX R-tune Spring Hard"]
   },
   {
     id: "springs-reve-d-rdx-r-tune-spring-all-set-3-type-w-box-reve-d-d1-ss1as",
@@ -3574,7 +4482,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-r-tune-spring-all-set-3-type-w-box-reve-d-d1-ss1as",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from spring selector by catalog review; all-type box bundle."
   },
   {
     id: "springs-reve-d-rdx-shock-spring-front-2pcs-reve-d-d1-ssf1",
@@ -3613,7 +4524,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/0-1-super-soft-c-lsd-spring-set-10pc-for-rr-600-rr-610-rhino-racing-rr-619",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Removed from spring selector by catalog review; C-LSD spring is not a shock spring setup item."
   },
   {
     id: "springs-rhino-racing-1-single-shock-color-changer-kit-and-spring-holder-red-purple-black-rhino-racing-rr-230-single",
@@ -3626,7 +4540,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/1-single-shock-color-changer-kit-and-spring-holder-red-purple-black-rhino-racing",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Shock color changer/spring holder hardware, not a shock spring set."
   },
   {
     id: "springs-rhino-racing-shock-color-changer-kit-and-spring-holders-trf-style-red-purple-black-rhino-racing",
@@ -3639,7 +4556,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shock-color-changer-kit-and-spring-holders-red-purple-black-rhino-racing",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Shock color changer/spring holder hardware, not a shock spring set."
   },
   {
     id: "springs-team-associated-rc28r-ft-center-spring-set-rc28-associated-21652",
@@ -3652,7 +4572,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rc28r-ft-center-spring-set-rc28-associated-21652",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "RC28R micro-scale spring set; hidden from the primary 1/10 drift spring selector."
   },
   {
     id: "springs-team-associated-rc28r-ft-front-spring-set-fixed-arm-rc28-associated-21651",
@@ -3665,7 +4588,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rc28r-ft-front-spring-set-fixed-arm-rc28-associated-21651",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "RC28R micro-scale front spring set; hidden from the primary 1/10 drift spring selector."
   },
   {
     id: "springs-team-associated-shock-spring-set-for-dc10-associated-asc72228",
@@ -3691,7 +4617,10 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sr27-spring-set-associated-21826",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "SR27 1/27-scale spring set; hidden from the primary 1/10 drift spring selector."
   },
   {
     id: "springs-yokomo-d-180-series-rwd-drift-springs-set-yokomo-d-180a",
@@ -3704,33 +4633,55 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/d-180-series-rwd-drift-springs-set-yokomo-d-180a",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-d-180a-rwd-drift-spring-set",
+    reasonHidden: "Duplicate sourced row; canonical Yokomo D-180A spring set already exists from the official Yokomo catalog."
   },
   {
     id: "springs-yokomo-d-185-series-drift-competition-springs-progressive-linear-rwd-drift-springs-set-yokomo-d-185-d-182f-d-183",
     category: "springs",
     brand: "Yokomo",
     productName: "D-185 Series Drift Competition Springs (progressive / linear) RWD Drift Springs Set [Yokomo] D-185 D-182F D-183F D-184F D-181R",
+    simplifiedName: "D-185 Competition Drift Spring Series",
+    displayName: "D-185 Competition Drift Spring Series",
     modelNumber: "D-185 D-182F D-183F D-184F D-181R",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Yokomo competition drift spring family collapsed by rate and winding type. D-185 is the four-type set.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/d-185-series-drift-competition-springs-progressive-linear-rwd-drift-springs-set-yokomo-d-185",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "set-d-185", displayName: "Set - 4 types", sku: "D-185", sourceProductName: "Competition Drift Spring Set" },
+      { id: "progressive-13-28-d-181r", displayName: "Progressive 1.3 x 28mm", sku: "D-181R", size: "1.3 x 28mm", sourceProductName: "D-181R Progressive" },
+      { id: "progressive-14-265-d-182f", displayName: "Progressive 1.4 x 26.5mm", sku: "D-182F", size: "1.4 x 26.5mm", sourceProductName: "D-182F Progressive" },
+      { id: "progressive-15-265-d-183f", displayName: "Progressive 1.5 x 26.5mm", sku: "D-183F", size: "1.5 x 26.5mm", sourceProductName: "D-183F Progressive" },
+      { id: "linear-15-265-d-184f", displayName: "Linear 1.5 x 26.5mm", sku: "D-184F", size: "1.5 x 26.5mm", sourceProductName: "D-184F Linear" }
+    ],
+    aliases: ["D-181R", "D-182F", "D-183F", "D-184F", "Yokomo Competition Drift Spring Set"]
   },
   {
     id: "springs-yokomo-drift-lts-springs-weight-shift-load-transfer-system-0-9-1-0-8-turn-9-turn-10-turn-yokomo-d-188-d-187-d-18",
     category: "springs",
     brand: "Yokomo",
     productName: "DRIFT LTS SPRINGS - WEIGHT SHIFT - LOAD TRANSFER SYSTEM 0.9 1.0 (8 turn, 9 turn, 10 turn) [Yokomo] D-188 D-187 D-186",
+    simplifiedName: "Drift LTS Load Transfer Spring Series",
+    displayName: "Drift LTS Load Transfer Spring Series",
     modelNumber: "D-188 D-187 D-186",
     compatibleChassis: ["Universal"],
-    notes: "Sourced catalog product. Verify exact fitment before ordering.",
+    notes: "Yokomo LTS load-transfer spring family collapsed by wire diameter and turn count.",
     tunableParameters: ["front/rear","length","rate if known","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/drift-lts-springs-weight-shift-load-transfer-system-0-9-1-0-8-turn-9-turn-10-turn-yokomo-d-188-d-187-d-186",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "8-turn-d-186", displayName: "0.9 x 48mm / 8 turns", sku: "D-186", size: "0.9 x 48mm / 8T", sourceProductName: "LTS 8-turn spring" },
+      { id: "9-turn-d-187", displayName: "1.0 x 48mm / 9 turns", sku: "D-187", size: "1.0 x 48mm / 9T", sourceProductName: "LTS 9-turn spring" },
+      { id: "10-turn-d-188", displayName: "1.0 x 48mm / 10 turns", sku: "D-188", size: "1.0 x 48mm / 10T", sourceProductName: "LTS 10-turn spring" }
+    ],
+    aliases: ["D-186", "D-187", "D-188", "Yokomo LTS Spring", "Load Transfer System Spring"]
   },
   {
     id: "springs-yokomo-p-tile-yatabe-arena-front-rwd-drift-springs-1-2-x-6-0mm-yokomo-yas-1260a",
@@ -3776,7 +4727,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     verified: true,
     confidence: "high",
     needsReview: false,
-    categorizationReason: "Source title identifies this as an ES aluminum rear shock tower for GALM."
+    categorizationReason: "Source title identifies this as an ES aluminum rear shock tower for GALM.",
+    variants: [
+      { id: "red-od3854", color: "Red", sku: "OD3854", displayName: "Red" },
+      { id: "purple-od3855", color: "Purple", sku: "OD3855", displayName: "Purple" },
+      { id: "black-od3856", color: "Black", sku: "OD3856", displayName: "Black" }
+    ]
   },
   {
     id: "rearlowerarms-overdose-es-aluminum-lowe-rear-arms-type-2-galm-od3844-od3845-od3846",
@@ -3796,16 +4752,44 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     verified: true,
     confidence: "high",
     needsReview: false,
-    categorizationReason: "Source title identifies this as lower rear arms, so it belongs in rear lower arms."
+    categorizationReason: "Source title identifies this as lower rear arms, so it belongs in rear lower arms.",
+    variants: [
+      { id: "red-od3844", color: "Red", sku: "OD3844", displayName: "Red" },
+      { id: "purple-od3845", color: "Purple", sku: "OD3845", displayName: "Purple" },
+      { id: "black-od3846", color: "Black", sku: "OD3846", displayName: "Black" }
+    ]
   },
   {
     id: "frontaxles-overdose-aluminum-one-piece-axle-shaft-type-2-5mm-od3984-od3985",
     category: "frontAxles",
     brand: "Overdose",
-    productName: "Aluminum One Piece Axle Shaft Type-2 5mm for OD / RWD Front (Red Purple) [Overdose] OD3984 OD3985",
+    productName: "Aluminum One Piece Axle Shaft Type-2 5mm for OD / RWD Front (Purple Red Black) [Overdose] OD3983 OD3984 OD3985",
     simplifiedName: "Type-2 Aluminum One Piece Front Axle Shaft 5mm",
     displayName: "Type-2 Aluminum One Piece Front Axle Shaft 5mm",
-    modelNumber: "OD3984 OD3985",
+    modelNumber: "OD3983 OD3984 OD3985",
+    variants: [
+      {
+        id: "5mm-purple-od3983",
+        color: "Purple",
+        size: "5mm",
+        sku: "OD3983",
+        displayName: "5mm / Purple"
+      },
+      {
+        id: "5mm-red-od3984",
+        color: "Red",
+        size: "5mm",
+        sku: "OD3984",
+        displayName: "5mm / Red"
+      },
+      {
+        id: "5mm-black-od3985",
+        color: "Black",
+        size: "5mm",
+        sku: "OD3985",
+        displayName: "5mm / Black"
+      }
+    ],
     productType: "front axle shaft",
     compatibleChassis: ["GALM", "GALM Ver.2", "OD RWD"],
     notes: "5mm front axle shaft option from the 2026 Overdose aluminum axle shaft lineup. Verify hub width and color before ordering.",
@@ -3816,7 +4800,7 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     verified: true,
     confidence: "medium",
     needsReview: false,
-    categorizationReason: "Source lists OD3984 and OD3985 as Aluminum One Piece Axle Shaft Type-2 for OD/RWD front 5mm."
+    categorizationReason: "Source lists OD3983, OD3984, and OD3985 as Aluminum One Piece Axle Shaft Type-2 for OD/RWD front 5mm."
   },
   {
     id: "frontaxles-overdose-aluminum-one-piece-axle-shaft-type-2-7mm-od3986-od3987-od3988",
@@ -3826,6 +4810,29 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     simplifiedName: "Type-2 Aluminum One Piece Front Axle Shaft 7mm",
     displayName: "Type-2 Aluminum One Piece Front Axle Shaft 7mm",
     modelNumber: "OD3986 OD3987 OD3988",
+    variants: [
+      {
+        id: "7mm-purple-od3986",
+        color: "Purple",
+        size: "7mm",
+        sku: "OD3986",
+        displayName: "7mm / Purple"
+      },
+      {
+        id: "7mm-red-od3987",
+        color: "Red",
+        size: "7mm",
+        sku: "OD3987",
+        displayName: "7mm / Red"
+      },
+      {
+        id: "7mm-black-od3988",
+        color: "Black",
+        size: "7mm",
+        sku: "OD3988",
+        displayName: "7mm / Black"
+      }
+    ],
     productType: "front axle shaft",
     compatibleChassis: ["GALM", "GALM Ver.2", "OD RWD"],
     notes: "7mm front axle shaft option from the 2026 Overdose aluminum axle shaft lineup. Verify hub width and color before ordering.",
@@ -3857,7 +4864,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     confidence: "high",
     needsReview: false,
     categorizationReason: "Source title identifies this as an ESC mount, so it belongs in the ESC mount accessory category.",
-    excludedCategories: ["escs"]
+    excludedCategories: ["escs"],
+    variants: [
+      { id: "red-od3974", color: "Red", sku: "OD3974", displayName: "Red" },
+      { id: "purple-od3975", color: "Purple", sku: "OD3975", displayName: "Purple" },
+      { id: "black-od3976", color: "Black", sku: "OD3976", displayName: "Black" }
+    ]
   },
   {
     id: "batterymounts-overdose-aluminum-battery-plate-set-type-2-galm-od3814-od3815-od3816",
@@ -3877,7 +4889,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     verified: true,
     confidence: "high",
     needsReview: false,
-    categorizationReason: "Source title identifies this as a battery plate set, so it belongs in battery mounts."
+    categorizationReason: "Source title identifies this as a battery plate set, so it belongs in battery mounts.",
+    variants: [
+      { id: "red-od3814", color: "Red", sku: "OD3814", displayName: "Red" },
+      { id: "purple-od3815", color: "Purple", sku: "OD3815", displayName: "Purple" },
+      { id: "black-od3816", color: "Black", sku: "OD3816", displayName: "Black" }
+    ]
   },
   {
     id: "bodymounts-overdose-aluminum-rear-body-mount-galm-od2883-od2884-od2885",
@@ -3897,7 +4914,12 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     verified: true,
     confidence: "medium",
     needsReview: false,
-    categorizationReason: "Source lists OD2883, OD2884, and OD2885 as aluminum rear body mounts for GALM."
+    categorizationReason: "Source lists OD2883, OD2884, and OD2885 as aluminum rear body mounts for GALM.",
+    variants: [
+      { id: "red-od2883", color: "Red", sku: "OD2883", displayName: "Red" },
+      { id: "purple-od2884", color: "Purple", sku: "OD2884", displayName: "Purple" },
+      { id: "black-od2885", color: "Black", sku: "OD2885", displayName: "Black" }
+    ]
   },
   {
     id: "motormounts-overdose-aluminum-motor-mount-type-2-galm-od3914-od3915-od3916",
@@ -3918,6 +4940,11 @@ export const sourcedCatalogItems: ProductCatalogItem[] = [
     confidence: "medium",
     needsReview: false,
     categorizationReason: "Source lists OD3914, OD3915, and OD3916 as aluminum motor mounts for GALM.",
-    excludedCategories: ["motors"]
+    excludedCategories: ["motors"],
+    variants: [
+      { id: "red-od3914", color: "Red", sku: "OD3914", displayName: "Red" },
+      { id: "purple-od3915", color: "Purple", sku: "OD3915", displayName: "Purple" },
+      { id: "black-od3916", color: "Black", sku: "OD3916", displayName: "Black" }
+    ]
   },
 ];

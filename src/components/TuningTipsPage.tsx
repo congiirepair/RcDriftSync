@@ -281,15 +281,15 @@ export function TuningTipsPage() {
   return (
     <main className="appPage tuningTipsPage">
       <PageHeader eyebrow="Trackside guide" title="Tuning Tips">
-        <button className="smallPill" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Top</button>
+        <button className="smallPill" type="button" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>Back to top</button>
       </PageHeader>
 
       <section className="tipsHero">
         <div>
-          <span>RC Drift Sync tuning guide</span>
+          <span>Trackside setup notes</span>
           <h2>Make one smart change at a time.</h2>
           <p>
-            These notes translate common RWD RC drift setup ideas into plain language for trackside use. Use them as starting points, then save what actually worked for your car, tire, surface, and driving style.
+            These notes keep common RWD RC drift setup ideas practical at the track. Use them as starting points, then save what actually worked for your car, tire, surface, and driving style.
           </p>
         </div>
       </section>

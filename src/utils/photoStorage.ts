@@ -68,8 +68,13 @@ export async function compressPhotoForStorage(file: File, maxEdge: number, targe
   }
 }
 
-export function displayPhotoUrl(photo: TunePhoto) {
-  return photo.cloudUrl || photo.dataUrl;
+function isTunePhoto(photo: unknown): photo is TunePhoto {
+  return Boolean(photo && typeof photo === "object" && ("cloudUrl" in photo || "dataUrl" in photo));
+}
+
+export function displayPhotoUrl(photo?: TunePhoto | null) {
+  if (!isTunePhoto(photo)) return "";
+  return photo.cloudUrl || photo.dataUrl || "";
 }
 
 export async function photoFromFile(
@@ -134,16 +139,16 @@ export function photoStorageStatusLabel() {
 function tunePhotos(tune: Tune): TunePhoto[] {
   const electronicsPhotos = Object.values(tune.electronics ?? {}).flatMap((item) => {
     if (!item || typeof item !== "object" || !("tunePhotos" in item)) return [];
-    return Array.isArray(item.tunePhotos) ? item.tunePhotos : [];
+    return Array.isArray(item.tunePhotos) ? item.tunePhotos.filter(isTunePhoto) : [];
   });
-  return [...(tune.photos ?? []), ...electronicsPhotos];
+  return [...(tune.photos ?? []), ...electronicsPhotos].filter(isTunePhoto);
 }
 
 export function appPhotos(data: AppData): TunePhoto[] {
   return [
     ...data.tunes.flatMap(tunePhotos),
     ...data.cars.flatMap((car) => car.photos ?? [])
-  ];
+  ].filter(isTunePhoto);
 }
 
 export async function deleteOrphanedCloudinaryPhotos(before: AppData, after: AppData) {

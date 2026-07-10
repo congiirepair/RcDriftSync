@@ -1,8 +1,9 @@
 import { Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { AnimatePresence, motion } from "motion/react";
+import { useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { ProductCatalogCategory, ProductCatalogItem, ProductCatalogVariant } from "../data/productCatalog";
-import { catalogBrandsByCategory, catalogOptionLabel, filterProductCatalog, getProductCatalog } from "../services/productCatalog";
+import { catalogBrandsByCategory, catalogOptionLabel, filterProductCatalog, getProductCatalog, type ProductCatalogCategory, type ProductCatalogItem, type ProductCatalogVariant } from "../features/catalog";
 import { formatFormLabel } from "../utils/formLabels";
 
 export interface PartSelectorValue {
@@ -29,6 +30,7 @@ interface PartSelectorProps {
   emptyLabel?: string;
   allowStock?: boolean;
   allowNotApplicable?: boolean;
+  allowSupportParts?: boolean;
   helper?: string;
   onChange: (value: PartSelectorValue) => void;
 }
@@ -89,7 +91,12 @@ function cleanPartTitle(label: string, partNumber?: string) {
     .replace(/\(\s*(?:left|right)\s+side\s*\)/gi, " ")
     .replace(/\b(?:left|right)\s+(?:or|\/)\s+(?:left|right)\b/gi, " ")
     .replace(/\b(?:left|right)\s+side\b/gi, " ")
+    .replace(/\b(?:left|right)\b/gi, " ")
     .replace(/\b(?:lh|rh|l\/h|r\/h)\b/gi, " ")
+    .replace(/\b(?:l\/r|r\/l)\b/gi, " ")
+    .replace(/\b(?:replacement|spare|optional?|option|upgrade)\s+parts?\b/gi, " ")
+    .replace(/\b(?:replacement|spare)\b/gi, " ")
+    .replace(/\b(?:set|kit)\b/gi, " ")
     .replace(/\[\s*\]/g, "")
     .replace(/\[\s*(?:[A-Z0-9][A-Z0-9.-]*\s*)+\]/gi, (match) => {
       const contents = match.slice(1, -1).trim().split(/\s+/);
@@ -146,6 +153,7 @@ export function PartSelector({
   emptyLabel,
   allowStock = true,
   allowNotApplicable = true,
+  allowSupportParts = false,
   helper,
   onChange
 }: PartSelectorProps) {
@@ -153,6 +161,8 @@ export function PartSelector({
   const [query, setQuery] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
   const [showSupportParts, setShowSupportParts] = useState(false);
+  const [customOpen, setCustomOpen] = useState(false);
+  const resultsParentRef = useRef<HTMLDivElement | null>(null);
   const [customDraft, setCustomDraft] = useState({
     brand: value.brand || "",
     name: value.customName || value.model || "",
@@ -180,6 +190,20 @@ export function PartSelector({
       .slice(0, 120),
     [brandFilter, categories, query, showSupportParts]
   );
+  const catalogGroups = useMemo(() => {
+    const groups = new Map<string, ProductCatalogItem[]>();
+    catalogItems.forEach((item) => groups.set(item.brand, [...(groups.get(item.brand) ?? []), item]));
+    return Array.from(groups.entries()).sort(([brandA], [brandB]) => brandA.localeCompare(brandB));
+  }, [catalogItems]);
+  const shouldVirtualizeResults = catalogItems.length > 80;
+  // TanStack Virtual intentionally returns imperative helpers for this scroll container.
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const groupVirtualizer = useVirtualizer({
+    count: catalogGroups.length,
+    getScrollElement: () => resultsParentRef.current,
+    estimateSize: (index) => 48 + Math.ceil((catalogGroups[index]?.[1].length ?? 1) / 2) * 128,
+    overscan: 3
+  });
 
   function chooseItem(item: ProductCatalogItem, variant?: ProductCatalogVariant) {
     const next = partValueFromItem(item, variant);
@@ -204,6 +228,7 @@ export function PartSelector({
     };
     saveRecentPart(category, next);
     onChange(next);
+    setCustomOpen(false);
     setOpen(false);
   }
 
@@ -221,19 +246,94 @@ export function PartSelector({
     setOpen(false);
   }
 
-  const selectorDialog = open ? (
-    <div className="partSelectorOverlay" role="presentation">
-      <section className="partSelectorSheet" role="dialog" aria-modal="true" aria-label={`${formatFormLabel(label)} selector`}>
-        <div className="partSelectorSheetHeader">
-          <div>
-            <span>Product Browser</span>
-            <h3>{formatFormLabel(label)}</h3>
-          </div>
-          <button className="partSelectorCloseButton" type="button" aria-label="Back to tune" onClick={() => setOpen(false)}>
-            <span className="partSelectorCloseText">Back</span>
-            <X size={20} />
-          </button>
-        </div>
+  function renderCatalogGroup(brand: string, items: ProductCatalogItem[]) {
+    return (
+      <div className="partSelectorBrandGroup" key={brand}>
+        <div className="partSelectorBrandHeading">{brand}</div>
+        {items.map((item) => (
+          item.variants && item.variants.length > 1 ? (
+            <div className="partSelectorVariantGroup" key={item.id}>
+              <div className="part-option part-option-heading">
+                <span className="part-option-media">
+                  {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
+                </span>
+                <div className="part-option-copy">
+                  <div className="part-meta-row">
+                    <span className="part-brand">{item.brand}</span>
+                    {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
+                  </div>
+                  <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
+                </div>
+                {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
+              </div>
+              {item.variants.map((variant) => (
+                <button key={`${item.id}-${variant.id}`} type="button" onClick={() => chooseItem(item, variant)}>
+                  <div className="part-option">
+                    <span className="part-option-media part-option-variant">Option</span>
+                    <div className="part-option-copy">
+                      <div className="part-meta-row">
+                        <span className="part-brand">Variant</span>
+                        {variant.sku ? <span className="part-number">{variant.sku}</span> : null}
+                      </div>
+                      <div className="part-name">{variant.displayName}</div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <button key={item.id} type="button" onClick={() => chooseItem(item, item.variants?.[0])}>
+              <div className="part-option">
+                <span className="part-option-media">
+                  {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
+                </span>
+                <div className="part-option-copy">
+                  <div className="part-meta-row">
+                    <span className="part-brand">{item.brand}</span>
+                    {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
+                  </div>
+                  <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
+                </div>
+                {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
+              </div>
+            </button>
+          )
+        ))}
+      </div>
+    );
+  }
+
+  const selectorDialog = (
+    <AnimatePresence>
+      {open ? (
+        <motion.div
+          className="partSelectorOverlay"
+          role="presentation"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.18 }}
+        >
+          <motion.section
+            className="partSelectorSheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${formatFormLabel(label)} selector`}
+            initial={{ y: 34, opacity: 0, scale: 0.985 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 24, opacity: 0, scale: 0.99 }}
+            transition={{ duration: 0.24, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            <div className="partSelectorSheetHeader">
+              <div>
+                <span>Product Browser</span>
+                <h3>{formatFormLabel(label)}</h3>
+              </div>
+              <button className="partSelectorCloseButton" type="button" aria-label="Back to tune" onClick={() => setOpen(false)}>
+                <span className="partSelectorCloseText">Back</span>
+                <X size={20} />
+              </button>
+            </div>
 
         <label className="partSelectorSearch">
           <Search size={18} />
@@ -252,16 +352,21 @@ export function PartSelector({
         <div className="partSelectorQuickActions">
           {allowStock ? <button type="button" onClick={() => chooseSimple("Stock")}>Use Stock</button> : null}
           {allowNotApplicable ? <button type="button" onClick={() => chooseSimple("Not applicable")}>Not applicable</button> : null}
-          <button type="button" onClick={() => setCustomDraft({ ...customDraft, name: query || customDraft.name })}>Use Custom</button>
+          <button type="button" onClick={() => {
+            setCustomDraft({ ...customDraft, name: query || customDraft.name });
+            setCustomOpen((current) => !current);
+          }}>{customOpen ? "Hide Custom" : "Use Custom"}</button>
           {selected ? <button type="button" onClick={() => {
             onChange({});
             setOpen(false);
           }}>Clear</button> : null}
         </div>
-        <label className="partSelectorSupportToggle">
-          <input type="checkbox" checked={showSupportParts} onChange={(event) => setShowSupportParts(event.target.checked)} />
-          <span>Show hardware / replacement parts</span>
-        </label>
+        {allowSupportParts ? (
+          <label className="partSelectorSupportToggle">
+            <input type="checkbox" checked={showSupportParts} onChange={(event) => setShowSupportParts(event.target.checked)} />
+            <span>Show hardware / replacement parts</span>
+          </label>
+        ) : <div className="partSelectorSupportToggle partSelectorSupportTogglePlaceholder" aria-hidden="true" />}
 
         {!query && !brandFilter && recentParts.length ? (
           <div className="partSelectorRecent">
@@ -281,60 +386,38 @@ export function PartSelector({
           </div>
         ) : null}
 
-        <div className="partSelectorResults">
-          {catalogItems.map((item) => (
-            item.variants && item.variants.length > 1 ? (
-              <div className="partSelectorVariantGroup" key={item.id}>
-                <div className="part-option part-option-heading">
-                  <span className="part-option-media">
-                    {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
-                  </span>
-                  <div className="part-option-copy">
-                    <div className="part-meta-row">
-                      <span className="part-brand">{item.brand}</span>
-                      {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
-                    </div>
-                    <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
+        <div className={`partSelectorResults ${shouldVirtualizeResults ? "partSelectorResultsVirtual" : ""}`} ref={resultsParentRef}>
+          {shouldVirtualizeResults ? (
+            <div className="partSelectorVirtualSizer" style={{ height: `${groupVirtualizer.getTotalSize()}px` }}>
+              {groupVirtualizer.getVirtualItems().map((virtualRow) => {
+                const [brand, items] = catalogGroups[virtualRow.index];
+                return (
+                  <div
+                    key={brand}
+                    className="partSelectorVirtualRow"
+                    data-index={virtualRow.index}
+                    ref={groupVirtualizer.measureElement}
+                    style={{ transform: `translateY(${virtualRow.start}px)` }}
+                  >
+                    {renderCatalogGroup(brand, items)}
                   </div>
-                  {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
-                </div>
-                {item.variants.map((variant) => (
-                  <button key={`${item.id}-${variant.id}`} type="button" onClick={() => chooseItem(item, variant)}>
-                    <div className="part-option">
-                      <span className="part-option-media part-option-variant">Option</span>
-                      <div className="part-option-copy">
-                        <div className="part-meta-row">
-                          <span className="part-brand">Variant</span>
-                          {variant.sku ? <span className="part-number">{variant.sku}</span> : null}
-                        </div>
-                        <div className="part-name">{variant.displayName}</div>
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <button key={item.id} type="button" onClick={() => chooseItem(item, item.variants?.[0])}>
-                <div className="part-option">
-                  <span className="part-option-media">
-                    {item.imageUrl ? <img className="part-option-image" src={item.imageUrl} alt="" loading="lazy" /> : <span className="part-option-placeholder">{item.brand.slice(0, 2)}</span>}
-                  </span>
-                  <div className="part-option-copy">
-                    <div className="part-meta-row">
-                      <span className="part-brand">{item.brand}</span>
-                      {item.partNumber || item.modelNumber ? <span className="part-number">{item.partNumber || item.modelNumber}</span> : null}
-                    </div>
-                    <div className="part-name">{cleanPartTitle(catalogOptionLabel(item), item.partNumber || item.modelNumber)}</div>
-                  </div>
-                  {item.hiddenFromTuneBuilder ? <div className="part-support-note">{item.reasonHidden || "Support/replacement part"}</div> : null}
-                </div>
-              </button>
-            )
-          ))}
-          {!catalogItems.length ? <p className="mutedText">No matching catalog parts yet. Use Custom below to save what you have.</p> : null}
+                );
+              })}
+            </div>
+          ) : catalogGroups.map(([brand, items]) => renderCatalogGroup(brand, items))}
+          {!catalogItems.length ? (
+            <div className="partSelectorEmpty">
+              <strong>No matching catalog parts yet.</strong>
+              <span>Save the part as Custom / Other and it will stay with this tune.</span>
+              <button type="button" onClick={() => {
+                setCustomDraft({ ...customDraft, name: query || customDraft.name });
+                setCustomOpen(true);
+              }}>Add custom part</button>
+            </div>
+          ) : null}
         </div>
 
-        <div className="partSelectorCustom">
+        {customOpen ? <div className="partSelectorCustom">
           <h4>Custom / Other</h4>
           <label>
             <span>{formatFormLabel("Custom brand")}</span>
@@ -355,13 +438,15 @@ export function PartSelector({
           <button className="primaryAction" type="button" onClick={saveCustom}>
             Save custom part
           </button>
-        </div>
+        </div> : null}
         <button className="partSelectorMobileBack" type="button" onClick={() => setOpen(false)}>
           Back to tune
         </button>
-      </section>
-    </div>
-  ) : null;
+          </motion.section>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
 
   return (
     <section className="partSelector">
@@ -397,7 +482,7 @@ export function PartSelector({
         )}
       </button>
       {selectedPartNumber ? <p className="part-helper-text">Part #: {selectedPartNumber}</p> : null}
-      {selectorDialog && typeof document !== "undefined" ? createPortal(selectorDialog, document.body) : selectorDialog}
+      {typeof document !== "undefined" ? createPortal(selectorDialog, document.body) : selectorDialog}
     </section>
   );
 }

@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { BASIC_CUSTOM_OPTION, starterBasicBrands } from "../data/basicTuneOptions";
-import { productCatalogCategories, type ProductCatalogCategory, type ProductCatalogItem } from "../data/productCatalog";
 import {
   catalogBrands,
   catalogDisplayName,
@@ -17,8 +16,11 @@ import {
   submitProductSuggestion,
   updateProductSuggestionStatus,
   upsertUserCatalogItem,
-  validateCatalogImport
-} from "../services/productCatalog";
+  validateCatalogImport,
+  productCatalogCategories,
+  type ProductCatalogCategory,
+  type ProductCatalogItem
+} from "../features/catalog";
 import type { UserAccount } from "../types";
 import { navigate } from "../utils/routing";
 import { EmptyState, SelectField, TextAreaField, TextField } from "./UiPrimitives";

@@ -39,7 +39,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["compound","surface","mounted wheel","front/rear use","notes"],
     sourceUrl: "https://teamyokomo.com/parts/ZR-DRCW6/",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Pre-assembled mounted tire/wheel set, not a standalone tire selector item."
   },
   {
     id: "tires-yokomo-drp-p-tile-zr-drpa",
@@ -71,14 +74,23 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     id: "gyros-yokomo-dp-302-v4-blue-dpp-302v4b",
     category: "gyros",
     brand: "Yokomo",
-    productName: "DP-302 V4 Steering Gyro - Blue",
-    modelNumber: "DPP-302V4B",
+    productName: "DP-302 V4 Steering Gyro",
+    simplifiedName: "DP-302 V4 Steering Gyro",
+    displayName: "DP-302 V4 Steering Gyro",
+    modelNumber: "DPP-302V4B / DPP-302V4BL / DPP-302V4PB / DPP-302V4RB",
     compatibleChassis: ["Universal"],
     notes: "Official Yokomo Racing Performer V4 steering gyro for digital servo setups.",
     tunableParameters: ["gain","mode","endpoint","direction","channel control","notes"],
     sourceUrl: "https://teamyokomo.com/parts/DPP-302V4B",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "black-dpp-302v4b", color: "Black", sku: "DPP-302V4B", displayName: "Black" },
+      { id: "blue-dpp-302v4bl", color: "Blue", sku: "DPP-302V4BL", displayName: "Blue" },
+      { id: "purple-dpp-302v4pb", color: "Purple", sku: "DPP-302V4PB", displayName: "Purple" },
+      { id: "red-dpp-302v4rb", color: "Red", sku: "DPP-302V4RB", displayName: "Red" }
+    ],
+    aliases: ["DP302 V4", "DPP-302V4", "DPP-302V4B", "DPP-302V4BL", "DPP-302V4PB", "DPP-302V4RB"]
   },
   {
     id: "motors-yokomo-dx1-type-r-titanium-10-5t-rpm-dx105rta",
@@ -91,7 +103,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","motor timing","rotor","sensor wire","fan","notes"],
     sourceUrl: "https://teamyokomo.com/parts/RPM-DX105RTA/",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-dx1-type-r-titanium-10-5t",
+    reasonHidden: "Collapsed into the base Yokomo DX1 Type-R Titanium 10.5T electronics row."
   },
   {
     id: "motors-yokomo-dx2-type-r-11-5t-rpm-d2115rr",
@@ -104,7 +120,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","motor timing","rotor","sensor wire","fan","notes"],
     sourceUrl: "https://teamyokomo.com/parts/RPM-D2115RR/",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-dx2-type-r-11-5t",
+    reasonHidden: "Collapsed into the base Yokomo DX2 Type-R 11.5T electronics row."
   },
   {
     id: "motors-yokomo-dx2-type-r-13-5t-rpm-d2135r",
@@ -117,7 +137,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","motor timing","rotor","sensor wire","fan","notes"],
     sourceUrl: "https://teamyokomo.com/downloadfiles/%2103%21CATALOG/2025_Fall_YOKOMO_CATALOG.pdf",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-dx2-type-r-13-5t",
+    reasonHidden: "Collapsed into the base Yokomo DX2 Type-R 13.5T electronics row."
   },
   {
     id: "motors-yokomo-dx2-type-r-15-5t-rpm-d2155rr",
@@ -130,7 +154,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","motor timing","rotor","sensor wire","fan","notes"],
     sourceUrl: "https://teamyokomo.com/parts/RPM-D2155RR/",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-dx2-type-r-15-5t",
+    reasonHidden: "Collapsed into the base Yokomo DX2 Type-R 15.5T electronics row."
   },
   {
     id: "motors-yokomo-zero-s-drift-13-5t-black-ym-s135dba",
@@ -143,7 +171,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["turn rating","motor timing","rotor","sensor wire","fan","notes"],
     sourceUrl: "https://teamyokomo.com/parts/YM-S135DBA/",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "yokomo-zero-s-drift-13-5t",
+    reasonHidden: "Collapsed into the base Yokomo ZERO-S Drift 13.5T motor row."
   },
   {
     id: "gyros-futaba-gyd560",
@@ -156,7 +188,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["gain mode","damper","damper point","steering control gain","tail slide speed"],
     sourceUrl: "",
     userAdded: false,
-    verified: false
+    verified: false,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "futaba-gyd560",
+    reasonHidden: "Collapsed into the base Futaba GYD560 electronics row."
   },
   {
     id: "capacitors-maclan-mdp-flow-capacitor-module-mcl4390",
@@ -175,14 +211,23 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     id: "capacitors-maclan-ultra-capacitor-black-mcl4371",
     category: "capacitors",
     brand: "Maclan",
-    productName: "Ultra Capacitor - Black",
-    modelNumber: "MCL4371",
+    productName: "Ultra Capacitor",
+    simplifiedName: "Ultra Capacitor",
+    displayName: "Ultra Capacitor",
+    modelNumber: "MCL4371 / MCL4372 / MCL4373 / MCL4374",
     compatibleChassis: ["Universal"],
-    notes: "Maclan Ultra Capacitor in CNC aluminum case. 1500000/9V for 2S RC drift application, 30 x 30 x 12 mm, 22g.",
+    notes: "Maclan Ultra Capacitor in CNC aluminum case. 1500000/9V for 2S RC drift application, 30 x 30 x 12 mm, 22g. Color SKUs are collapsed as variants.",
     tunableParameters: ["capacity","voltage","ESC compatibility","mounting notes"],
     sourceUrl: "https://maclanracingshop.com/maclan-ultra-capacitor/",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["Ultra Capacitor - Black", "Ultra Capacitor - Purple", "Ultra Capacitor - Red", "Ultra Capacitor - Blue"],
+    variants: [
+      { id: "black-mcl4371", color: "Black", sku: "MCL4371", displayName: "Black" },
+      { id: "purple-mcl4372", color: "Purple", sku: "MCL4372", displayName: "Purple" },
+      { id: "red-mcl4373", color: "Red", sku: "MCL4373", displayName: "Red" },
+      { id: "blue-mcl4374", color: "Blue", sku: "MCL4374", displayName: "Blue" }
+    ]
   },
   {
     id: "capacitors-maclan-ultra-capacitor-purple-mcl4372",
@@ -195,7 +240,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["capacity","voltage","ESC compatibility","mounting notes"],
     sourceUrl: "https://maclanracingshop.com/maclan-ultra-capacitor/",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Maclan Ultra Capacitor color variants.",
+    canonicalProductId: "capacitors-maclan-ultra-capacitor-black-mcl4371",
+    canonicalVariantId: "purple-mcl4372"
   },
   {
     id: "capacitors-maclan-ultra-capacitor-red-mcl4373",
@@ -208,7 +258,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["capacity","voltage","ESC compatibility","mounting notes"],
     sourceUrl: "https://maclanracingshop.com/maclan-ultra-capacitor/",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Maclan Ultra Capacitor color variants.",
+    canonicalProductId: "capacitors-maclan-ultra-capacitor-black-mcl4371",
+    canonicalVariantId: "red-mcl4373"
   },
   {
     id: "capacitors-maclan-ultra-capacitor-blue-mcl4374",
@@ -221,7 +276,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["capacity","voltage","ESC compatibility","mounting notes"],
     sourceUrl: "https://maclanracingshop.com/maclan-ultra-capacitor/",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Maclan Ultra Capacitor color variants.",
+    canonicalProductId: "capacitors-maclan-ultra-capacitor-black-mcl4371",
+    canonicalVariantId: "blue-mcl4374"
   },
   {
     id: "capacitors-maclan-pico-esc-capacitor-module-mcl4249",
@@ -247,7 +307,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["capacity","voltage","ESC compatibility","mounting notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/chevalier-trace-acuvance-60522",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Duplicate sourced Chevalier Trace row collapsed into the canonical Acuvance Chevalier Trace Capacitor entry.",
+    canonicalProductId: "acuvance-chevalier-trace-capacitor"
   },
   {
     id: "capacitors-acuvance-chevelier-blaze-capacitor-acuvance-15103-60600",
@@ -260,13 +324,17 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["capacity","voltage","ESC compatibility","mounting notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/chevelier-blaze-capacitor-acuvance-15103-60600",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Duplicate sourced Chevalier Blaze row collapsed into the canonical Acuvance Chevalier Blaze Capacitor entry.",
+    canonicalProductId: "acuvance-chevalier-blaze-capacitor"
   },
   {
     id: "capacitors-futaba-receiver-capacitor-glitch-buster-plug-and-play-1800-f-capacitor-futaba-ubr0002",
     category: "capacitors",
     brand: "Futaba",
-    productName: "RECEIVER CAPACITOR - Glitch Buster - Plug and Play 1800�F Capacitor [FUTABA] UBR0002",
+    productName: "RECEIVER CAPACITOR - Glitch Buster - Plug and Play 1800uF Capacitor [FUTABA] UBR0002",
     modelNumber: "UBR0002",
     compatibleChassis: ["Universal"],
     notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
@@ -318,14 +386,25 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     id: "damperoils-overdose-motys-high-performance-shock-oil-5-od3931",
     category: "damperOils",
     brand: "Overdose",
-    productName: "Moty's High Performance Shock Oil #5",
-    modelNumber: "OD3931",
+    productName: "Moty's High Performance Shock Oil",
+    simplifiedName: "Moty's High Performance Shock Oil",
+    displayName: "Moty's High Performance Shock Oil",
+    modelNumber: "OD3931 / OD3932 / OD3933 / OD3934 / OD3935 / OD3936",
     compatibleChassis: ["Universal"],
-    notes: "Overdose x Moty's high performance suspension oil, 30ml.",
+    notes: "Overdose x Moty's high performance suspension oil, 30ml. Collapsed by viscosity.",
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/products/overdose-moty-s-high-performance-suspension-oil-shock-fluid-10-15-20-25-30-overdose",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "5-od3931", displayName: "#5", sku: "OD3931", size: "#5" },
+      { id: "10-od3932", displayName: "#10", sku: "OD3932", size: "#10" },
+      { id: "15-od3933", displayName: "#15", sku: "OD3933", size: "#15" },
+      { id: "20-od3934", displayName: "#20", sku: "OD3934", size: "#20" },
+      { id: "25-od3935", displayName: "#25", sku: "OD3935", size: "#25" },
+      { id: "30-od3936", displayName: "#30", sku: "OD3936", size: "#30" }
+    ],
+    aliases: ["Moty's #5", "Moty's #10", "Moty's #15", "Moty's #20", "Moty's #25", "Moty's #30", "OD3931", "OD3932", "OD3933", "OD3934", "OD3935", "OD3936"]
   },
   {
     id: "damperoils-overdose-motys-high-performance-shock-oil-10-od3932",
@@ -338,7 +417,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/products/overdose-moty-s-high-performance-suspension-oil-shock-fluid-10-15-20-25-30-overdose",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Overdose Moty's High Performance Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-overdose-motys-high-performance-shock-oil-5-od3931",
+    canonicalVariantId: "10-od3932"
   },
   {
     id: "damperoils-overdose-motys-high-performance-shock-oil-15-od3933",
@@ -351,7 +435,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/products/overdose-moty-s-high-performance-suspension-oil-shock-fluid-10-15-20-25-30-overdose",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Overdose Moty's High Performance Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-overdose-motys-high-performance-shock-oil-5-od3931",
+    canonicalVariantId: "15-od3933"
   },
   {
     id: "damperoils-overdose-motys-high-performance-shock-oil-20-od3934",
@@ -364,7 +453,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/products/overdose-moty-s-high-performance-suspension-oil-shock-fluid-10-15-20-25-30-overdose",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Overdose Moty's High Performance Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-overdose-motys-high-performance-shock-oil-5-od3931",
+    canonicalVariantId: "20-od3934"
   },
   {
     id: "damperoils-overdose-motys-high-performance-shock-oil-25-od3935",
@@ -377,7 +471,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/products/overdose-moty-s-high-performance-suspension-oil-shock-fluid-10-15-20-25-30-overdose",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Overdose Moty's High Performance Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-overdose-motys-high-performance-shock-oil-5-od3931",
+    canonicalVariantId: "25-od3935"
   },
   {
     id: "damperoils-overdose-motys-high-performance-shock-oil-30-od3936",
@@ -390,20 +489,33 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/products/overdose-moty-s-high-performance-suspension-oil-shock-fluid-10-15-20-25-30-overdose",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Overdose Moty's High Performance Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-overdose-motys-high-performance-shock-oil-5-od3931",
+    canonicalVariantId: "30-od3936"
   },
   {
     id: "damperoils-mst-mineral-shock-oil-10-mst-220012",
     category: "damperOils",
     brand: "MST",
-    productName: "Mineral Shock Oil 10# [MST] 220012",
-    modelNumber: "220012",
+    productName: "Mineral Shock Oil",
+    simplifiedName: "Mineral Shock Oil",
+    displayName: "Mineral Shock Oil",
+    modelNumber: "220011 / 220012 / 220013",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "MST mineral shock oil family collapsed by viscosity.",
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mineral-shock-oil-10-mst-220012",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "5-220011", displayName: "5#", sku: "220011", size: "5#" },
+      { id: "10-220012", displayName: "10#", sku: "220012", size: "10#" },
+      { id: "15-220013", displayName: "15#", sku: "220013", size: "15#" }
+    ],
+    aliases: ["Mineral Shock Oil 5#", "Mineral Shock Oil 10#", "Mineral Shock Oil 15#", "220011", "220012", "220013"]
   },
   {
     id: "damperoils-mst-mineral-shock-oil-15-mst-220013",
@@ -416,7 +528,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mineral-shock-oil-15-mst-220013",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the MST Mineral Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-mst-mineral-shock-oil-10-mst-220012",
+    canonicalVariantId: "15-220013"
   },
   {
     id: "damperoils-mst-mineral-shock-oil-5-mst-220011",
@@ -429,20 +546,50 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mineral-shock-oil-5-mst-220011",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the MST Mineral Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-mst-mineral-shock-oil-10-mst-220012",
+    canonicalVariantId: "5-220011"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
     category: "damperOils",
     brand: "Yokomo",
-    productName: "Super Blend Silicon Shock Oil (#100) [Yokomo] YS-100B",
-    modelNumber: "YS-100B",
+    productName: "Super Blend Silicone Shock Oil",
+    simplifiedName: "Super Blend Silicone Shock Oil",
+    displayName: "Super Blend Silicone Shock Oil",
+    modelNumber: "YS-50 / YS-100B / YS-150 / YS-200B / YS-250B / YS-300B / YS-350 / YS-375B / YS-400 / YS-425B / YS-450 / YS-500 / YS-550 / YS-600 / YS-650 / YS-700A / YS-800B / YS-850A / YS-900B / YS-3000A",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Yokomo Super Blend silicone shock oil family collapsed by viscosity.",
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-100-yokomo-ys-100b",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "50-ys-50", displayName: "#50", sku: "YS-50", size: "#50" },
+      { id: "100-ys-100b", displayName: "#100", sku: "YS-100B", size: "#100" },
+      { id: "150-ys-150", displayName: "#150", sku: "YS-150", size: "#150" },
+      { id: "200-ys-200b", displayName: "#200", sku: "YS-200B", size: "#200" },
+      { id: "250-ys-250b", displayName: "#250", sku: "YS-250B", size: "#250" },
+      { id: "300-ys-300b", displayName: "#300", sku: "YS-300B", size: "#300" },
+      { id: "350-ys-350", displayName: "#350", sku: "YS-350", size: "#350" },
+      { id: "375-ys-375b", displayName: "#375", sku: "YS-375B", size: "#375" },
+      { id: "400-ys-400", displayName: "#400", sku: "YS-400", size: "#400" },
+      { id: "425-ys-425b", displayName: "#425", sku: "YS-425B", size: "#425" },
+      { id: "450-ys-450", displayName: "#450", sku: "YS-450", size: "#450" },
+      { id: "500-ys-500", displayName: "#500", sku: "YS-500", size: "#500" },
+      { id: "550-ys-550", displayName: "#550", sku: "YS-550", size: "#550" },
+      { id: "600-ys-600", displayName: "#600", sku: "YS-600", size: "#600" },
+      { id: "650-ys-650", displayName: "#650", sku: "YS-650", size: "#650" },
+      { id: "700-ys-700a", displayName: "#700", sku: "YS-700A", size: "#700" },
+      { id: "800-ys-800b", displayName: "#800", sku: "YS-800B", size: "#800" },
+      { id: "850-ys-850a", displayName: "#850", sku: "YS-850A", size: "#850" },
+      { id: "900-ys-900b", displayName: "#900", sku: "YS-900B", size: "#900" },
+      { id: "3000-ys-3000a", displayName: "#3000", sku: "YS-3000A", size: "#3000" }
+    ],
+    aliases: ["Yokomo Super Blend Silicon Shock Oil", "YS-50", "YS-100B", "YS-150", "YS-200B", "YS-250B", "YS-300B", "YS-350", "YS-375B", "YS-400", "YS-425B", "YS-450", "YS-500", "YS-550", "YS-600", "YS-650", "YS-700A", "YS-800B", "YS-850A", "YS-900B", "YS-3000A"]
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-150-yokomo-ys-150",
@@ -455,7 +602,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-150-yokomo-ys-150",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "150-ys-150"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-200-yokomo-ys-200b",
@@ -468,7 +620,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-200-yokomo-ys-200",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "200-ys-200b"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-250-yokomo-ys-250b",
@@ -481,7 +638,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-250-yokomo-ys-250",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "250-ys-250b"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-300-yokomo-ys-300b",
@@ -494,7 +656,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-300-yokomo-ys-300",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "300-ys-300b"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-3000-yokomo-ys-3000a",
@@ -507,7 +674,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-3000-yokomo-ys-3000a",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "3000-ys-3000a"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-350-yokomo-ys-350",
@@ -520,7 +692,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-350-yokomo-ys-350",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "350-ys-350"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-375-yokomo-ys-375b",
@@ -533,7 +710,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-375-yokomo-ys-375b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "375-ys-375b"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-400-yokomo-ys-400",
@@ -546,7 +728,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-400-yokomo-ys-400",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "400-ys-400"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-425-yokomo-ys-425b",
@@ -559,7 +746,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-425-yokomo-ys-425b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "425-ys-425b"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-450-yokomo-ys-450",
@@ -572,7 +764,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-450-yokomo-ys-450",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "450-ys-450"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-50-yokomo-ys-50",
@@ -585,7 +782,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-50-yokomo-ys-50",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "50-ys-50"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-500-yokomo-ys-500",
@@ -598,7 +800,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-500-yokomo-ys-500",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "500-ys-500"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-550-yokomo-ys-550",
@@ -611,7 +818,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-550-yokomo-ys-550",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "550-ys-550"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-600-yokomo-ys-600",
@@ -624,7 +836,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-600-yokomo-ys-600",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "600-ys-600"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-650-yokomo-ys-650",
@@ -637,7 +854,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-650-yokomo-ys-650",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "650-ys-650"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-700-yokomo-ys-700a",
@@ -650,7 +872,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-700-yokomo-ys-700",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "700-ys-700a"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-800-yokomo-ys-800b",
@@ -663,7 +890,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-800-yokomo-ys-800b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "800-ys-800b"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-850-yokomo-ys-850a",
@@ -676,7 +908,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-850-yokomo-ys-850a",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "850-ys-850a"
   },
   {
     id: "damperoils-yokomo-super-blend-silicon-shock-oil-900-yokomo-ys-900b",
@@ -689,7 +926,12 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["viscosity","front/rear use","temperature notes","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/super-blend-silicon-shock-oil-900-yokomo-ys-900b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Yokomo Super Blend Silicone Shock Oil viscosity variants.",
+    canonicalProductId: "damperoils-yokomo-super-blend-silicon-shock-oil-100-yokomo-ys-100b",
+    canonicalVariantId: "900-ys-900b"
   },
   {
     id: "frontshocktowers-mst-frx-aluminum-front-damper-stay-shock-tower-black-frx-mst-210709bk",
@@ -767,7 +1009,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper shock hole","tower height","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mc-iii-aluminum-front-shock-tower-spacer-2-0mm-rdx-mc3-reve-d-d1-m3-172",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Front shock tower spacer, not a standalone front shock tower."
   },
   {
     id: "frontshocktowers-reve-d-mc-iii-aluminum-front-shock-tower-spacer-4-0mm-rdx-mc3-reve-d-d1-m3-174",
@@ -780,7 +1025,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["upper shock hole","tower height","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mc-iii-aluminum-front-shock-tower-spacer-4-0mm-rdx-mc3-reve-d-d1-m3-174",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Front shock tower spacer, not a standalone front shock tower."
   },
   {
     id: "frontshocktowers-rhino-racing-shark-carbon-lightweight-front-shock-tower-for-ddss-shark-non-ifs-rhino-racing-rr-841",
@@ -826,13 +1074,21 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     category: "frontShockTowers",
     brand: "Yokomo",
     productName: "SD / RD / YD ALUMINUM FRONT SHOCK Tower (BLUE - RED - PURPLE - BLACK) [Yokomo] Y2-017AFE",
+    simplifiedName: "SD/RD/YD Aluminum Front Shock Tower",
+    displayName: "SD/RD/YD Aluminum Front Shock Tower",
     modelNumber: "Y2-017AFE",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced wizard catalog product. Color options are collapsed as variants where retailer SKU detail is unavailable.",
     tunableParameters: ["upper shock hole","tower height","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/sd-rd-yd-aluminum-front-shock-tower-blue-red-purple-black-yokomo-y2-017afe",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "blue-y2-017afe", color: "Blue", sku: "Y2-017AFE", displayName: "Blue" },
+      { id: "red-y2-017afe", color: "Red", sku: "Y2-017AFE", displayName: "Red" },
+      { id: "purple-y2-017afe", color: "Purple", sku: "Y2-017AFE", displayName: "Purple" },
+      { id: "black-y2-017afe", color: "Black", sku: "Y2-017AFE", displayName: "Black" }
+    ]
   },
   {
     id: "frontupperarms-mst-frx-aluminum-front-upper-arm-set-black-frx-mst-210711bk",
@@ -858,7 +1114,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/frx-side-braces-mounts-front-upper-arm-mount-set-mst-230166",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Side brace and upper arm mount set, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-mst-rmx-2-0-aluminum-upper-arm-mount-red-mst-210598r",
@@ -871,7 +1130,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-2-0-aluminum-upper-arm-mount-red-mst-210598r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Upper arm mount support part, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-mst-rmx-2-0-aluminum-upper-arm-set-red-mst-210575r",
@@ -884,7 +1146,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rmx-2-0-aluminum-upper-arm-set-red-mst-210575r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "mst-210575-aluminum-front-upper-arm-set",
+    reasonHidden: "Duplicate sourced row collapsed into the canonical MST RMX 2.0 Aluminum Front Upper Arm Set."
   },
   {
     id: "frontupperarms-mst-rmx-m-aluminum-upper-arm-set-red-mst-210702r",
@@ -903,14 +1169,22 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     id: "frontupperarms-overdose-adjustable-aluminum-front-upper-arm-type-2-for-galm-purple-red-black-overdose-od2940-od2941-od29",
     category: "frontUpperArms",
     brand: "Overdose",
-    productName: "Adjustable Aluminum Front Upper Arm Type-2 for GALM PURPLE RED BLACK [OVERDOSE] OD2940 OD2941 OD2942",
+    productName: "GALM Adjustable Front Upper Arm Type-2",
+    simplifiedName: "GALM Adjustable Front Upper Arm Type-2",
+    displayName: "GALM Adjustable Front Upper Arm Type-2",
     modelNumber: "OD2940 OD2941 OD2942",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced wizard catalog product. Color SKUs are collapsed as variants.",
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/adjustable-aluminum-front-upper-arm-type-2-for-galm-purple-red-black-overdose-od2940-od2941-od2942",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["Adjustable Aluminum Front Upper Arm Type-2 for GALM PURPLE RED BLACK [OVERDOSE] OD2940 OD2941 OD2942"],
+    variants: [
+      { id: "purple-od2940", color: "Purple", sku: "OD2940", displayName: "Purple" },
+      { id: "red-od2941", color: "Red", sku: "OD2941", displayName: "Red" },
+      { id: "black-od2942", color: "Black", sku: "OD2942", displayName: "Black" }
+    ]
   },
   {
     id: "frontupperarms-overdose-upper-arm-shaft-for-od2940-od2941-od2942-type-2-overdose-od2997",
@@ -923,20 +1197,26 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/upper-arm-shaft-for-od2940-od2941-od2942-type-2-overdose-od2997",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Upper arm shaft support hardware, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-reve-d-aluminum-front-upper-arm-left-side-for-hg-mc1-reve-d-rd-008ul",
     category: "frontUpperArms",
     brand: "Reve D",
-    productName: "ALUMINUM FRONT UPPER ARM (LEFT SIDE) For HG-MC1 [REVE D] RD-008UL",
-    modelNumber: "RD-008UL",
+    productName: "HG/MC-1 Aluminum Front Upper Arm",
+    simplifiedName: "HG/MC-1 Aluminum Front Upper Arm",
+    displayName: "HG/MC-1 Aluminum Front Upper Arm",
+    modelNumber: "RD-008UL / RD-008UR",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced wizard catalog product. Left/right side listings are represented as one clean selector item.",
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-front-upper-arm-left-side-for-hg-mc1-reve-d-rd-008ul",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["ALUMINUM FRONT UPPER ARM (LEFT SIDE) For HG-MC1 [REVE D] RD-008UL", "ALUMINUM FRONT UPPER ARM (RIGHT SIDE) For HG-MC1 [REVE D] RD-008UR"]
   },
   {
     id: "frontupperarms-reve-d-aluminum-front-upper-arm-right-side-for-hg-mc1-reve-d-rd-008ur",
@@ -949,7 +1229,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-front-upper-arm-right-side-for-hg-mc1-reve-d-rd-008ur",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    canonicalProductId: "frontupperarms-reve-d-aluminum-front-upper-arm-left-side-for-hg-mc1-reve-d-rd-008ul",
+    reasonHidden: "Left/right side variant collapsed into the HG/MC-1 Aluminum Front Upper Arm selector item."
   },
   {
     id: "frontupperarms-reve-d-aluminum-front-upper-arm-mount-reve-d-rd-008um",
@@ -962,20 +1246,26 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-front-upper-arm-mount-reve-d-rd-008um",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Front upper arm mount support part, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-reve-d-mc-iii-aluminum-front-upper-arm-left-or-right-rdx-mc3-reve-d-d1-m3-08",
     category: "frontUpperArms",
     brand: "Reve D",
-    productName: "MC-III Aluminum Front Upper Arm (left or right) - RDX MC3 [Reve D] D1-M3-08",
+    productName: "MC-III Aluminum Front Upper Arm",
+    simplifiedName: "MC-III Aluminum Front Upper Arm",
+    displayName: "MC-III Aluminum Front Upper Arm",
     modelNumber: "D1-M3-08",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced wizard catalog product. Left/right wording removed from selector display.",
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/mc-iii-aluminum-front-upper-arm-rdx-mc3-reve-d-d1-m3-08",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["MC-III Aluminum Front Upper Arm (left or right) - RDX MC3 [Reve D] D1-M3-08"]
   },
   {
     id: "frontupperarms-reve-d-rdx-graphite-resin-front-upper-arm-rdx-reve-d-d1-008fug",
@@ -1014,7 +1304,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rdx-upper-arm-pin-set-for-d1-racreve-d-d1-ra-04",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Upper arm pin support hardware, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-rhino-racing-1-24-rts-rts-tc4-titanium-upper-arms-set-upgrade-rhino-racing-rts-605",
@@ -1027,7 +1320,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/1-24-rts-rts-tc4-titanium-servo-lower-mount-upgrade-rhino-racing-rts-604-copy",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "1/24 RTS mini-platform part; hidden from primary 1/10 front upper arm selectors."
   },
   {
     id: "frontupperarms-rhino-racing-shark-hardened-steel-link-for-lower-upper-arm-w-set-screws-pair-for-rr-1200-1100-rhino-racin",
@@ -1040,7 +1336,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shark-hardened-steel-link-for-lower-upper-arm-w-set-screws-pair-for-rr-1200-1100-rhino-racing-rr-linkset",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Link and set screw support hardware, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-rhino-racing-shark-upper-arm-hardened-long-screw-and-spacer-set-pair-for-rr-1200-rhino-racing-rr-1701",
@@ -1053,7 +1352,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shark-upper-arm-hardened-long-screw-and-spacer-sert-pair-for-rr-1200-rhino-racing-rr-up-set",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Upper arm screw/spacer support hardware, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-rhino-racing-shark-upper-arm-hardened-long-screw-set-2-pc-for-rr-1200-rhino-racing-rr-up-sc",
@@ -1066,7 +1368,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shark-upper-arm-hardened-long-screw-set-2-pc-for-rr-1200-rhino-racing-rr-up-sc",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Upper arm screw support hardware, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-rhino-racing-shark-upper-arm-installation-kit-for-rmx-pin-bearing-set-rhino-racing-rmx-pin",
@@ -1079,7 +1384,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shark-upper-arm-installation-kit-for-rmx-pin-bearing-set-rhino-racing-rmx-pin",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Installation pin/bearing kit, not a complete upper arm."
   },
   {
     id: "frontupperarms-rhino-racing-upper-arm-mount-ddss-shark-red-black-purple-rhino-racing-rr-752",
@@ -1092,7 +1400,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/upper-arm-mount-ddss-shark-red-black-purple-rhino-racing-rr-752",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Upper arm mount support part, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-team-associated-dc10-ft-aluminum-front-upper-arms-associated-asc72280",
@@ -1131,7 +1442,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/curved-slide-rack-upper-arm-mount-blue-yd-2-rd-sd-yokomo-y2-202umbl",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Slide-rack upper arm mount support part, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-yokomo-curved-slide-rack-upper-arm-mount-purple-yd-2-rd-sd-yokomo-y2-202umpa",
@@ -1144,7 +1458,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/curved-slide-rack-upper-arm-mount-purple-yd-2-yokomo-y2-202umpa",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Slide-rack upper arm mount support part, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-yokomo-curved-slide-rack-upper-arm-mount-red-yd-2-rd-sd-yokomo-y2-202umra",
@@ -1157,7 +1474,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/curved-slide-rack-upper-arm-mount-red-yd-2-yokomo-y2-202umra",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Slide-rack upper arm mount support part, not a standalone front upper arm."
   },
   {
     id: "frontupperarms-yokomo-yd-2-aluminum-front-upper-a-arm-yokomo-y2-008fuc",
@@ -1293,7 +1613,9 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     id: "rearshocktowers-reve-d-rdx-molded-rear-shock-tower-esc-plate-reve-d-d1-018m",
     category: "rearShockTowers",
     brand: "Reve D",
-    productName: "RDX Molded Rear Shock Tower-ESC Plate [Reve D] D1-018M",
+    productName: "RDX Molded Rear Shock Tower w/ESC Plate [Reve D] D1-018M",
+    simplifiedName: "RDX Molded Rear Shock Tower w/ESC Plate",
+    displayName: "RDX Molded Rear Shock Tower w/ESC Plate",
     modelNumber: "D1-018M",
     compatibleChassis: ["Universal"],
     notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
@@ -1307,26 +1629,42 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     category: "rearShockTowers",
     brand: "Rhino Racing",
     productName: "SHARK - Optional NARROW Rear Shock Tower Set - RED PURPLE BLACK [Rhino Racing]",
-    modelNumber: "",
-    compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    simplifiedName: "SHARK Narrow Rear Shock Tower",
+    displayName: "SHARK Narrow Rear Shock Tower",
+    modelNumber: "RR-840R / RR-840P / RR-840B",
+    productType: "rear shock tower",
+    compatibleChassis: ["Rhino Racing SHARK", "SHARK DDSS", "YD2 dimensions"],
+    notes: "Narrow lightweight rear shock tower for SHARK transmission. Body post holes are closer together for YD2-dimension body mounting.",
     tunableParameters: ["upper shock hole","tower height","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shark-optional-narrow-rear-shock-tower-set-red-purple-black-rhino-racing",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "red-rr-840r", color: "Red", sku: "RR-840R", displayName: "Red" },
+      { id: "purple-rr-840p", color: "Purple", sku: "RR-840P", displayName: "Purple" },
+      { id: "black-rr-840b", color: "Black", sku: "RR-840B", displayName: "Black" }
+    ]
   },
   {
     id: "rearshocktowers-yokomo-rd-sd-yd-aluminum-rear-shock-tower-red-blue-black-purple-yokomo-y2-018ar2",
     category: "rearShockTowers",
     brand: "Yokomo",
     productName: "RD SD YD Aluminum Rear Shock Tower (RED BLUE BLACK PURPLE) [Yokomo] Y2-018AR2",
+    simplifiedName: "RD/SD/YD Aluminum Rear Shock Tower",
+    displayName: "RD/SD/YD Aluminum Rear Shock Tower",
     modelNumber: "Y2-018AR2",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Sourced wizard catalog product. Color options are collapsed as variants where retailer SKU detail is unavailable.",
     tunableParameters: ["upper shock hole","tower height","spacer","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rd-sd-yd-aluminum-rear-shock-tower-red-blue-black-purple-yokomo-y2-018ar2",
     userAdded: false,
-    verified: true
+    verified: true,
+    variants: [
+      { id: "red-y2-018ar2", color: "Red", sku: "Y2-018AR2", displayName: "Red" },
+      { id: "blue-y2-018ar2", color: "Blue", sku: "Y2-018AR2", displayName: "Blue" },
+      { id: "black-y2-018ar2", color: "Black", sku: "Y2-018AR2", displayName: "Black" },
+      { id: "purple-y2-018ar2", color: "Purple", sku: "Y2-018AR2", displayName: "Purple" }
+    ]
   },
   {
     id: "rearupperarms-overdose-aluminum-rear-upper-arm-mount-for-galm-purple-red-black-overdose-od2404b-od3867-od3868",
@@ -1339,7 +1677,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-rear-upper-arm-mount-for-galm-purple-red-black-overdose-od2404b-od3867-od3868",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear upper arm mount support part, not a standalone rear upper arm."
   },
   {
     id: "rearupperarms-overdose-tc-aluminum-rear-upper-arm-bracket-for-galm-galm-ver-2-red-purple-black-overdose-od2850-od2849-od",
@@ -1352,7 +1693,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/tc-aluminum-rear-upper-arm-bracket-for-galm-galm-ver-2-red-purple-black-overdose-od2850-od2849-od2848",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear upper arm bracket support item, not a standalone rear upper arm."
   },
   {
     id: "rearupperarms-reve-d-rear-upper-arm-pin-set-reve-d-m1-ra-04",
@@ -1365,7 +1709,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["inner hole","outer hole","arm length","spacer position","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rear-upper-arm-pin-set-reve-d-m1-ra-04",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Rear upper arm pin support hardware, not a standalone rear upper arm."
   },
   {
     id: "servohorns-overdose-jt-aluminum-direct-servo-horn-type-2-futaba-25t-galm-black-purple-red-overdose-od3887-od3888-od3889",
@@ -1378,7 +1725,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/preorder-jt-aluminum-direct-servo-horn-type-2-futaba-25t-galm-black-purple-red-overdose-od3887-od3888-od3889",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Overdose GALM JT Aluminum Direct Servo Horn Type-2 spline/color variants.",
+    canonicalProductId: "overdose-od3884-od3889-jt-direct-servo-horn-type-2"
   },
   {
     id: "servohorns-overdose-jt-aluminum-direct-servo-horn-type-2-sanwa-ko-23t-galm-black-purple-red-overdose-od3884-od3885-od388",
@@ -1391,20 +1742,27 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/jt-aluminum-direct-servo-horn-type-2-sanwa-ko-23t-galm-black-purple-red-overdose-od3884-od3885-od3886",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Overdose GALM JT Aluminum Direct Servo Horn Type-2 spline/color variants.",
+    canonicalProductId: "overdose-od3884-od3889-jt-direct-servo-horn-type-2"
   },
   {
     id: "servohorns-reve-d-adjustable-servo-horn-25t-futaba-mc1-yd-2-yd2-reve-d-rd-017-25-rd-019-25",
     category: "servoHorns",
     brand: "Reve D",
-    productName: "ADJUSTABLE SERVO HORN 25T (FUTABA) MC1 YD-2 YD2 [REVE D] RD-017-25 rd-019-25",
-    modelNumber: "",
+    productName: "Adjustable Servo Horn 25T",
+    simplifiedName: "Adjustable Servo Horn 25T",
+    displayName: "Adjustable Servo Horn 25T",
+    modelNumber: "RD-017-25 / RD-019-25",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Reve D adjustable 25T Futaba servo horn family for MC-1/YD-2 style steering setups.",
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/adjustable-servo-horn-25t-futaba-mc1-yd-2-yd2-reve-d-rd-017-25",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["ADJUSTABLE SERVO HORN 25T (FUTABA) MC1 YD-2 YD2 [REVE D] RD-017-25 rd-019-25"]
   },
   {
     id: "servohorns-rhino-racing-23t-ko-propo-sanwa-servo-horn-ddss-rhinomax-shark-red-black-purple-rhino-racing-rr-757b-rr-757p-",
@@ -1417,7 +1775,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/23t-ko-propo-sanwa-servo-horn-ddss-rhinomax-shark-red-black-purple-rhino-racing-rr-757b-rr-757p-rr-757r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Rhino Racing DDSS SHARK Servo Horn spline/color variants.",
+    canonicalProductId: "rhino-racing-ddss-shark-servo-horn-series"
   },
   {
     id: "servohorns-rhino-racing-25t-servo-horn-splined-ddss-rhinomax-shark-red-black-purple-rhino-racing-rr-755b-rr-755p-rr-755r",
@@ -1430,7 +1792,11 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/25t-servo-horn-splined-ddss-rhinomax-shark-red-black-purple-rhino-racing-rr-755b-rr-755p-rr-755r",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Collapsed into the Rhino Racing DDSS SHARK Servo Horn spline/color variants.",
+    canonicalProductId: "rhino-racing-ddss-shark-servo-horn-series"
   },
   {
     id: "servohorns-rhino-racing-rts-1-24-servo-horn-and-suspension-mount-set-rhino-racing-rts-445",
@@ -1443,7 +1809,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rts-1-24-servo-horn-and-suspension-mount-set-rhino-racing-rts-445",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "1/24 RTS mini-platform servo horn/mount set; hidden from primary 1/10 servo horn selectors."
   },
   {
     id: "servohorns-rhinomax-servo-horn-arm-for-rhinomax-black-25t-rhinomax",
@@ -1469,7 +1838,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rc28r-axles-steering-block-and-servo-horn-setrc28-associated-21636",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "RC28 micro-scale axle/steering block/servo horn bundle; hidden from 1/10 drift servo horn selectors."
   },
   {
     id: "servohorns-team-associated-rc8-ft-aluminum-clamping-servo-horn-25t-20mm-2mm-offset-associated-81673",
@@ -1482,7 +1854,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/rc8-ft-aluminum-clamping-servo-horn-25t-20mm-2mm-offset-associated-81673",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "RC8 1/8-scale servo horn; hidden from primary 1/10 drift servo horn selectors."
   },
   {
     id: "servohorns-yokomo-aluminum-servo-horn-23t-20mm-yokomo-zc-204320a",
@@ -1501,27 +1876,42 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     id: "servohorns-yokomo-aluminum-servo-horn-25t-17mm-20mm-23mm-yokomo-zc-204517a-zc-204520a-zc-204523a",
     category: "servoHorns",
     brand: "Yokomo",
-    productName: "Aluminum Servo Horn (25T) 17mm 20mm 23mm [Yokomo] ZC-204517A ZC-204520A ZC-204523A",
+    productName: "Aluminum Servo Horn 25T",
+    simplifiedName: "Aluminum Servo Horn 25T",
+    displayName: "Aluminum Servo Horn 25T",
     modelNumber: "ZC-204517A ZC-204520A ZC-204523A",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Yokomo 25T aluminum servo horn family collapsed by arm length.",
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-servo-horn-25t-17mm-20mm-23mm-yokomo-zc-204517-zc-204520-zc-204523",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["Aluminum Servo Horn (25T) 17mm 20mm 23mm [Yokomo] ZC-204517A ZC-204520A ZC-204523A"],
+    variants: [
+      { id: "17mm-zc-204517a", size: "17mm", sku: "ZC-204517A", displayName: "17mm" },
+      { id: "20mm-zc-204520a", size: "20mm", sku: "ZC-204520A", displayName: "20mm" },
+      { id: "23mm-zc-204523a", size: "23mm", sku: "ZC-204523A", displayName: "23mm" }
+    ]
   },
   {
     id: "servohorns-yokomo-aluminum-servo-horn-for-yd2-slide-rack-23t-25t-yokomo-y2-204523-y2-204323",
     category: "servoHorns",
     brand: "Yokomo",
-    productName: "Aluminum Servo Horn for YD2 Slide Rack (23T-25T) [Yokomo] Y2-204523 Y2-204323",
+    productName: "YD-2 Slide Rack Aluminum Servo Horn",
+    simplifiedName: "YD-2 Slide Rack Aluminum Servo Horn",
+    displayName: "YD-2 Slide Rack Aluminum Servo Horn",
     modelNumber: "Y2-204523 Y2-204323",
     compatibleChassis: ["Universal"],
-    notes: "Sourced wizard catalog product. Verify exact fitment before ordering.",
+    notes: "Yokomo YD-2 slide rack servo horn family collapsed by spline count.",
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/aluminum-servo-horn-for-yd2-slide-rack-23t-25t-yokomo-y2-204523-y2-204323",
     userAdded: false,
-    verified: true
+    verified: true,
+    aliases: ["Aluminum Servo Horn for YD2 Slide Rack (23T-25T) [Yokomo] Y2-204523 Y2-204323"],
+    variants: [
+      { id: "25t-y2-204523", size: "25T", sku: "Y2-204523", displayName: "25T" },
+      { id: "23t-y2-204323", size: "23T", sku: "Y2-204323", displayName: "23T" }
+    ]
   },
   {
     id: "servohorns-yokomo-suspension-mount-servo-horn-for-rd2-0-yokomo-rd-301",
@@ -1534,7 +1924,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["spline","length","offset","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/suspension-mount-servo-horn-for-rd2-0-yokomo-rd-301",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Mixed suspension mount and servo horn bundle; not a clean servo horn selector item."
   },
   {
     id: "servohorns-yokomo-yd-2zx-servo-horn-aluminum-26mm-yokomo-y2-204z26a",
@@ -1651,7 +2044,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["length","diameter","coating","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shock-shaft-guide-4pcs-overdose-od1172b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Shock shaft guide support part, not a shock shaft."
   },
   {
     id: "shockshafts-overdose-shock-shaft-guide-for-hg-shocks-overdose-od1847b",
@@ -1664,7 +2060,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["length","diameter","coating","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/shock-shaft-guide-for-hg-shocks-overdose-od1847b",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "Shock shaft guide support part, not a shock shaft."
   },
   {
     id: "shockshafts-reve-d-spm-titanium-shock-shafts-for-yokomo-slf-big-bores-3mm-x-28-3mm-4pc-set-with-e-rings-clip-reve-d-rt-0",
@@ -1703,7 +2102,10 @@ export const sourcedWizardCatalogItems: ProductCatalogItem[] = [
     tunableParameters: ["length","diameter","coating","notes"],
     sourceUrl: "https://supergdrift.com/collections/vendors/products/2-0mm-e-clips-18-pc-pack-for-shock-shaft-yokomo-zc-410a",
     userAdded: false,
-    verified: true
+    verified: true,
+    tuneSelectable: false,
+    hiddenFromTuneBuilder: true,
+    reasonHidden: "E-clip hardware, not a shock shaft."
   },
   {
     id: "shockshafts-yokomo-titanium-coating-shock-shaft-for-slf-bigbore-shock-yokomo-y4-s5t",
